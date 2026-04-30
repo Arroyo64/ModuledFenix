@@ -42,7 +42,7 @@ class PurchaseServiceTest {
 
     @Test
     void createPurchase_whenClientAndGameExistAndNotPurchased_savesAndReturnsDto() {
-        Client client = client(1, "ana");
+        Client client = client(1, "Ana");
         Game game = game(10, "Fenix Quest", 3, "9.99");
         Purchase savedPurchase = purchase(100, client, game);
 
@@ -79,7 +79,7 @@ class PurchaseServiceTest {
 
     @Test
     void createPurchase_whenGameDoesNotExist_returnsNullAndDoesNotSavePurchase() {
-        Client client = client(1, "ana");
+        Client client = client(1, "Ana");
 
         when(clientRepository.findById(1)).thenReturn(Optional.of(client));
         when(gameRepository.findById(404)).thenReturn(Optional.empty());
@@ -95,7 +95,7 @@ class PurchaseServiceTest {
 
     @Test
     void createPurchase_whenAlreadyPurchased_throwsExceptionAndDoesNotSave() {
-        Client client = client(1, "ana");
+        Client client = client(1, "Ana");
         Game game = game(10, "Fenix Quest", 3, "9.99");
 
         when(clientRepository.findById(1)).thenReturn(Optional.of(client));
@@ -114,7 +114,7 @@ class PurchaseServiceTest {
 
     @Test
     void getLibraryByClientId_mapsPurchasesToLibraryGames() {
-        Client client = client(1, "ana");
+        Client client = client(1, "Ana");
         Game game = game(10, "Fenix Quest", 3, "9.99");
         game.setDescription("A fantasy visual novel");
         game.setTamanoMb(new BigDecimal("512"));
