@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.PasswordField?>
@@ -29,8 +30,20 @@
                 <Insets top="30.0" right="30.0" bottom="0.0" left="30.0"/>
             </padding>
 
-            <Button text="&lt;" styleClass="nav-button"/>
-            <Button text="&gt;" styleClass="nav-button"/>
+<!--            <Button text="&lt;" styleClass="nav-button"/>-->
+<!--            <Button text="&gt;" styleClass="nav-button"/>-->
+            <Button styleClass="nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
+                </graphic>
+            </Button>
+
+            <Button styleClass="nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
+                </graphic>
+            </Button>
+<!--       Estos son los iconos supuestamente de ir hacia atrás y hacia adelante, pero ahora no deja ver la pantalla-->
 
             <Hyperlink text="MARKET PLACE" styleClass="tab-inactive" onAction="#switchToMarketplaceScene"/>
             <Hyperlink text="LIBRARY" styleClass="tab-inactive" onAction="#switchLibraryScene"/>
@@ -41,17 +54,31 @@
             <Button text="Create your own visual novel"
                     styleClass="main-action-button"/>
 
+<!--            <HBox alignment="CENTER"-->
+<!--                  prefHeight="40.0"-->
+<!--                  prefWidth="40.0"-->
+<!--                  styleClass="profile-wrapper">-->
+<!--                <ImageView fitHeight="28.0"-->
+<!--                           fitWidth="28.0"-->
+<!--                           preserveRatio="true"-->
+<!--                           styleClass="profile-image"/>-->
+<!--            </HBox>-->
             <HBox alignment="CENTER"
                   prefHeight="40.0"
                   prefWidth="40.0"
                   styleClass="profile-wrapper">
-                <ImageView fitHeight="28.0"
-                           fitWidth="28.0"
-                           preserveRatio="true"
-                           styleClass="profile-image"/>
+                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
             </HBox>
+<!--            Cambiado por icono de perfil-->
 
-            <Label text="⌄" styleClass="dropdown-icon"/>
+
+
+<!--            <Label text="⌄" styleClass="dropdown-icon"/>-->
+            <Label styleClass="dropdown-icon">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
+                </graphic>
+            </Label>
         </HBox>
     </top>
 
@@ -86,16 +113,27 @@
                                 <Insets top="35.0" right="30.0" bottom="35.0" left="30.0"/>
                             </padding>
 
+<!--                            <HBox alignment="CENTER"-->
+<!--                                  styleClass="profile-avatar-wrapper">-->
+<!--                                <ImageView fitWidth="240.0"-->
+<!--                                           fitHeight="260.0"-->
+<!--                                           preserveRatio="false"-->
+<!--                                           styleClass="profile-avatar-image"/>-->
+<!--                            </HBox>-->
                             <HBox alignment="CENTER"
                                   styleClass="profile-avatar-wrapper">
-                                <ImageView fitWidth="240.0"
-                                           fitHeight="260.0"
-                                           preserveRatio="false"
-                                           styleClass="profile-avatar-image"/>
+                                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="180" iconColor="#C6C6C6"/>
                             </HBox>
+<!--                            Cambiado por icono de profile-->
 
-                            <Button text="EDIT ▶"
-                                    styleClass="profile-edit-button"/>
+                            <Button text="EDIT"
+                                    styleClass="profile-edit-button"
+                                    contentDisplay="RIGHT"
+                                    graphicTextGap="4">
+                                <graphic>
+                                    <FontIcon iconLiteral="mdi2p-play" iconSize="13" iconColor="WHITE"/>
+                                </graphic>
+                            </Button>
                         </VBox>
 
                         <!-- CENTER -->
@@ -140,9 +178,15 @@
 
                             <Region VBox.vgrow="ALWAYS"/>
 
-                            <HBox alignment="CENTER_RIGHT">
-                                <Button text="EDIT ▶"
-                                        styleClass="profile-edit-button"/>
+                            <HBox alignment="CENTER">
+                                <Button text="EDIT"
+                                        styleClass="profile-edit-button"
+                                        contentDisplay="RIGHT"
+                                        graphicTextGap="4">
+                                    <graphic>
+                                        <FontIcon iconLiteral="mdi2p-play" iconSize="13" iconColor="WHITE"/>
+                                    </graphic>
+                                </Button>
                             </HBox>
                         </VBox>
 
@@ -161,14 +205,21 @@
                                 <Insets top="24.0" right="28.0" bottom="24.0" left="28.0"/>
                             </padding>
 
+<!--                            <HBox alignment="CENTER"-->
+<!--                                  styleClass="profile-overview-icon">-->
+<!--                                <ImageView fitWidth="34.0"-->
+<!--                                           fitHeight="34.0"-->
+<!--                                           preserveRatio="true"/>-->
+<!--                            </HBox>-->
                             <HBox alignment="CENTER"
                                   styleClass="profile-overview-icon">
-                                <ImageView fitWidth="34.0"
-                                           fitHeight="34.0"
-                                           preserveRatio="true"/>
+                                <FontIcon iconLiteral="mdi2g-gamepad-outline" iconSize="34" iconColor="#D3D3D3"/>
                             </HBox>
+<!--                            Cambiado por icon-->
 
-                            <VBox spacing="6.0">
+                            <VBox spacing="6.0"
+                                  alignment="CENTER_LEFT"
+                                  HBox.hgrow="ALWAYS">
                                 <Label text="Games acquired"
                                        styleClass="profile-overview-title"/>
                                 <Label text="0"
@@ -185,14 +236,21 @@
                                 <Insets top="24.0" right="28.0" bottom="24.0" left="28.0"/>
                             </padding>
 
+<!--                            <HBox alignment="CENTER"-->
+<!--                                  styleClass="profile-overview-icon">-->
+<!--                                <ImageView fitWidth="34.0"-->
+<!--                                           fitHeight="34.0"-->
+<!--                                           preserveRatio="true"/>-->
+<!--                            </HBox>-->
                             <HBox alignment="CENTER"
                                   styleClass="profile-overview-icon">
-                                <ImageView fitWidth="34.0"
-                                           fitHeight="34.0"
-                                           preserveRatio="true"/>
+                                <FontIcon iconLiteral="mdi2b-brush-outline" iconSize="34" iconColor="#D3D3D3"/>
                             </HBox>
+<!--                            Cambiado icon-->
 
-                            <VBox spacing="6.0">
+                            <VBox spacing="6.0"
+                                  alignment="CENTER_LEFT"
+                                  HBox.hgrow="ALWAYS">
                                 <Label text="Games created"
                                        styleClass="profile-overview-title"/>
                                 <Label text="0"

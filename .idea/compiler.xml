@@ -19,6 +19,7 @@
         <module name="client" />
         <module name="backend" />
         <module name="common" />
+        <module name="frontend" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
