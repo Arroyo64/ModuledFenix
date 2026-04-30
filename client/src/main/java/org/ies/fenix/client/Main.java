@@ -6,10 +6,7 @@ import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlLoader;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
-import org.ies.fenix.client.controller.ClientController;
-import org.ies.fenix.client.controller.EmailFormController;
-import org.ies.fenix.client.controller.HomeController;
-import org.ies.fenix.client.controller.MarketplaceController;
+import org.ies.fenix.client.controller.*;
 import org.ies.fenix.client.listener.SceneResizeListener;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
@@ -65,6 +62,16 @@ public class Main extends Application {
 
             if (clazz == MarketplaceController.class) {
                 return new MarketplaceController(stageManager, clientApiService, sessionManager);
+            }
+
+            if (clazz == LibraryController.class) {
+                return new LibraryController(stageManager, clientApiService, sessionManager);
+            }
+            if (clazz == ProfileController.class) {
+                return new ProfileController(stageManager, clientApiService, sessionManager);
+            }
+            if (clazz == GameController.class) {
+                return new GameController(stageManager, clientApiService, sessionManager);
             }
 
             try {

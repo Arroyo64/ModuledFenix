@@ -42,13 +42,20 @@ public enum FxmlView {
         }
     },
 
-    SCALES_THEORY {
-
+    GAME {
         @Override
         public String getFxmlPath() {
-            return "/fxml/scales-theory.fxml";
+            return "/fxml/game.fxml";
+        }
+    },
+    PROFILE {
+        @Override
+        public String getFxmlPath() {
+            return "/fxml/profile.fxml";
         }
     };
+
+
 
     public abstract String getFxmlPath();
 }

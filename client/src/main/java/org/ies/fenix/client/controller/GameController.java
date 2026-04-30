@@ -1,26 +1,28 @@
 package org.ies.fenix.client.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
-import org.ies.fenix.controller.dto.client.ClientLoginDTO;
 import org.ies.fenix.controller.dto.client.ClientNameDTO;
-import org.ies.fenix.controller.dto.client.LoginResponseDTO;
 import org.springframework.http.ResponseEntity;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class MarketplaceController implements Initializable {
+public class GameController {
 
     @FXML
     private TextField searchField;
+
+    @FXML
+    private VBox leftGamesList;
+
+    @FXML
+    private GridPane libraryGrid;
 
     @FXML
     private Hyperlink username;
@@ -35,15 +37,14 @@ public class MarketplaceController implements Initializable {
     private final IClientController clientApiService;
     private final SessionManager sessionManager;
 
-
-    public MarketplaceController(StageManager stageManager, IClientController clientApiService, SessionManager sessionManager) {
+    public GameController(StageManager stageManager, IClientController clientApiService, SessionManager sessionManager) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.sessionManager = sessionManager;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    private void initialize() {
         try {
             ResponseEntity<ClientNameDTO> response = clientApiService.getUsername("Bearer " + sessionManager.getToken()); //tokens en todos lados para peticiones de las interfaces Ike
 
@@ -54,21 +55,18 @@ public class MarketplaceController implements Initializable {
             e.printStackTrace(); //needs to be handled
         }
     }
-
     @FXML
     void switchProfileScene() {
         stageManager.switchToNextScene(FxmlView.PROFILE);
     }
 
     @FXML
-    void switchToLibraryScene() {
-        stageManager.switchToNextScene(FxmlView.LIBRARY);
+    void switchToMarketplaceScene() {
+        stageManager.switchToNextScene(FxmlView.MARKETPLACE);
     }
 
     @FXML
     public void reloadView() {
         stageManager.reloadCurrentScene();
     }
-
-
 }

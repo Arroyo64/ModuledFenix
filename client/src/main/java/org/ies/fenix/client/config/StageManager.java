@@ -16,6 +16,7 @@ public class StageManager {
     private final FxmlLoader fxmlLoader;
     private final String applicationTitle;
     private final SceneResizeListener sceneResizeListener;
+    private FxmlView currentView;
 
     public StageManager(FxmlLoader fxmlLoader,
                         Stage primaryStage,
@@ -61,6 +62,7 @@ public class StageManager {
     }
 
     public void switchToNextScene(final FxmlView view) {
+        this.currentView = view;
         Parent rootNode = loadRootNode(view.getFxmlPath());
 
         rootNode.applyCss();
@@ -78,6 +80,14 @@ public class StageManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void reloadCurrentScene() {
+        if (currentView == null) {
+            throw new IllegalStateException("No hay vista cargada");
+        }
+        Parent rootNode = loadRootNode(currentView.getFxmlPath());
+        primaryStage.getScene().setRoot(rootNode);
     }
 
     public void switchToFullScreenMode() {

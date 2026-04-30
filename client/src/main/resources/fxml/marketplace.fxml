@@ -48,9 +48,9 @@
                         </Button>
 <!--                        Cambiado por icon-->
 
-                        <Hyperlink fx:id="marketplace" text="MARKETPLACE" styleClass="tab-active"/>
-                        <Hyperlink fx:id="library" text="LIBRARY" styleClass="tab-inactive"/>
-                        <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive"/>
+                        <Hyperlink fx:id="marketplace" text="MARKET PLACE" styleClass="tab-active" onAction="#reloadView"/>
+                        <Hyperlink fx:id="library" text="LIBRARY" styleClass="tab-inactive" onAction="#switchToLibraryScene"/>
+                        <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive" onAction="#switchProfileScene"/>
 
                         <Region HBox.hgrow="ALWAYS"/>
 

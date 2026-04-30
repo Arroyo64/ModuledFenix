@@ -57,8 +57,8 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    void switchToTheoryScene() {
-        stageManager.switchToNextScene(FxmlView.SCALES_THEORY);
+    void switchToLibraryScene() {
+        stageManager.switchToNextScene(FxmlView.LIBRARY);
     }
 
     @FXML
@@ -67,19 +67,26 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    void switchToChordsScene() {
+    void switchProfileScene() {
+        stageManager.switchToNextScene(FxmlView.PROFILE);
     }
 
     @FXML
-    public void switchToChordGeneratorScene() {
+    public void switchToGameScene() {
+        stageManager.switchToNextScene(FxmlView.GAME);
     }
 
     @FXML
-    public void switchToIntervalsScene(ActionEvent actionEvent) {
+    public void switchToMarketplaceScene(ActionEvent actionEvent) {
         stageManager.switchToNextScene(FxmlView.MARKETPLACE);
     }
 
     @FXML
-    public void switchToDictationsScene(ActionEvent actionEvent) {
+    public void switchTouUserCreateScene(ActionEvent actionEvent) {
+        stageManager.switchToNextScene(FxmlView.USER_CREATE);
+    }
+    @FXML
+    public void switchTouLoginScene(ActionEvent actionEvent) {
+        stageManager.switchToNextScene(FxmlView.LOGIN);
     }
 }

@@ -14,6 +14,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 
+<?import javafx.scene.control.Hyperlink?>
 <BorderPane fx:id="root"
             prefHeight="800.0"
             prefWidth="1300.0"
@@ -44,9 +45,9 @@
             </Button>
             <!--Cambiado por icon-->
 
-            <Label text="MARKET PLACE" styleClass="tab-inactive"/>
-            <Label text="LIBRARY" styleClass="tab-active"/>
-            <Label fx:id="usernameLabel" text="USERNAME" styleClass="tab-inactive"/>
+            <Hyperlink text="MARKET PLACE" styleClass="tab-inactive" onAction="#switchToMarketplaceScene"/>
+            <Hyperlink text="LIBRARY" styleClass="tab-active" onAction="#reloadView"/>
+            <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive" onAction="#switchProfileScene"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
