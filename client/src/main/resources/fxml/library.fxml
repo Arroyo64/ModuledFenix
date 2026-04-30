@@ -63,7 +63,7 @@
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
                 <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
             </HBox>
-            <!--                        Cambiado por icon-->
+            <!--Cambiado por icon-->
 
 <!--            <Label text="⌄" styleClass="dropdown-icon"/>-->
             <Label styleClass="dropdown-icon">
@@ -71,7 +71,7 @@
                     <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
                 </graphic>
             </Label>
-            <!--                        Cambiado por icon-->
+            <!--Cambiado por icon-->
         </HBox>
     </top>
 
