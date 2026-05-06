@@ -15,6 +15,7 @@
 
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="root"
             prefHeight="800.0"
             prefWidth="1300.0"
@@ -120,15 +121,28 @@
 <!--                                           preserveRatio="false"-->
 <!--                                           styleClass="profile-avatar-image"/>-->
 <!--                            </HBox>-->
-                            <HBox alignment="CENTER"
-                                  styleClass="profile-avatar-wrapper">
-                                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="180" iconColor="#C6C6C6"/>
-                            </HBox>
-<!--                            Cambiado por icono de profile-->
+                            <StackPane alignment="CENTER" styleClass="profile-avatar-wrapper">
+
+                                <!-- Icono por defecto (cuando no hay foto) -->
+                                <FontIcon fx:id="profileIcon"
+                                          iconLiteral="mdi2a-account-outline"
+                                          iconSize="180"
+                                          iconColor="#C6C6C6"/>
+
+                                <!-- Imagen de perfil -->
+                                <ImageView fx:id="profileImage"
+                                           fitWidth="180"
+                                           fitHeight="180"
+                                           preserveRatio="true"
+                                           visible="false"/>
+                            </StackPane>
+
+                            <!--                            Cambiado por icono de profile-->
 
                             <Button text="EDIT"
                                     styleClass="profile-edit-button"
                                     contentDisplay="RIGHT"
+                                    onAction="#uploadProfilePicture"
                                     graphicTextGap="4">
                                 <graphic>
                                     <FontIcon iconLiteral="mdi2p-play" iconSize="13" iconColor="WHITE"/>
@@ -171,15 +185,16 @@
                                    styleClass="profile-label"/>
 
                             <TextArea wrapText="true"
-                                      editable="false"
+                                      fx:id="bio"
                                       prefHeight="220.0"
-                                      text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."
+                                      promptText="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."
                                       styleClass="profile-description"/>
 
                             <Region VBox.vgrow="ALWAYS"/>
 
                             <HBox alignment="CENTER">
                                 <Button text="EDIT"
+                                        onAction="#updateProfileBio"
                                         styleClass="profile-edit-button"
                                         contentDisplay="RIGHT"
                                         graphicTextGap="4">

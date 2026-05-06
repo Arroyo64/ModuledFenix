@@ -28,8 +28,11 @@ public class Client {
     @Column(unique = true)
     private String username;
 
-
+    @Column(length = 250)
     private String bio;
+
+    @Column(name = "profile_image_key", length = 255)
+    private String profileImageKey;
 
     @OneToMany(mappedBy = "user")
     private List<AuthToken> authTokens;
