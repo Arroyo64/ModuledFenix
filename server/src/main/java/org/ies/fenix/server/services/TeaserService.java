@@ -41,7 +41,7 @@ public class TeaserService {
         TeaserResponseDTO dto = new TeaserResponseDTO();
         dto.setId(teaser.getId());
         dto.setGameId(teaser.getGame().getId());
-        dto.setFileName(teaser.getFileName());
+        dto.setFileName(teaser.getObjectKey());
         dto.setType(teaser.getType());
         return dto;
     }

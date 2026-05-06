@@ -21,13 +21,14 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 50)
     private String title;
 
     @ManyToOne
     @JoinColumn(name = "dev_id")
     private Client dev;
 
+    @Column(length = 250)
     private String description;
 
     @Column(name = "tamano_mb")
