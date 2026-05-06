@@ -72,16 +72,14 @@ CREATE TABLE purchase
 
 CREATE TABLE teaser
 (
-    id INT AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     game_id INT NOT NULL,
-    file_name VARCHAR(255),
+    object_key VARCHAR(255) NOT NULL,
     type VARCHAR(50),
-    PRIMARY KEY(id, game_id),
     CONSTRAINT fk_teaser_game
         FOREIGN KEY (game_id)
             REFERENCES game(id)
-            ON DELETE RESTRICT
-            ON UPDATE CASCADE
+            ON DELETE CASCADE
 );
 
 CREATE TABLE auth_token
@@ -99,30 +97,8 @@ CREATE TABLE auth_token
             ON UPDATE CASCADE
 );
 
-CREATE INDEX idx_auth_token_client_id 
-ON auth_token(client_id);
+CREATE INDEX idx_auth_token_client_id
+    ON auth_token(client_id);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ALTER TABLE client
+    ADD COLUMN profile_image_key VARCHAR(255);
