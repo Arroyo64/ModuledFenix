@@ -49,9 +49,15 @@ public class ClientController implements IClientController {
         String token = extractBearerToken(authorization);
         if (token != null) {
             System.out.println("Recibido token = " + token);
-            return ResponseEntity.ok( new ClientInfoDTO(clientService.getClient(token).getUsername(),
-                    clientService.getClient(token).getEmail(),
-                    clientService.getClient(token).getCharacterCounterPassword()));
+            var client = clientService.getClient(token);
+
+            return ResponseEntity.ok(
+                    new ClientInfoDTO(
+                            client.getUsername(),
+                            client.getEmail(),
+                            client.getCharacterCounterPassword() + 1
+                    )
+            );
         }
         return ResponseEntity.badRequest().build();
     }

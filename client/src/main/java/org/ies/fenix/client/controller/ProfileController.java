@@ -2,9 +2,7 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -28,13 +26,13 @@ import java.util.ResourceBundle;
 public class ProfileController implements Initializable {
 
     @FXML
-    public Label nameLabel;
+    public TextField nameField;
 
     @FXML
-    public Label emailLabel;
+    public TextField emailField;
 
     @FXML
-    public Label passwordLabel;
+    public PasswordField passwordField;
 
     @FXML
     private Hyperlink username;
@@ -73,8 +71,9 @@ public class ProfileController implements Initializable {
             ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader()); //tokens en todos lados para peticiones de las interfaces Ike
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
-                emailLabel.setText(response.getBody().getEmail());
-                passwordLabel.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
+                nameField.setText(response.getBody().getUsername());
+                emailField.setText(response.getBody().getEmail());
+                passwordField.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
             }
             ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
@@ -92,7 +91,6 @@ public class ProfileController implements Initializable {
                 profileImage.setVisible(false);
                 profileIcon.setVisible(true);
             }
-            System.out.println("Bytes recibidos: " + imageBytes.length);
 
         } catch (RuntimeException e) {
             e.printStackTrace(); //needs to be handled

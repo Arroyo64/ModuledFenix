@@ -159,16 +159,17 @@
                                 <Insets top="40.0" right="35.0" bottom="35.0" left="35.0"/>
                             </padding>
 
-                            <Label fx:id="nameLabel" text="Name" styleClass="profile-label"/>
-                            <TextField promptText="[USER-NAME]"
+                            <Label text="Name" styleClass="profile-label"/>
+                            <TextField fx:id="nameField" promptText="[USER-NAME]"
                                        styleClass="profile-input"/>
 
-                            <Label fx:id="emailLabel" text="Email" styleClass="profile-label"/>
-                            <TextField promptText="user@gmail.com"
+                            <Label text="Email" styleClass="profile-label"/>
+                            <TextField fx:id="emailField" promptText="user@gmail.com"
                                        styleClass="profile-input"/>
 
-                            <Label fx:id="passwordLabel" text="Password" styleClass="profile-label"/>
-                            <PasswordField promptText="esto es una contraseña"
+                            <Label text="Password" styleClass="profile-label"/>
+                            <PasswordField fx:id="passwordField" promptText="esto es una contraseña"
+                                           editable="false"
                                            styleClass="profile-input"/>
                         </VBox>
 
