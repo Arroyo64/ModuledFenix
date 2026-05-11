@@ -19,7 +19,7 @@ import org.ies.fenix.client.config.StageManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static org.ies.fenix.client.config.EmailValidator.isValidEmail;
+import static org.ies.fenix.client.utils.EmailValidator.isValidEmail;
 
 public class EmailFormController implements Initializable {
 

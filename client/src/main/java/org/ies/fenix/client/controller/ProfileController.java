@@ -2,13 +2,16 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
+import org.ies.fenix.client.utils.ImageUtils;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
@@ -23,6 +26,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
 
+import static org.ies.fenix.client.utils.ImageUtils.*;
+
 public class ProfileController implements Initializable {
 
     @FXML
@@ -33,7 +38,10 @@ public class ProfileController implements Initializable {
 
     @FXML
     public PasswordField passwordField;
-
+    @FXML
+    public FontIcon topProfileIcon;
+    @FXML
+    public ImageView topProfileImage;
     @FXML
     private Hyperlink username;
 
@@ -65,10 +73,10 @@ public class ProfileController implements Initializable {
 
     }
 
-    @FXML
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader()); //tokens en todos lados para peticiones de las interfaces Ike
+            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader());
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
                 nameField.setText(response.getBody().getUsername());
@@ -80,20 +88,13 @@ public class ProfileController implements Initializable {
                 bio.setText(loadedBio.getBody());
             }
             ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-
-            byte[] imageBytes = image.getBody();
-
-            if (imageBytes != null && imageBytes.length > 0) {
-                profileImage.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-                profileImage.setVisible(true);
+            if (image.getStatusCode().value() == 200) {
+                setCoverImage(image.getBody(), profileImage, 180);
                 profileIcon.setVisible(false);
-            } else {
-                profileImage.setVisible(false);
-                profileIcon.setVisible(true);
+                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
             }
-
-        } catch (RuntimeException e) {
-            e.printStackTrace(); //needs to be handled
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -130,8 +131,7 @@ public class ProfileController implements Initializable {
         if (serverResponse.getStatusCode().value() == 200) {
             System.out.println("Bio updated");
             stageManager.reloadCurrentScene();
-        }
-        else {
+        } else {
             assert serverResponse.getBody() != null;
             System.out.println(serverResponse.getBody().getMessage());
         }
@@ -141,26 +141,14 @@ public class ProfileController implements Initializable {
     @FXML
     public void uploadProfilePicture() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-        );
-
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile == null) return;
-
         try {
             String mimeType = Files.probeContentType(selectedFile.toPath());
             byte[] bytes = Files.readAllBytes(selectedFile.toPath());
-            FileUploadDTO dto = new FileUploadDTO(
-                    selectedFile.getName(),
-                    mimeType,
-                    bytes
-            );
-            ResponseEntity<ServerResponseDTO> response =
-                    clientApiService.uploadProfilePicture(
-                            buildHeader(),
-                            dto
-                    );
+            FileUploadDTO dto = new FileUploadDTO(selectedFile.getName(), mimeType, bytes);
+            ResponseEntity<ServerResponseDTO> response = clientApiService.uploadProfilePicture(buildHeader(), dto);
             if (response.getStatusCode().value() == 200) {
                 System.out.println("Profile picture updated");
                 profileImage.setImage(new Image(selectedFile.toURI().toString()));

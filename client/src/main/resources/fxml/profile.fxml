@@ -55,26 +55,27 @@
             <Button text="Create your own visual novel"
                     styleClass="main-action-button"/>
 
-<!--            <HBox alignment="CENTER"-->
-<!--                  prefHeight="40.0"-->
-<!--                  prefWidth="40.0"-->
-<!--                  styleClass="profile-wrapper">-->
-<!--                <ImageView fitHeight="28.0"-->
-<!--                           fitWidth="28.0"-->
-<!--                           preserveRatio="true"-->
-<!--                           styleClass="profile-image"/>-->
-<!--            </HBox>-->
-            <HBox alignment="CENTER"
-                  prefHeight="40.0"
-                  prefWidth="40.0"
-                  styleClass="profile-wrapper">
-                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
-            </HBox>
-<!--            Cambiado por icono de perfil-->
+            <StackPane prefWidth="40"
+                       prefHeight="40"
+                       minWidth="40"
+                       minHeight="40"
+                       maxWidth="40"
+                       maxHeight="40"
+                       styleClass="profile-wrapper">
 
+                <!-- Icono por defecto -->
+                <FontIcon fx:id="topProfileIcon"
+                          iconLiteral="mdi2a-account-outline"
+                          iconSize="22"
+                          iconColor="#B8B8B8"/>
 
-
-<!--            <Label text="⌄" styleClass="dropdown-icon"/>-->
+                <!-- Imagen -->
+                <ImageView fx:id="topProfileImage"
+                           fitWidth="40"
+                           fitHeight="40"
+                           preserveRatio="true"
+                           visible="false"/>
+            </StackPane>
             <Label styleClass="dropdown-icon">
                 <graphic>
                     <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
@@ -121,7 +122,13 @@
 <!--                                           preserveRatio="false"-->
 <!--                                           styleClass="profile-avatar-image"/>-->
 <!--                            </HBox>-->
-                            <StackPane alignment="CENTER" styleClass="profile-avatar-wrapper">
+                            <StackPane prefWidth="180"
+                                       prefHeight="180"
+                                       minWidth="180"
+                                       minHeight="180"
+                                       maxWidth="180"
+                                       maxHeight="180"
+                                       styleClass="profile-avatar-wrapper">
 
                                 <!-- Icono por defecto (cuando no hay foto) -->
                                 <FontIcon fx:id="profileIcon"
@@ -161,10 +168,12 @@
 
                             <Label text="Name" styleClass="profile-label"/>
                             <TextField fx:id="nameField" promptText="[USER-NAME]"
+                                       editable="false"
                                        styleClass="profile-input"/>
 
                             <Label text="Email" styleClass="profile-label"/>
                             <TextField fx:id="emailField" promptText="user@gmail.com"
+                                       editable="false"
                                        styleClass="profile-input"/>
 
                             <Label text="Password" styleClass="profile-label"/>

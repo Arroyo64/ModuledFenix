@@ -676,3 +676,12 @@
 .library-card-click-wrapper {
     -fx-background-color: transparent;
 }
+
+.profile-avatar-wrapper {
+    -fx-pref-width: 180;
+    -fx-pref-height: 180;
+    -fx-min-width: 180;
+    -fx-min-height: 180;
+    -fx-max-width: 180;
+    -fx-max-height: 180;
+}

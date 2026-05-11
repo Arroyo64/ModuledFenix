@@ -3,17 +3,25 @@ package org.ies.fenix.client.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
+import org.ies.fenix.client.utils.ImageUtils;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
 
-public class GameController {
+import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
 
+public class GameController {
+    @FXML
+    public FontIcon topProfileIcon;
+    @FXML
+    public ImageView topProfileImage;
     @FXML
     private TextField searchField;
 
@@ -49,6 +57,10 @@ public class GameController {
 
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
+            }
+            ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+            if (image.getStatusCode().value() == 200) {
+                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
             }
         } catch (RuntimeException e) {
             e.printStackTrace(); //needs to be handled

@@ -15,6 +15,7 @@
 
 
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="root"
             prefHeight="850.0"
             prefWidth="1400.0"
@@ -60,22 +61,27 @@
             <Button text="Create your own visual novel"
                     styleClass="main-action-button"/>
 
-<!--            <HBox alignment="CENTER"-->
-<!--                  prefHeight="40.0"-->
-<!--                  prefWidth="40.0"-->
-<!--                  styleClass="profile-wrapper">-->
+            <StackPane prefWidth="40"
+                       prefHeight="40"
+                       minWidth="40"
+                       minHeight="40"
+                       maxWidth="40"
+                       maxHeight="40"
+                       styleClass="profile-wrapper">
 
-<!--                <ImageView fitHeight="28.0"-->
-<!--                           fitWidth="28.0"-->
-<!--                           preserveRatio="true"-->
-<!--                           styleClass="profile-image"/>-->
-<!--            </HBox>-->
-            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
-                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
-            </HBox>
-            <!--                        Cambiado por icon-->
+                <!-- Icono por defecto -->
+                <FontIcon fx:id="topProfileIcon"
+                          iconLiteral="mdi2a-account-outline"
+                          iconSize="22"
+                          iconColor="#B8B8B8"/>
 
-<!--            <Label text="⌄" styleClass="dropdown-icon"/>-->
+                <!-- Imagen -->
+                <ImageView fx:id="topProfileImage"
+                           fitWidth="40"
+                           fitHeight="40"
+                           preserveRatio="true"
+                           visible="false"/>
+            </StackPane>
             <Label styleClass="dropdown-icon">
                 <graphic>
                     <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
