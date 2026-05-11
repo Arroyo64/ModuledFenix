@@ -95,15 +95,36 @@ public class ClientService {
     }
 
     public boolean logout(String token) {
-        tokenService.revoke(token);
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+
+        String cleanToken = token.trim();
+
+        if (cleanToken.startsWith("Bearer ")) {
+            cleanToken = cleanToken.substring(7).trim();
+        }
+
+        tokenService.revoke(cleanToken);
         return true;
     }
-    public Client getClient(String token){
-        if (tokenService.isValid(token))
-            return clientRepository.findByAuthTokensToken(token);
-        else
+    public Client getClient(String token) {
+        if (token == null || token.isBlank()) {
             return null;
-    } //needs to develop the null return statement
+        }
+
+        String cleanToken = token.trim();
+
+        if (cleanToken.startsWith("Bearer ")) {
+            cleanToken = cleanToken.substring(7).trim();
+        }
+
+        if (!tokenService.isValid(cleanToken)) {
+            return null;
+        }
+
+        return clientRepository.findByAuthTokensToken(cleanToken);
+    }
     public ServerResponseDTO uploadImageProfile(FileUploadDTO dto, String token) {
         Client client = getClient(token);
         if (client == null) {

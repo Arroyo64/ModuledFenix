@@ -46,7 +46,9 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="Create your own visual novel" styleClass="main-action-button"/>
+            <Button text="Create your own visual novel"
+                    styleClass="main-action-button"
+                    onAction="#switchToUploadGameScene"/>
 
             <StackPane prefWidth="40"
                        prefHeight="40"

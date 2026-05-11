@@ -75,7 +75,7 @@ CREATE TABLE teaser
     id INT AUTO_INCREMENT PRIMARY KEY,
     game_id INT NOT NULL,
     object_key VARCHAR(255) NOT NULL,
-    type VARCHAR(50),
+    type VARCHAR(50) NOT NULL,
     CONSTRAINT fk_teaser_game
         FOREIGN KEY (game_id)
             REFERENCES game(id)
@@ -107,6 +107,8 @@ ALTER TABLE client
 ALTER TABLE game
     ADD COLUMN game_logo_key VARCHAR(255);
 
+ALTER TABLE game
+    ADD COLUMN game_file_key VARCHAR(255);
 
 INSERT INTO tag (name, description) VALUES
                                         ('Romance', 'Romantic stories and relationships'),
@@ -119,6 +121,19 @@ INSERT INTO tag (name, description) VALUES
                                         ('Adventure', 'Exploration and journey-focused stories'),
                                         ('Slice of life', 'Everyday life stories'),
                                         ('Thriller', 'Suspense and tension-focused stories');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
