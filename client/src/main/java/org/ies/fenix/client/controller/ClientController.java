@@ -62,6 +62,8 @@ public class ClientController implements Initializable {
     @FXML
     private PasswordField passwordCheck;
 
+    private String email = "";
+
     @FXML
     private Label clientErrorLabel;
 
@@ -77,6 +79,17 @@ public class ClientController implements Initializable {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.sessionManager = sessionManager;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        clientErrorLabel.textProperty().bind(errorProperty);
+        clientErrorLabel.setVisible(false);
+
+        username.textProperty().addListener((observable, oldText, newText) -> {
+            errorProperty.setValue("");
+            clientErrorLabel.setVisible(false);
+        });
     }
 
     @FXML
@@ -145,7 +158,7 @@ public class ClientController implements Initializable {
             var response = clientApiService.register(
                     new ClientRegisterDTO(
                             name,
-                            name + "@fenix.local",
+                            email,
                             rawPassword
                     )
 
@@ -164,24 +177,12 @@ public class ClientController implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        clientErrorLabel.textProperty().bind(errorProperty);
-        clientErrorLabel.setVisible(false);
-
-        username.textProperty().addListener(new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                                String oldText,
-                                String newText) {
-                errorProperty.setValue("");
-                clientErrorLabel.setVisible(false);
-            }
-        });
-    }
-
     @FXML
     void switchEmailFormView() {
         stageManager.switchToNextScene(FxmlView.EMAIL);
+    }
+
+    void setEmail(String email) {
+        this.email= email;
     }
 }

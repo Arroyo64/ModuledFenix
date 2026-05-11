@@ -2,7 +2,6 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -10,7 +9,7 @@ import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
-import org.ies.fenix.controller.dto.client.ClientNameDTO;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.springframework.http.ResponseEntity;
 
 public class LibraryController {
@@ -46,7 +45,7 @@ public class LibraryController {
     @FXML
     private void initialize() {
         try {
-            ResponseEntity<ClientNameDTO> response = clientApiService.getUsername("Bearer " + sessionManager.getToken()); //tokens en todos lados para peticiones de las interfaces Ike
+            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo("Bearer " + sessionManager.getToken()); //tokens en todos lados para peticiones de las interfaces Ike
 
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());

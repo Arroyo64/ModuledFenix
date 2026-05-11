@@ -22,8 +22,8 @@ public interface IClientController {
     @PostExchange("/logout")
     ResponseEntity<Void> logout(@RequestHeader("Authorization") String authorization);
 
-    @PostExchange("/username")
-    ResponseEntity<ClientNameDTO> getUsername(@RequestHeader("Authorization") String authorization);
+    @PostExchange("/info")
+    ResponseEntity<ClientInfoDTO> getClientInfo(@RequestHeader("Authorization") String authorization);
 
     @PostExchange("/bio")
     ResponseEntity<ServerResponseDTO> updateBio(@RequestHeader("Authorization") String authorization, @RequestBody String bio);

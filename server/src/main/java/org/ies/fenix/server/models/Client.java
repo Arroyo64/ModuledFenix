@@ -42,4 +42,7 @@ public class Client {
 
     @OneToMany(mappedBy = "client")
     private List<Purchase> purchases;
+
+    @Column(name = "character_counter_password")
+    private Integer characterCounterPassword;
 }

@@ -74,7 +74,7 @@ public class PurchaseService {
             dto.setGameId(game.getId());
             dto.setTitle(game.getTitle());
             dto.setDescription(game.getDescription());
-            dto.setTamanoMb(game.getTamanoMb());
+            dto.setTamanoMb(game.getSizeMb());
             dto.setDownloads(game.getDownloads());
             dto.setPrice(game.getPrice());
 

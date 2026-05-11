@@ -3,6 +3,7 @@ package org.ies.fenix.client.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +13,7 @@ import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
-import org.ies.fenix.controller.dto.client.ClientNameDTO;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.ies.fenix.controller.dto.client.FileUploadDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,16 @@ import java.nio.file.Files;
 import java.util.ResourceBundle;
 
 public class ProfileController implements Initializable {
+
+    @FXML
+    public Label nameLabel;
+
+    @FXML
+    public Label emailLabel;
+
+    @FXML
+    public Label passwordLabel;
+
     @FXML
     private Hyperlink username;
 
@@ -59,9 +70,11 @@ public class ProfileController implements Initializable {
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientNameDTO> response = clientApiService.getUsername(buildHeader()); //tokens en todos lados para peticiones de las interfaces Ike
+            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader()); //tokens en todos lados para peticiones de las interfaces Ike
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
+                emailLabel.setText(response.getBody().getEmail());
+                passwordLabel.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
             }
             ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
@@ -84,6 +97,14 @@ public class ProfileController implements Initializable {
         } catch (RuntimeException e) {
             e.printStackTrace(); //needs to be handled
         }
+    }
+
+    private String buildStingWithCharsof(int passwordCharacter) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < passwordCharacter; i++) {
+            sb.append("*");
+        }
+        return sb.toString();
     }
 
     private String buildHeader() {

@@ -148,7 +148,7 @@ class GameServiceTest {
         game.setTitle(title);
         game.setDescription("Description");
         game.setDev(dev);
-        game.setTamanoMb(sizeMb);
+        game.setSizeMb(sizeMb);
         game.setDownloads(downloads);
         game.setPrice(new BigDecimal("9.99"));
         game.setTags(tags);
