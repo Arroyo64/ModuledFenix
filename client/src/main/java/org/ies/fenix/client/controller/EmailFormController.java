@@ -19,6 +19,8 @@ import org.ies.fenix.client.config.StageManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static org.ies.fenix.client.config.EmailValidator.isValidEmail;
+
 public class EmailFormController implements Initializable {
 
     @FXML
@@ -64,6 +66,14 @@ public class EmailFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        clientErrorLabel.textProperty().bind(errorProperty);
+        clientErrorLabel.visibleProperty().bind(
+                errorProperty.isNotNull().and(errorProperty.isNotEmpty())
+        );
+        clientErrorLabel.managedProperty().bind(clientErrorLabel.visibleProperty());
+        emailTextField.textProperty().addListener((observable, oldText, newText) -> {
+            errorProperty.setValue("");
+        });
         logoImage.setFitWidth(294.0);
         logoImage.setSmooth(true);
         settingsImage.setFitWidth(15.0);
@@ -73,8 +83,10 @@ public class EmailFormController implements Initializable {
     @FXML
     void switchToUserCreateView(){
         String email = emailTextField.getText();
-        if(email.isBlank() || email.length() > 50)
+        if(!isValidEmail(email)){
+            errorProperty.set("Please enter a valid email address");
             return;
+        }
         ClientController controller =
                 stageManager.switchSceneAndGetController(FxmlView.USER_CREATE);
         controller.setEmail(email);

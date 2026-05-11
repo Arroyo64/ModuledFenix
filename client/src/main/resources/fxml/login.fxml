@@ -71,17 +71,12 @@
                 <Font size="20.0" />
             </font>
         </PasswordField>
-        <Hyperlink text="&lt;/Text&gt; ">
-            <font>
-                <Font size="20.0" />
-            </font>
-        </Hyperlink>
+        <Label fx:id="clientErrorLabel" layoutX="7.0" layoutY="223.0" prefHeight="45.0" prefWidth="434.0" text="Label" wrapText="true" alignment="CENTER" textAlignment="CENTER" />
         <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="396.0" style="-fx-background-radius: 8;" text="Continuar" onAction="#loadUserAndOpenMarketPlace" >
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
         </Button>
-        <Label fx:id="clientErrorLabel" layoutX="7.0" layoutY="223.0" prefHeight="45.0" prefWidth="434.0" text="Label" wrapText="true" alignment="CENTER" textAlignment="CENTER" />
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Al continuar, aceptas nuestra Política de privacidad">
             <font>
                 <Font size="16.0" />
