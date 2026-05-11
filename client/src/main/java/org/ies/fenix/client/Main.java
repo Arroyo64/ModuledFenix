@@ -31,13 +31,15 @@ public class Main extends Application {
         FxmlLoader fxmlLoader = new FxmlLoader();
         String applicationTitle = "Fenix";
 
-        RestClient rc = RestClient.create("http://localhost:8080");
+        RestClient restClient = RestClient.create("http://localhost:8080");
+
         HttpServiceProxyFactory factory = HttpServiceProxyFactory
-                .builderFor(RestClientAdapter.create(rc))
+                .builderFor(RestClientAdapter.create(restClient))
                 .build();
-        var  clientApiService = factory.createClient(IClientController.class);
-        var  gamesApiService = factory.createClient(IGameController.class);
-        //ClientApiService clientApiService = new ClientApiService();
+
+        var clientApiService = factory.createClient(IClientController.class);
+        var gamesApiService = factory.createClient(IGameController.class);
+
         SessionManager sessionManager = new SessionManager();
 
         stageManager = new StageManager(
@@ -61,17 +63,23 @@ public class Main extends Application {
             }
 
             if (clazz == MarketplaceController.class) {
-                return new MarketplaceController(stageManager, clientApiService, sessionManager);
+                return new MarketplaceController(stageManager, clientApiService, gamesApiService, sessionManager);
             }
 
             if (clazz == LibraryController.class) {
-                return new LibraryController(stageManager, clientApiService, sessionManager);
+                return new LibraryController(stageManager, clientApiService, gamesApiService, sessionManager);
             }
+
             if (clazz == ProfileController.class) {
                 return new ProfileController(stageManager, clientApiService, sessionManager);
             }
+
             if (clazz == GameController.class) {
-                return new GameController(stageManager, clientApiService, sessionManager);
+                return new GameController(stageManager, clientApiService, gamesApiService, sessionManager);
+            }
+
+            if (clazz == UploadGameController.class) {
+                return new UploadGameController(stageManager, gamesApiService, sessionManager, restClient);
             }
 
             try {

@@ -50,16 +50,24 @@
             </Button>
             <!--Cambiado por icon-->
 
-            <Hyperlink text="MARKET PLACE" styleClass="tab-inactive"/>
-            <Hyperlink text="LIBRARY" styleClass="tab-active"/>
+            <Hyperlink text="MARKET PLACE"
+                       styleClass="tab-inactive"
+                       onAction="#switchToMarketplaceScene"/>
+
+            <Hyperlink text="LIBRARY"
+                       styleClass="tab-active"
+                       onAction="#switchToLibraryScene"/>
+
             <Hyperlink fx:id="username"
-                   text="USERNAME"
-                   styleClass="tab-inactive"/>
+                       text="USERNAME"
+                       styleClass="tab-inactive"
+                       onAction="#switchProfileScene"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <Button text="Create your own visual novel"
-                    styleClass="main-action-button"/>
+                    styleClass="main-action-button"
+                    onAction="#switchToUploadGameScene"/>
 
             <StackPane prefWidth="40"
                        prefHeight="40"

@@ -1,6 +1,5 @@
 package org.ies.fenix.client.config;
 
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,7 +16,9 @@ public class StageManager {
     private final FxmlLoader fxmlLoader;
     private final String applicationTitle;
     private final SceneResizeListener sceneResizeListener;
+
     private FxmlView currentView;
+    private FxmlView previousView;
 
     public StageManager(FxmlLoader fxmlLoader,
                         Stage primaryStage,
@@ -31,8 +32,11 @@ public class StageManager {
 
     public void switchScene(final FxmlView view) {
         primaryStage.setTitle(applicationTitle);
-
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+
+        previousView = currentView;
+        currentView = view;
+
         Parent rootNode = loadRootNode(view.getFxmlPath());
 
         createAndSetScene(rootNode);
@@ -47,6 +51,7 @@ public class StageManager {
 
     private void createAndSetScene(Parent rootNode) {
         Scene scene = new Scene(rootNode);
+
         String stylesheet = Objects.requireNonNull(getClass()
                         .getResource("/styles/styles.css"))
                 .toExternalForm();
@@ -63,13 +68,39 @@ public class StageManager {
     }
 
     public void switchToNextScene(final FxmlView view) {
-        this.currentView = view;
+        previousView = currentView;
+        currentView = view;
+
         Parent rootNode = loadRootNode(view.getFxmlPath());
 
         rootNode.applyCss();
         rootNode.autosize();
 
         createAndSetScene(rootNode);
+
+        primaryStage.sizeToScene();
+        primaryStage.show();
+        primaryStage.centerOnScreen();
+    }
+
+    public void goBack() {
+        if (previousView == null) {
+            switchToNextScene(FxmlView.MARKETPLACE);
+            return;
+        }
+
+        FxmlView viewToGoBack = previousView;
+
+        previousView = currentView;
+        currentView = viewToGoBack;
+
+        Parent rootNode = loadRootNode(viewToGoBack.getFxmlPath());
+
+        rootNode.applyCss();
+        rootNode.autosize();
+
+        createAndSetScene(rootNode);
+
         primaryStage.sizeToScene();
         primaryStage.show();
         primaryStage.centerOnScreen();
@@ -87,16 +118,16 @@ public class StageManager {
         if (currentView == null) {
             throw new IllegalStateException("No hay vista cargada");
         }
+
         Parent rootNode = loadRootNode(currentView.getFxmlPath());
         primaryStage.getScene().setRoot(rootNode);
     }
 
     public <T> T switchSceneAndGetController(final FxmlView view) {
-
-        this.currentView = view;
+        previousView = currentView;
+        currentView = view;
 
         try {
-
             FXMLLoader loader = fxmlLoader.createLoader(view.getFxmlPath());
 
             Parent rootNode = loader.load();

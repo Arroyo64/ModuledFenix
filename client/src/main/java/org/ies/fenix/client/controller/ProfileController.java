@@ -158,5 +158,10 @@ public class ProfileController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    void switchToUploadGameScene() {
+        stageManager.switchToNextScene(FxmlView.UPLOAD_GAME);
+    }
 }
 

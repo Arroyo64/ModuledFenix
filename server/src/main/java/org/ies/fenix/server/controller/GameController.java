@@ -1,42 +1,105 @@
 package org.ies.fenix.server.controller;
 
+import org.ies.fenix.controller.IGameController;
 import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.ies.fenix.controller.dto.game.GameSearchDTO;
 import org.ies.fenix.server.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.ies.fenix.controller.IGameController;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/games")
 public class GameController implements IGameController {
 
     @Autowired
     private GameService gameService;
 
     @Override
-    public ResponseEntity<List<GameResponseDTO>> getManyGames(GameSearchDTO dto) {
+    @GetMapping
+    public ResponseEntity<List<GameResponseDTO>> getAllGames() {
         try {
-            if (dto == null) {
-                return ResponseEntity.badRequest().build();
-            }
-            return ResponseEntity.ok(gameService.getGames(dto));
+            return ResponseEntity.ok(gameService.getAllGames());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
-    public ResponseEntity<GameResponseDTO> getById(Integer id) {
+    @PostMapping("/search")
+    public ResponseEntity<List<GameResponseDTO>> getManyGames(@RequestBody GameSearchDTO dto) {
+        try {
+            if (dto == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            return ResponseEntity.ok(gameService.getGames(dto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<GameResponseDTO> getById(@PathVariable Integer id) {
         try {
             if (id == null) {
                 return ResponseEntity.badRequest().build();
             }
+
             return ResponseEntity.ok(gameService.getGameById(id));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping(
+            value = "/create/upload",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<GameResponseDTO> uploadGame(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam("title") String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "price", required = false) BigDecimal price,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam("gameFile") MultipartFile gameFile,
+            @RequestParam("logoFile") MultipartFile logoFile,
+            @RequestParam(value = "verticalImage", required = false) MultipartFile verticalImage,
+            @RequestParam(value = "horizontalImageOne", required = false) MultipartFile horizontalImageOne,
+            @RequestParam(value = "horizontalImageTwo", required = false) MultipartFile horizontalImageTwo
+    ) {
+        try {
+            GameResponseDTO response = gameService.createGame(
+                    authorization,
+                    title,
+                    description,
+                    price,
+                    tags,
+                    gameFile,
+                    logoFile,
+                    verticalImage,
+                    horizontalImageOne,
+                    horizontalImageTwo
+            );
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

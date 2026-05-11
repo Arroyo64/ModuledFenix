@@ -2,14 +2,15 @@ package org.ies.fenix.server.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
+@Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Entity
 @Table(name = "teaser")
 public class Teaser {
 
@@ -17,7 +18,7 @@ public class Teaser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "game_id",
             nullable = false,
@@ -28,7 +29,6 @@ public class Teaser {
     @Column(name = "object_key", nullable = false, length = 255)
     private String objectKey;
 
-    @Column(name = "type", length = 50)
+    @Column(name = "type", nullable = false, length = 50)
     private String type;
-
 }

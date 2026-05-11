@@ -2,9 +2,7 @@ package org.ies.fenix.client.config;
 
 public enum FxmlView {
 
-
     LOGIN {
-
         @Override
         public String getFxmlPath() {
             return "/fxml/login.fxml";
@@ -12,7 +10,6 @@ public enum FxmlView {
     },
 
     EMAIL {
-
         @Override
         public String getFxmlPath() {
             return "/fxml/email-form.fxml";
@@ -20,7 +17,6 @@ public enum FxmlView {
     },
 
     USER_CREATE {
-
         @Override
         public String getFxmlPath() {
             return "/fxml/user-create.fxml";
@@ -28,7 +24,6 @@ public enum FxmlView {
     },
 
     MARKETPLACE {
-
         @Override
         public String getFxmlPath() {
             return "/fxml/marketplace.fxml";
@@ -48,14 +43,20 @@ public enum FxmlView {
             return "/fxml/game.fxml";
         }
     },
+
     PROFILE {
         @Override
         public String getFxmlPath() {
             return "/fxml/profile.fxml";
         }
+    },
+
+    UPLOAD_GAME {
+        @Override
+        public String getFxmlPath() {
+            return "/fxml/upload-game.fxml";
+        }
     };
-
-
 
     public abstract String getFxmlPath();
 }

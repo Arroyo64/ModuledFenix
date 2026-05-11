@@ -9,6 +9,7 @@ import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
+import org.ies.fenix.controller.IGameController;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,13 @@ import java.util.ResourceBundle;
 import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
 
 public class MarketplaceController implements Initializable {
+
     @FXML
     public FontIcon topProfileIcon;
+
     @FXML
     public ImageView topProfileImage;
+
     @FXML
     private TextField searchField;
 
@@ -37,28 +41,38 @@ public class MarketplaceController implements Initializable {
 
     private final StageManager stageManager;
     private final IClientController clientApiService;
+    private final IGameController gameApiService;
     private final SessionManager sessionManager;
 
-
-    public MarketplaceController(StageManager stageManager, IClientController clientApiService, SessionManager sessionManager) {
+    public MarketplaceController(StageManager stageManager,
+                                 IClientController clientApiService,
+                                 IGameController gameApiService,
+                                 SessionManager sessionManager) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
+        this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(sessionManager.getAuthorizationHeader());
+            ResponseEntity<ClientInfoDTO> response =
+                    clientApiService.getClientInfo(sessionManager.getAuthorizationHeader());
+
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
             }
-            ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+
+            ResponseEntity<byte[]> image =
+                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+
             if (image.getStatusCode().value() == 200) {
                 setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
             }
+
         } catch (RuntimeException e) {
-            e.printStackTrace(); //needs to be handled
+            e.printStackTrace();
         }
     }
 
@@ -73,9 +87,12 @@ public class MarketplaceController implements Initializable {
     }
 
     @FXML
+    void switchToUploadGameScene() {
+        stageManager.switchToNextScene(FxmlView.UPLOAD_GAME);
+    }
+
+    @FXML
     public void reloadView() {
         stageManager.reloadCurrentScene();
     }
-
-
 }
