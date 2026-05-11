@@ -9,17 +9,56 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.control.Hyperlink?>
+
 <BorderPane fx:id="root"
             prefHeight="800.0"
             prefWidth="1300.0"
             stylesheets="@../styles/styles.css"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.ies.fenix.client.controller.MarketplaceController"
->
+            fx:controller="org.ies.fenix.client.controller.MarketplaceController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="content-container">
+            <padding>
+                <Insets top="30.0" right="30.0" bottom="0.0" left="30.0"/>
+            </padding>
+
+            <Button styleClass="nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
+                </graphic>
+            </Button>
+
+            <Button styleClass="nav-button">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
+                </graphic>
+            </Button>
+
+            <Hyperlink fx:id="marketplace" text="MARKET PLACE" styleClass="tab-active" onAction="#reloadView"/>
+            <Hyperlink fx:id="library" text="LIBRARY" styleClass="tab-inactive" onAction="#switchToLibraryScene"/>
+            <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive" onAction="#switchProfileScene"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Create your own visual novel" styleClass="main-action-button"/>
+
+            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
+                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
+            </HBox>
+
+            <Label styleClass="dropdown-icon">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
+                </graphic>
+            </Label>
+        </HBox>
+    </top>
 
     <center>
         <ScrollPane fitToWidth="true"
@@ -29,53 +68,8 @@
             <content>
                 <VBox spacing="35.0" styleClass="content-container">
                     <padding>
-                        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+                        <Insets top="45.0" right="30.0" bottom="30.0" left="30.0"/>
                     </padding>
-
-                    <HBox alignment="CENTER_LEFT" spacing="20.0">
-<!--                        <Button text="&lt;" styleClass="nav-button"/>-->
-<!--                        <Button text="&gt;" styleClass="nav-button"/>-->
-                        <Button styleClass="nav-button">
-                            <graphic>
-                                <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
-                            </graphic>
-                        </Button>
-
-                        <Button styleClass="nav-button">
-                            <graphic>
-                                <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
-                            </graphic>
-                        </Button>
-<!--                        Cambiado por icon-->
-
-                        <Hyperlink fx:id="marketplace" text="MARKET PLACE" styleClass="tab-active" onAction="#reloadView"/>
-                        <Hyperlink fx:id="library" text="LIBRARY" styleClass="tab-inactive" onAction="#switchToLibraryScene"/>
-                        <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive" onAction="#switchProfileScene"/>
-
-                        <Region HBox.hgrow="ALWAYS"/>
-
-                        <Button text="Create your own visual novel" styleClass="main-action-button"/>
-
-<!--                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">-->
-<!--                            <ImageView fitHeight="28.0"-->
-<!--                                       fitWidth="28.0"-->
-<!--                                       pickOnBounds="true"-->
-<!--                                       preserveRatio="true"-->
-<!--                                       styleClass="profile-image"/>-->
-<!--                        </HBox>-->
-                        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
-                            <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
-                        </HBox>
-<!--                        Cambiado por icon-->
-
-<!--                        <Label text="⌄" styleClass="dropdown-icon"/>-->
-                        <Label styleClass="dropdown-icon">
-                            <graphic>
-                                <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
-                            </graphic>
-                        </Label>
-<!--                        Cambiado por icon-->
-                    </HBox>
 
                     <VBox spacing="18.0">
                         <HBox alignment="CENTER_LEFT">
@@ -86,7 +80,8 @@
 
                             <Region HBox.hgrow="ALWAYS"/>
 
-                            <TextField fx:id="searchField" promptText="Search"
+                            <TextField fx:id="searchField"
+                                       promptText="Search"
                                        prefWidth="420.0"
                                        styleClass="search-field"/>
                         </HBox>
@@ -101,65 +96,80 @@
                             <content>
                                 <HBox spacing="24.0" styleClass="games-row">
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 1" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 1" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 2" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 2" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 3" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 3" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 4" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 4" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 5" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 5" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
                                 </HBox>
                             </content>
@@ -182,65 +192,80 @@
                             <content>
                                 <HBox spacing="24.0" styleClass="games-row">
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 1" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 1" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 2" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 2" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 3" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 3" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 4" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 4" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 5" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 5" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
                                 </HBox>
                             </content>
@@ -263,65 +288,80 @@
                             <content>
                                 <HBox spacing="24.0" styleClass="games-row">
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 1" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 1" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 2" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 2" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 3" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 3" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 4" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 4" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
-                                    <VBox styleClass="card">
-                                        <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
-                                            <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
-                                        </HBox>
-                                        <Label text="Título 5" styleClass="card-title"/>
-                                        <HBox spacing="8.0">
-                                            <Label text="Tag 1" styleClass="tag"/>
-                                            <Label text="Tag 2" styleClass="tag"/>
-                                            <Label text="Tag 3" styleClass="tag"/>
-                                        </HBox>
-                                    </VBox>
+                                    <StackPane styleClass="card-click-wrapper">
+                                        <VBox styleClass="card">
+                                            <HBox alignment="CENTER" prefHeight="170.0" prefWidth="280.0" styleClass="card-image-wrapper">
+                                                <ImageView fitHeight="150.0" fitWidth="260.0" preserveRatio="false" styleClass="card-image"/>
+                                            </HBox>
+                                            <Label text="Título 5" styleClass="card-title"/>
+                                            <HBox spacing="8.0">
+                                                <Label text="Tag 1" styleClass="tag"/>
+                                                <Label text="Tag 2" styleClass="tag"/>
+                                                <Label text="Tag 3" styleClass="tag"/>
+                                            </HBox>
+                                        </VBox>
+                                        <Button prefWidth="280.0" prefHeight="230.0" styleClass="invisible-game-button"/>
+                                    </StackPane>
 
                                 </HBox>
                             </content>

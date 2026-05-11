@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-
-
 <?import javafx.scene.control.Hyperlink?>
+
 <BorderPane fx:id="root"
             prefHeight="800.0"
             prefWidth="1300.0"
@@ -30,8 +30,6 @@
                 <Insets top="30.0" right="30.0" bottom="0.0" left="30.0"/>
             </padding>
 
-<!--            <Button text="&lt;" styleClass="nav-button"/>-->
-<!--            <Button text="&gt;" styleClass="nav-button"/>-->
             <Button styleClass="nav-button">
                 <graphic>
                     <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
@@ -43,7 +41,6 @@
                     <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
                 </graphic>
             </Button>
-            <!--Cambiado por icon-->
 
             <Hyperlink text="MARKET PLACE" styleClass="tab-inactive" onAction="#switchToMarketplaceScene"/>
             <Hyperlink text="LIBRARY" styleClass="tab-active" onAction="#reloadView"/>
@@ -53,32 +50,21 @@
 
             <Button text="Create your own visual novel" styleClass="main-action-button"/>
 
-<!--            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">-->
-<!--                <ImageView fitHeight="28.0"-->
-<!--                           fitWidth="28.0"-->
-<!--                           pickOnBounds="true"-->
-<!--                           preserveRatio="true"-->
-<!--                           styleClass="profile-image"/>-->
-<!--            </HBox>-->
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
                 <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
             </HBox>
-            <!--Cambiado por icon-->
 
-<!--            <Label text="⌄" styleClass="dropdown-icon"/>-->
             <Label styleClass="dropdown-icon">
                 <graphic>
                     <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
                 </graphic>
             </Label>
-            <!--Cambiado por icon-->
         </HBox>
     </top>
 
     <center>
         <HBox spacing="0.0" styleClass="library-main-container">
 
-            <!-- Panel izquierdo -->
             <VBox prefWidth="360.0"
                   minWidth="360.0"
                   maxWidth="360.0"
@@ -185,7 +171,6 @@
                 </ScrollPane>
             </VBox>
 
-            <!-- Panel derecho -->
             <ScrollPane fitToWidth="true"
                         hbarPolicy="NEVER"
                         vbarPolicy="AS_NEEDED"
@@ -201,77 +186,113 @@
                             <Insets top="70.0" right="28.0" bottom="30.0" left="28.0"/>
                         </padding>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
-                        <VBox styleClass="library-card" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                            <HBox alignment="CENTER" styleClass="library-cover-wrapper">
-                                <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
-                            </HBox>
-                        </VBox>
+                        <StackPane styleClass="library-card-click-wrapper" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                            <VBox styleClass="library-card">
+                                <HBox alignment="CENTER" styleClass="library-cover-wrapper">
+                                    <ImageView fitWidth="170.0" fitHeight="245.0" preserveRatio="true" styleClass="library-cover-image"/>
+                                </HBox>
+                            </VBox>
+                            <Button prefWidth="230.0" prefHeight="285.0" styleClass="invisible-game-button"/>
+                        </StackPane>
 
                     </GridPane>
                 </content>
