@@ -16,7 +16,7 @@ CREATE TABLE client
 CREATE TABLE tag
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(30),
+    name VARCHAR(30) UNIQUE,
     description VARCHAR(250)
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE game
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(50) UNIQUE,
     dev_id INT,
-    description VARCHAR(250),
+    description TEXT,
     tamano_mb DECIMAL(10,2),
     downloads INT,
     price DECIMAL(6,2),
@@ -102,3 +102,29 @@ CREATE INDEX idx_auth_token_client_id
 
 ALTER TABLE client
     ADD COLUMN profile_image_key VARCHAR(255);
+
+ALTER TABLE game
+    ADD COLUMN game_file_key VARCHAR(255),
+	ADD COLUMN logo_image_key VARCHAR(255),
+	ADD COLUMN vertical_image_key VARCHAR(255),
+	ADD COLUMN horizontal_image_one_key VARCHAR(255),
+	ADD COLUMN horizontal_image_two_key VARCHAR(255);
+
+INSERT INTO tag (name, description) VALUES
+                                        ('Romance', 'Romantic stories and relationships'),
+                                        ('Mystery', 'Stories focused on secrets and investigation'),
+                                        ('Sci-fi', 'Science fiction and futuristic stories'),
+                                        ('Fantasy', 'Magic, mythical worlds and fantasy elements'),
+                                        ('Horror', 'Scary, dark or disturbing stories'),
+                                        ('Drama', 'Emotional and dramatic stories'),
+                                        ('Comedy', 'Light-hearted and funny stories'),
+                                        ('Adventure', 'Exploration and journey-focused stories'),
+                                        ('Slice of life', 'Everyday life stories'),
+                                        ('Thriller', 'Suspense and tension-focused stories');
+
+
+
+
+
+
+

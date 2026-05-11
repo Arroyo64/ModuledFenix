@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane fx:id="root"
+            prefHeight="860.0"
+            prefWidth="1420.0"
+            styleClass="create-game-root"
+            stylesheets="@../styles/styles.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ies.fenix.client.controller.UploadGameController">
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="main-scroll">
+
+            <content>
+                <VBox spacing="24.0"
+                      fillWidth="true"
+                      styleClass="create-game-page">
+
+                    <padding>
+                        <Insets top="28.0" right="28.0" bottom="28.0" left="28.0"/>
+                    </padding>
+
+                    <!-- HEADER -->
+                    <HBox alignment="CENTER_LEFT" spacing="18.0">
+
+                        <VBox spacing="6.0">
+                            <Label text="Create your game"
+                                   styleClass="create-game-title"/>
+
+                            <Label text="Upload your game file and the images that will be shown in the application."
+                                   wrapText="true"
+                                   styleClass="create-game-subtitle"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <Button text="Clear"
+                                styleClass="game-download-button"
+                                onAction="#clearForm"/>
+
+                        <Button text="Publish game"
+                                styleClass="main-action-button"
+                                onAction="#submitGame"/>
+                    </HBox>
+
+                    <!-- MAIN LAYOUT -->
+                    <GridPane hgap="22.0"
+                              vgap="22.0"
+                              styleClass="create-game-grid">
+
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="35.0"/>
+                            <ColumnConstraints percentWidth="65.0"/>
+                        </columnConstraints>
+
+                        <!-- LEFT COLUMN -->
+                        <VBox GridPane.columnIndex="0"
+                              spacing="20.0"
+                              styleClass="upload-panel">
+
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0"/>
+                            </padding>
+
+                            <VBox spacing="4.0">
+                                <Label text="Game information"
+                                       styleClass="game-title"/>
+
+                                <Label text="Basic data for your visual novel."
+                                       styleClass="section-subtitle"/>
+                            </VBox>
+
+                            <VBox spacing="14.0">
+
+                                <VBox spacing="6.0">
+                                    <Label text="Title"
+                                           styleClass="game-info"/>
+
+                                    <TextField fx:id="titleField"
+                                               promptText="Example: Stain;Gate"
+                                               styleClass="upload-text-field"/>
+                                </VBox>
+
+                                <VBox spacing="6.0">
+                                    <Label text="Developer"
+                                           styleClass="game-info"/>
+
+                                    <TextField fx:id="developerField"
+                                               promptText="Studio or creator name"
+                                               styleClass="upload-text-field"/>
+                                </VBox>
+
+                                <VBox spacing="6.0">
+                                    <Label text="Tags"
+                                           styleClass="game-info"/>
+
+                                    <TextField fx:id="tagsField"
+                                               promptText="Sci-fi, Romance, Mystery..."
+                                               styleClass="upload-text-field"/>
+                                </VBox>
+
+                                <VBox spacing="6.0">
+                                    <Label text="Description"
+                                           styleClass="game-info"/>
+
+                                    <TextArea fx:id="descriptionArea"
+                                              prefHeight="165.0"
+                                              wrapText="true"
+                                              promptText="Write a short description of your game..."
+                                              styleClass="upload-text-area"/>
+                                </VBox>
+
+                            </VBox>
+
+                            <!-- GAME FILE -->
+                            <VBox spacing="12.0"
+                                  styleClass="upload-card">
+
+                                <padding>
+                                    <Insets top="18.0" right="18.0" bottom="18.0" left="18.0"/>
+                                </padding>
+
+                                <Label text="Game file"
+                                       styleClass="card-title"/>
+
+                                <Label text="Select the file you want to upload to the application. It does not have to be ZIP."
+                                       wrapText="true"
+                                       styleClass="section-subtitle"/>
+
+                                <StackPane prefHeight="120.0"
+                                           styleClass="upload-drop-area-small">
+
+                                    <Label text="No file selected"
+                                           styleClass="upload-placeholder-text"/>
+                                </StackPane>
+
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <Button text="Choose file"
+                                            styleClass="game-download-button"
+                                            onAction="#chooseGameFile"/>
+
+                                    <Label fx:id="gameFileNameLabel"
+                                           text="No file selected"
+                                           wrapText="true"
+                                           styleClass="upload-file-label"/>
+                                </HBox>
+                            </VBox>
+
+                        </VBox>
+
+                        <!-- RIGHT COLUMN -->
+                        <VBox GridPane.columnIndex="1"
+                              spacing="20.0"
+                              styleClass="upload-panel">
+
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0"/>
+                            </padding>
+
+                            <VBox spacing="4.0">
+                                <Label text="Game media"
+                                       styleClass="game-title"/>
+
+                                <Label text="Add the images that will represent the game in the app."
+                                       styleClass="section-subtitle"/>
+                            </VBox>
+
+                            <!-- TOP ROW: LOGO + VERTICAL IMAGE -->
+                            <HBox spacing="18.0">
+
+                                <!-- LOGO CARD -->
+                                <VBox spacing="14.0"
+                                      prefWidth="250.0"
+                                      prefHeight="410.0"
+                                      styleClass="upload-logo-card">
+
+                                    <padding>
+                                        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                                    </padding>
+
+                                    <VBox spacing="4.0">
+                                        <Label text="Logo"
+                                               styleClass="card-title"/>
+
+                                        <Label text="This image will be used as the icon of the game."
+                                               wrapText="true"
+                                               styleClass="section-subtitle"/>
+                                    </VBox>
+
+                                    <Region VBox.vgrow="ALWAYS"/>
+
+                                    <StackPane prefWidth="190.0"
+                                               prefHeight="190.0"
+                                               maxWidth="190.0"
+                                               maxHeight="190.0"
+                                               styleClass="upload-logo-circle-wrapper">
+
+                                        <ImageView fx:id="logoImageView"
+                                                   fitWidth="140.0"
+                                                   fitHeight="140.0"
+                                                   preserveRatio="false"
+                                                   pickOnBounds="true">
+
+                                            <clip>
+                                                <Circle radius="70.0"
+                                                        centerX="70.0"
+                                                        centerY="70.0"/>
+                                            </clip>
+                                        </ImageView>
+                                    </StackPane>
+
+                                    <Region VBox.vgrow="ALWAYS"/>
+
+                                    <Button text="Choose logo"
+                                            maxWidth="Infinity"
+                                            styleClass="game-download-button"
+                                            onAction="#chooseLogoImage"/>
+
+                                    <Label fx:id="logoFileNameLabel"
+                                           text="No image selected"
+                                           wrapText="true"
+                                           styleClass="upload-file-label"/>
+                                </VBox>
+
+                                <!-- VERTICAL IMAGE -->
+                                <VBox spacing="10.0"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <Label text="Vertical image"
+                                           styleClass="card-title"/>
+
+                                    <StackPane prefHeight="410.0"
+                                               styleClass="upload-drop-area">
+
+                                        <ImageView fx:id="verticalImageView"
+                                                   fitWidth="255.0"
+                                                   fitHeight="370.0"
+                                                   preserveRatio="false"
+                                                   pickOnBounds="true"/>
+                                    </StackPane>
+
+                                    <Button text="Choose vertical image"
+                                            maxWidth="Infinity"
+                                            styleClass="game-download-button"
+                                            onAction="#chooseVerticalImage"/>
+
+                                    <Label fx:id="verticalFileNameLabel"
+                                           text="No image selected"
+                                           wrapText="true"
+                                           styleClass="upload-file-label"/>
+                                </VBox>
+
+                            </HBox>
+
+                            <!-- HORIZONTAL IMAGE 1 -->
+                            <VBox spacing="10.0">
+
+                                <Label text="Horizontal image 1"
+                                       styleClass="card-title"/>
+
+                                <StackPane prefHeight="210.0"
+                                           styleClass="upload-drop-area">
+
+                                    <ImageView fx:id="horizontalImageOneView"
+                                               fitWidth="760.0"
+                                               fitHeight="180.0"
+                                               preserveRatio="false"
+                                               pickOnBounds="true"/>
+                                </StackPane>
+
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <Button text="Choose image"
+                                            styleClass="game-download-button"
+                                            onAction="#chooseHorizontalImageOne"/>
+
+                                    <Label fx:id="horizontalOneFileNameLabel"
+                                           text="No image selected"
+                                           wrapText="true"
+                                           styleClass="upload-file-label"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- HORIZONTAL IMAGE 2 -->
+                            <VBox spacing="10.0">
+
+                                <Label text="Horizontal image 2"
+                                       styleClass="card-title"/>
+
+                                <StackPane prefHeight="210.0"
+                                           styleClass="upload-drop-area">
+
+                                    <ImageView fx:id="horizontalImageTwoView"
+                                               fitWidth="760.0"
+                                               fitHeight="180.0"
+                                               preserveRatio="false"
+                                               pickOnBounds="true"/>
+                                </StackPane>
+
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <Button text="Choose image"
+                                            styleClass="game-download-button"
+                                            onAction="#chooseHorizontalImageTwo"/>
+
+                                    <Label fx:id="horizontalTwoFileNameLabel"
+                                           text="No image selected"
+                                           wrapText="true"
+                                           styleClass="upload-file-label"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- BOTTOM ACTIONS -->
+                            <HBox spacing="16.0">
+                                <Button text="Publish game"
+                                        styleClass="game-play-button"
+                                        onAction="#submitGame"/>
+
+                                <Button text="Clear form"
+                                        styleClass="game-download-button"
+                                        onAction="#clearForm"/>
+                            </HBox>
+
+                        </VBox>
+
+                    </GridPane>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

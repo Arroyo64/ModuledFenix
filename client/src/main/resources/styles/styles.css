@@ -536,3 +536,115 @@
 #brushIcon {
     -fx-image: url("../graphics/brush_icon.png");
 }
+
+
+
+/*UploadGame*/
+
+
+
+.create-game-root {
+    -fx-background-color: #F7F5F1;
+}
+
+.create-game-page {
+    -fx-background-color: #F7F5F1;
+}
+
+.create-game-grid {
+    -fx-background-color: transparent;
+}
+
+.create-game-title {
+    -fx-font-size: 34px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.create-game-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6F6F6F;
+}
+
+.upload-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #E4E0D9;
+}
+
+.upload-card {
+    -fx-background-color: #FBFBFA;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: #E7E2DB;
+}
+
+.upload-logo-card {
+    -fx-background-color: #FBFBFA;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: #E7E2DB;
+}
+
+.upload-text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #D9D4CC;
+    -fx-padding: 11px 14px;
+    -fx-font-size: 14px;
+}
+
+.upload-text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #D9D4CC;
+    -fx-font-size: 14px;
+}
+
+.upload-text-area .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+}
+
+.upload-drop-area,
+.upload-drop-area-small {
+    -fx-background-color: #EAE7E2;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: #D8D2C9;
+}
+
+.upload-drop-area:hover,
+.upload-drop-area-small:hover {
+    -fx-background-color: #E4E0DA;
+}
+
+.upload-logo-circle-wrapper {
+    -fx-background-color: #EAE7E2;
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-border-color: #D8D2C9;
+    -fx-alignment: center;
+    -fx-min-width: 190px;
+    -fx-min-height: 190px;
+    -fx-max-width: 190px;
+    -fx-max-height: 190px;
+}
+
+.upload-logo-circle-wrapper:hover {
+    -fx-background-color: #E4E0DA;
+}
+
+.upload-placeholder-text {
+    -fx-text-fill: #9A948C;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.upload-file-label {
+    -fx-text-fill: #7C7C7C;
+    -fx-font-size: 13px;
+}
