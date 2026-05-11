@@ -9,6 +9,7 @@ import org.ies.fenix.server.repositories.ClientRepository;
 import org.ies.fenix.server.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ies.fenix.server.repositories.TagRepository;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -20,6 +21,9 @@ public class GameService {
 
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     public List<GameResponseDTO> getGames(GameSearchDTO dto) {
 
@@ -93,13 +97,30 @@ public class GameService {
 
     private GameResponseDTO toResponseDTO(Game game) {
         GameResponseDTO dto = new GameResponseDTO();
+
         dto.setId(game.getId());
         dto.setTitle(game.getTitle());
         dto.setDescription(game.getDescription());
-        dto.setSizeApproximation(formatSizeFromMB(game.getTamanoMb()));
-        dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
-        dto.setPrice(game.getPrice());
-        dto.setDevUsername(game.getDev().getUsername());
+
+        if (game.getTamanoMb() != null) {
+            dto.setSizeApproximation(formatSizeFromMB(game.getTamanoMb()));
+        } else {
+            dto.setSizeApproximation("0 MB");
+        }
+
+        if (game.getDownloads() != null) {
+            dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
+        } else {
+            dto.setDownloadsApproximation("0");
+        }
+
+        dto.setPrice(game.getPrice() != null ? game.getPrice() : BigDecimal.ZERO);
+
+        if (game.getDev() != null) {
+            dto.setDevUsername(game.getDev().getUsername());
+        } else {
+            dto.setDevUsername("Unknown");
+        }
 
         List<String> tagNames = new ArrayList<>();
         if (game.getTags() != null) {
@@ -111,6 +132,7 @@ public class GameService {
 
         return dto;
     }
+
     public String formatSizeFromMB(BigDecimal mb) {
         if (mb.compareTo(BigDecimal.ZERO) == 0) return "0 MB";
 
@@ -157,6 +179,19 @@ public class GameService {
         }
 
         return rounded + units[unitIndex];
+    }
+
+    private List<Tag> parseExistingTags(String tagsText) {
+        if (tagsText == null || tagsText.isBlank()) {
+            return List.of();
+        }
+
+        return Arrays.stream(tagsText.split(","))
+                .map(String::trim)
+                .filter(tagName -> !tagName.isBlank())
+                .map(tagName -> tagRepository.findByNameIgnoreCase(tagName)
+                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tagName)))
+                .toList();
     }
 
     public GameResponseDTO getGameById(Integer id) {

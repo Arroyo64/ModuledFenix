@@ -28,15 +28,32 @@ public class Game {
     @JoinColumn(name = "dev_id")
     private Client dev;
 
-    @Column(length = 250)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "tamano_mb")
     private BigDecimal tamanoMb;
 
+    @Column(name = "downloads")
     private Integer downloads;
 
+    @Column(name = "price")
     private BigDecimal price;
+
+    @Column(name = "game_file_key")
+    private String gameFileKey;
+
+    @Column(name = "logo_image_key")
+    private String logoImageKey;
+
+    @Column(name = "vertical_image_key")
+    private String verticalImageKey;
+
+    @Column(name = "horizontal_image_one_key")
+    private String horizontalImageOneKey;
+
+    @Column(name = "horizontal_image_two_key")
+    private String horizontalImageTwoKey;
 
     @ManyToMany
     @JoinTable(
