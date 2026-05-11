@@ -121,7 +121,13 @@
 <!--                                           preserveRatio="false"-->
 <!--                                           styleClass="profile-avatar-image"/>-->
 <!--                            </HBox>-->
-                            <StackPane alignment="CENTER" styleClass="profile-avatar-wrapper">
+                            <StackPane prefWidth="180"
+                                       prefHeight="180"
+                                       minWidth="180"
+                                       minHeight="180"
+                                       maxWidth="180"
+                                       maxHeight="180"
+                                       styleClass="profile-avatar-wrapper">
 
                                 <!-- Icono por defecto (cuando no hay foto) -->
                                 <FontIcon fx:id="profileIcon"

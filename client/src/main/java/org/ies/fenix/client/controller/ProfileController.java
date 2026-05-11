@@ -2,9 +2,11 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
@@ -65,35 +67,29 @@ public class ProfileController implements Initializable {
 
     }
 
-    @FXML
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader()); //tokens en todos lados para peticiones de las interfaces Ike
+            ResponseEntity<ClientInfoDTO> response =
+                    clientApiService.getClientInfo(buildHeader());
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
                 nameField.setText(response.getBody().getUsername());
                 emailField.setText(response.getBody().getEmail());
-                passwordField.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
+                passwordField.setText(
+                        buildStingWithCharsof(response.getBody().getPasswordCharacter())
+                );
             }
-            ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
+            ResponseEntity<String> loadedBio =
+                    clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
                 bio.setText(loadedBio.getBody());
             }
-            ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-
-            byte[] imageBytes = image.getBody();
-
-            if (imageBytes != null && imageBytes.length > 0) {
-                profileImage.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-                profileImage.setVisible(true);
-                profileIcon.setVisible(false);
-            } else {
-                profileImage.setVisible(false);
-                profileIcon.setVisible(true);
-            }
-
-        } catch (RuntimeException e) {
-            e.printStackTrace(); //needs to be handled
+            ResponseEntity<byte[]> image =
+                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+            setAvatar(image.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -137,17 +133,14 @@ public class ProfileController implements Initializable {
         }
         stageManager.reloadCurrentScene();
     }
-
     @FXML
     public void uploadProfilePicture() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
-
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile == null) return;
-
         try {
             String mimeType = Files.probeContentType(selectedFile.toPath());
             byte[] bytes = Files.readAllBytes(selectedFile.toPath());
@@ -168,6 +161,31 @@ public class ProfileController implements Initializable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    private void setAvatar(byte[] imageBytes) {
+        double size = 180;
+        profileImage.setFitWidth(size);
+        profileImage.setFitHeight(size);
+        profileImage.setSmooth(true);
+        profileImage.setPreserveRatio(false); // IMPORTANTE
+        if (imageBytes != null && imageBytes.length > 0) {
+            Image image = new Image(new ByteArrayInputStream(imageBytes));
+            profileImage.setImage(image);
+            // CENTRADO tipo "cover"
+            double imgW = image.getWidth();
+            double imgH = image.getHeight();
+            double ratio = Math.max(size / imgW, size / imgH);
+            double newW = size / ratio;
+            double newH = size / ratio;
+            double x = (imgW - newW) / 2;
+            double y = (imgH - newH) / 2;
+            profileImage.setViewport(new Rectangle2D(x, y, newW, newH));
+            profileImage.setVisible(true);
+            profileIcon.setVisible(false);
+        } else {
+            profileImage.setVisible(false);
+            profileIcon.setVisible(true);
         }
     }
 }
