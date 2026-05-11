@@ -70,7 +70,7 @@ public class ClientService {
         if (clientOpt.isEmpty()) {
             return LoginResponseDTO.builder()
                     .status("WARN")
-                    .message("Password incorrect")
+                    .message("Username does not exist")
                     .build();
         }
 

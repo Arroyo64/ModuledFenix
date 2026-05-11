@@ -84,36 +84,36 @@ public class ClientController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clientErrorLabel.textProperty().bind(errorProperty);
-        clientErrorLabel.setVisible(false);
-
+        clientErrorLabel.visibleProperty().bind(
+                errorProperty.isNotNull().and(errorProperty.isNotEmpty())
+        );
+        clientErrorLabel.managedProperty().bind(clientErrorLabel.visibleProperty());
         username.textProperty().addListener((observable, oldText, newText) -> {
             errorProperty.setValue("");
-            clientErrorLabel.setVisible(false);
         });
     }
 
-    @FXML
     public void loadUserAndOpenMarketPlace() {
-        clientErrorLabel.setVisible(true);
 
         String name = username.getText();
         String rawPassword = password.getText();
 
         if (name == null || name.isBlank()) {
-            errorProperty.setValue("Username must not be blank.");
+            errorProperty.set("Username can not be blank.");
             return;
         }
 
         if (rawPassword == null || rawPassword.isBlank()) {
-            errorProperty.setValue("Password must not be blank.");
+            errorProperty.set("Password can not be blank.");
             return;
         }
 
         try {
-            ResponseEntity<LoginResponseDTO> response = clientApiService.login(new ClientLoginDTO(name, rawPassword));
+            ResponseEntity<LoginResponseDTO> response =
+                    clientApiService.login(new ClientLoginDTO(name, rawPassword));
 
             if (response.getStatusCode().value() != 200 || response.getBody().getToken() == null) {
-                errorProperty.setValue(response.getBody().getMessage());
+                errorProperty.set(response.getBody().getMessage());
                 return;
             }
 
@@ -123,34 +123,33 @@ public class ClientController implements Initializable {
                     response.getBody().getUsername()
             );
 
-            clientErrorLabel.setVisible(false);
+            errorProperty.set(""); // limpia error
             stageManager.switchToNextScene(FxmlView.MARKETPLACE);
+
         } catch (RuntimeException e) {
             e.printStackTrace();
-            errorProperty.setValue("Could not connect to server.");
+            errorProperty.set("Could not connect to server.");
         }
     }
 
-    @FXML
     public void saveUserAndOpenLogInView() {
-        clientErrorLabel.setVisible(true);
 
         String name = username.getText();
         String rawPassword = password.getText();
         String repeatedPassword = passwordCheck.getText();
 
         if (name == null || name.isBlank() || name.length() > 20) {
-            errorProperty.setValue("Username must not be blank or longer than 20 characters.");
+            errorProperty.set("Username must not be blank or longer than 20 characters.");
             return;
         }
 
         if (!rawPassword.equals(repeatedPassword)) {
-            errorProperty.setValue("Passwords don't match.");
+            errorProperty.set("Passwords do not match.");
             return;
         }
 
         if (rawPassword.length() >= 10) {
-            errorProperty.setValue("The password must be less than 10 characters long.");
+            errorProperty.set("The password must be less than 10 characters long.");
             return;
         }
 
@@ -161,19 +160,19 @@ public class ClientController implements Initializable {
                             email,
                             rawPassword
                     )
-
             );
 
             if (response.getStatusCode().value() != 200) {
-                errorProperty.setValue(response.getBody().getMessage());
+                errorProperty.set(response.getBody().getMessage());
                 return;
             }
 
-            clientErrorLabel.setVisible(false);
+            errorProperty.set("");
             stageManager.switchToNextScene(FxmlView.LOGIN);
+
         } catch (RuntimeException e) {
             e.printStackTrace();
-            errorProperty.setValue("Could not connect to server.");
+            errorProperty.set("Could not connect to server.");
         }
     }
 
