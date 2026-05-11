@@ -161,10 +161,12 @@
 
                             <Label text="Name" styleClass="profile-label"/>
                             <TextField fx:id="nameField" promptText="[USER-NAME]"
+                                       editable="false"
                                        styleClass="profile-input"/>
 
                             <Label text="Email" styleClass="profile-label"/>
                             <TextField fx:id="emailField" promptText="user@gmail.com"
+                                       editable="false"
                                        styleClass="profile-input"/>
 
                             <Label text="Password" styleClass="profile-label"/>
