@@ -1,6 +1,5 @@
 package org.ies.fenix.client.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
@@ -9,9 +8,7 @@ import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
-import org.ies.fenix.controller.dto.client.ClientLoginDTO;
-import org.ies.fenix.controller.dto.client.ClientNameDTO;
-import org.ies.fenix.controller.dto.client.LoginResponseDTO;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URL;
@@ -45,7 +42,7 @@ public class MarketplaceController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientNameDTO> response = clientApiService.getUsername("Bearer " + sessionManager.getToken()); //tokens en todos lados para peticiones de las interfaces Ike
+            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo("Bearer " + sessionManager.getToken()); //tokens en todos lados para peticiones de las interfaces Ike
 
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());

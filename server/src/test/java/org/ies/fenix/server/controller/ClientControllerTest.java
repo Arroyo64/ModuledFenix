@@ -1,7 +1,7 @@
 package org.ies.fenix.server.controller;
 
 import org.ies.fenix.controller.dto.client.ClientLoginDTO;
-import org.ies.fenix.controller.dto.client.ClientNameDTO;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.ies.fenix.controller.dto.client.ClientRegisterDTO;
 import org.ies.fenix.controller.dto.client.LoginResponseDTO;
 import org.ies.fenix.controller.dto.client.RegisterResponseDTO;
@@ -92,12 +92,12 @@ class ClientControllerTest {
     }
 
     @Test
-    void getUsername_whenAuthorizationHasBearerToken_returnsUsername() {
+    void getUsername_whenAuthorizationHasBearerToken_returnsInfo() {
         Client client = new Client();
         client.setUsername("ana");
         when(clientService.getClient("token-123")).thenReturn(client);
 
-        ResponseEntity<ClientNameDTO> response = clientController.getUsername("Bearer token-123");
+        ResponseEntity<ClientInfoDTO> response = clientController.getClientInfo("Bearer token-123");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("ana", response.getBody().getUsername());
@@ -105,8 +105,8 @@ class ClientControllerTest {
     }
 
     @Test
-    void getUsername_whenAuthorizationIsMissing_returnsBadRequest() {
-        ResponseEntity<ClientNameDTO> response = clientController.getUsername(null);
+    void getClientInfo_whenAuthorizationIsMissing_returnsBadRequest() {
+        ResponseEntity<ClientInfoDTO> response = clientController.getClientInfo(null);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNull(response.getBody());

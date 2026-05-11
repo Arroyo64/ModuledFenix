@@ -26,7 +26,7 @@ CREATE TABLE game
     title VARCHAR(50) UNIQUE,
     dev_id INT,
     description TEXT,
-    tamano_mb DECIMAL(10,2),
+    size_mb DECIMAL(10,2),
     downloads INT,
     price DECIMAL(6,2),
     CONSTRAINT fk_game_client
@@ -104,11 +104,10 @@ ALTER TABLE client
     ADD COLUMN profile_image_key VARCHAR(255);
 
 ALTER TABLE game
-    ADD COLUMN game_file_key VARCHAR(255),
-	ADD COLUMN logo_image_key VARCHAR(255),
-	ADD COLUMN vertical_image_key VARCHAR(255),
-	ADD COLUMN horizontal_image_one_key VARCHAR(255),
-	ADD COLUMN horizontal_image_two_key VARCHAR(255);
+    ADD COLUMN game_logo_key VARCHAR(255),
+
+ALTER TABLE client
+    ADD COLUMN character_counter_password INT NOT NULL;
 
 INSERT INTO tag (name, description) VALUES
                                         ('Romance', 'Romantic stories and relationships'),

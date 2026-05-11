@@ -2,10 +2,8 @@ package org.ies.fenix.server.services;
 
 import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.ies.fenix.controller.dto.game.GameSearchDTO;
-import org.ies.fenix.server.models.Client;
 import org.ies.fenix.server.models.Game;
 import org.ies.fenix.server.models.Tag;
-import org.ies.fenix.server.repositories.ClientRepository;
 import org.ies.fenix.server.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,8 +100,8 @@ public class GameService {
         dto.setTitle(game.getTitle());
         dto.setDescription(game.getDescription());
 
-        if (game.getTamanoMb() != null) {
-            dto.setSizeApproximation(formatSizeFromMB(game.getTamanoMb()));
+        if (game.getSizeMb() != null) {
+            dto.setSizeApproximation(formatSizeFromMB(game.getSizeMb()));
         } else {
             dto.setSizeApproximation("0 MB");
         }

@@ -22,13 +22,20 @@ public class FxmlLoader {
     }
 
     public Parent load(String fxmlPath) throws IOException {
+       return createLoader(fxmlPath).load();
+    }
+
+    public FXMLLoader createLoader(String fxmlPath) {
+
         URL location = getClass().getResource(fxmlPath);
+
         if (location == null) {
             throw new IllegalArgumentException("FXML not found: " + fxmlPath);
         }
 
         FXMLLoader loader = new FXMLLoader(location);
         loader.setControllerFactory(controllerFactory::apply);
-        return loader.load();
+
+        return loader;
     }
 }

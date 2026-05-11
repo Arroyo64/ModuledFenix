@@ -5,6 +5,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -48,11 +49,14 @@ public class EmailFormController implements Initializable {
     private Button backButton;
 
     @FXML
-    private TextField email;
+    public TextField emailTextField;
+
+    @FXML
+    private Label clientErrorLabel;
+
+    private final StringProperty errorProperty = new SimpleStringProperty();
 
     private final StageManager stageManager;
-
-    StringProperty nameProperty = new SimpleStringProperty();
 
     public EmailFormController(StageManager stageManager) {
         this.stageManager = stageManager;
@@ -67,7 +71,14 @@ public class EmailFormController implements Initializable {
     }
 
     @FXML
-    void switchToUserCreateView(){ stageManager.switchToNextScene(FxmlView.USER_CREATE);}
+    void switchToUserCreateView(){
+        String email = emailTextField.getText();
+        if(email.isBlank() || email.length() > 50)
+            return;
+        ClientController controller =
+                stageManager.switchSceneAndGetController(FxmlView.USER_CREATE);
+        controller.setEmail(email);
+    }
 
     @FXML
     void switchLogInView(){ stageManager.switchToNextScene(FxmlView.LOGIN);}

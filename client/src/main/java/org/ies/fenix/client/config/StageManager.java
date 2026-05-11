@@ -1,6 +1,7 @@
 package org.ies.fenix.client.config;
 
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
@@ -88,6 +89,32 @@ public class StageManager {
         }
         Parent rootNode = loadRootNode(currentView.getFxmlPath());
         primaryStage.getScene().setRoot(rootNode);
+    }
+
+    public <T> T switchSceneAndGetController(final FxmlView view) {
+
+        this.currentView = view;
+
+        try {
+
+            FXMLLoader loader = fxmlLoader.createLoader(view.getFxmlPath());
+
+            Parent rootNode = loader.load();
+
+            rootNode.applyCss();
+            rootNode.autosize();
+
+            createAndSetScene(rootNode);
+
+            primaryStage.sizeToScene();
+            primaryStage.show();
+            primaryStage.centerOnScreen();
+
+            return loader.getController();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void switchToFullScreenMode() {

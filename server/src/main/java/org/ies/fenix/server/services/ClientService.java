@@ -49,6 +49,7 @@ public class ClientService {
         client.setUsername(dto.getUsername());
         client.setEmail(dto.getEmail());
         client.setPasswordHashed(passwordEncoder.encode(dto.getPassword()));
+        client.setCharacterCounterPassword(dto.getPassword().length()-1);
         client.setBio(null);
         clientRepository.save(client);
 

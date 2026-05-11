@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,6 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ies.fenix.client.controller.EmailFormController">
 <top>
     <HBox alignment="TOP_RIGHT" prefHeight="40.0" prefWidth="454.0" BorderPane.alignment="CENTER">
@@ -53,12 +53,17 @@
                 <Font size="20.0" />
             </font>
         </TextField>
-        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="396.0" style="-fx-background-radius: 8;" text="Continuar" onAction="#switchToUserCreateView">
+         <Label layoutX="7.0" layoutY="223.0" prefHeight="45.0" prefWidth="434.0" text="Label" wrapText="true" alignment="CENTER" textAlignment="CENTER">
+            <font>
+               <Font size="16.0" />
+            </font>
+         </Label>
+        <Button mnemonicParsing="false" onAction="#switchToUserCreateView" prefHeight="45.0" prefWidth="396.0" style="-fx-background-radius: 8;" text="Continuar">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
         </Button>
-         <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="396.0" style="-fx-background-radius: 8;" text="Ya tengo una cuenta" onAction="#switchLogInView">
+         <Button mnemonicParsing="false" onAction="#switchLogInView" prefHeight="45.0" prefWidth="396.0" style="-fx-background-radius: 8;" text="Ya tengo una cuenta">
             <font>
                <Font name="System Bold" size="18.0" />
             </font>

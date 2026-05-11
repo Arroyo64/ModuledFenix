@@ -45,11 +45,13 @@ public class ClientController implements IClientController {
     }
 
     @Override
-    public ResponseEntity<ClientNameDTO> getUsername(String authorization) {
+    public ResponseEntity<ClientInfoDTO> getClientInfo(String authorization) {
         String token = extractBearerToken(authorization);
         if (token != null) {
             System.out.println("Recibido token = " + token);
-            return ResponseEntity.ok( new ClientNameDTO(clientService.getClient(token).getUsername()));
+            return ResponseEntity.ok( new ClientInfoDTO(clientService.getClient(token).getUsername(),
+                    clientService.getClient(token).getEmail(),
+                    clientService.getClient(token).getCharacterCounterPassword()));
         }
         return ResponseEntity.badRequest().build();
     }

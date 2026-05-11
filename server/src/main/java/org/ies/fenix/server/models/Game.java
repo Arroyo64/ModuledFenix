@@ -31,8 +31,8 @@ public class Game {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "tamano_mb")
-    private BigDecimal tamanoMb;
+    @Column(name = "size_mb")
+    private BigDecimal sizeMb;
 
     @Column(name = "downloads")
     private Integer downloads;
@@ -40,20 +40,8 @@ public class Game {
     @Column(name = "price")
     private BigDecimal price;
 
-    @Column(name = "game_file_key")
-    private String gameFileKey;
-
-    @Column(name = "logo_image_key")
-    private String logoImageKey;
-
-    @Column(name = "vertical_image_key")
-    private String verticalImageKey;
-
-    @Column(name = "horizontal_image_one_key")
-    private String horizontalImageOneKey;
-
-    @Column(name = "horizontal_image_two_key")
-    private String horizontalImageTwoKey;
+    @Column(name = "game_logo_key")
+    private String gameLogoKey;
 
     @ManyToMany
     @JoinTable(

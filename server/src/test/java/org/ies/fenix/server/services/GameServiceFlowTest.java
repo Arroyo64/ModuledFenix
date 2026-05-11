@@ -82,7 +82,7 @@ class GameServiceFlowTest {
         game.setId(10);
         game.setTitle("Fenix Quest");
         game.setDescription("Adventure game");
-        game.setTamanoMb(BigDecimal.valueOf(1024));
+        game.setSizeMb(BigDecimal.valueOf(1024));
         game.setDownloads(1500);
         game.setPrice(BigDecimal.valueOf(19.99));
         game.setDev(dev);

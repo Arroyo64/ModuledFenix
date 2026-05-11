@@ -117,7 +117,7 @@ class PurchaseServiceTest {
         Client client = client(1, "Ana");
         Game game = game(10, "Fenix Quest", 3, "9.99");
         game.setDescription("A fantasy visual novel");
-        game.setTamanoMb(new BigDecimal("512"));
+        game.setSizeMb(new BigDecimal("512"));
 
         when(purchaseRepository.findByClientId(1)).thenReturn(List.of(purchase(100, client, game)));
 
@@ -205,7 +205,7 @@ class PurchaseServiceTest {
         game.setTitle(title);
         game.setDev(dev);
         game.setDescription("Description");
-        game.setTamanoMb(new BigDecimal("256"));
+        game.setSizeMb(new BigDecimal("256"));
         game.setDownloads(downloads);
         game.setPrice(new BigDecimal(price));
         return game;

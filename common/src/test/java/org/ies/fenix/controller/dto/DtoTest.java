@@ -1,7 +1,7 @@
 package org.ies.fenix.controller.dto;
 
 import org.ies.fenix.controller.dto.client.ClientLoginDTO;
-import org.ies.fenix.controller.dto.client.ClientNameDTO;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.ies.fenix.controller.dto.client.ClientRegisterDTO;
 import org.ies.fenix.controller.dto.client.LoginResponseDTO;
 import org.ies.fenix.controller.dto.client.RegisterResponseDTO;
@@ -38,7 +38,7 @@ class DtoTest {
         assertEquals("ana@fenix.local", register.getEmail());
         assertEquals("1234", register.getPassword());
 
-        ClientNameDTO clientName = new ClientNameDTO("player1");
+        ClientInfoDTO clientName = new ClientInfoDTO("player1",null,0);
         assertEquals("player1", clientName.getUsername());
     }
 

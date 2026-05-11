@@ -101,7 +101,7 @@ class PurchaseServiceFlowTest {
         Client client = client(1, "ana");
         Game game = game(10, "Fenix Quest", 20, BigDecimal.valueOf(9.99));
         game.setDescription("Adventure game");
-        game.setTamanoMb(BigDecimal.valueOf(2048));
+        game.setSizeMb(BigDecimal.valueOf(2048));
         Purchase purchase = new Purchase(5, client, game);
 
         when(purchaseRepository.findByClientId(1)).thenReturn(List.of(purchase));
