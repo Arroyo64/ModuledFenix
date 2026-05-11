@@ -48,9 +48,27 @@
 
             <Button text="Create your own visual novel" styleClass="main-action-button"/>
 
-            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="40.0" styleClass="profile-wrapper">
-                <FontIcon iconLiteral="mdi2a-account-outline" iconSize="22" iconColor="#B8B8B8"/>
-            </HBox>
+            <StackPane prefWidth="40"
+                       prefHeight="40"
+                       minWidth="40"
+                       minHeight="40"
+                       maxWidth="40"
+                       maxHeight="40"
+                       styleClass="profile-wrapper">
+
+                <!-- Icono por defecto -->
+                <FontIcon fx:id="topProfileIcon"
+                          iconLiteral="mdi2a-account-outline"
+                          iconSize="22"
+                          iconColor="#B8B8B8"/>
+
+                <!-- Imagen -->
+                <ImageView fx:id="topProfileImage"
+                           fitWidth="40"
+                           fitHeight="40"
+                           preserveRatio="true"
+                           visible="false"/>
+            </StackPane>
 
             <Label styleClass="dropdown-icon">
                 <graphic>

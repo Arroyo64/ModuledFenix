@@ -11,6 +11,7 @@ import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
+import org.ies.fenix.client.utils.ImageUtils;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
@@ -25,6 +26,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
 
+import static org.ies.fenix.client.utils.ImageUtils.*;
+
 public class ProfileController implements Initializable {
 
     @FXML
@@ -35,7 +38,10 @@ public class ProfileController implements Initializable {
 
     @FXML
     public PasswordField passwordField;
-
+    @FXML
+    public FontIcon topProfileIcon;
+    @FXML
+    public ImageView topProfileImage;
     @FXML
     private Hyperlink username;
 
@@ -70,24 +76,23 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            ResponseEntity<ClientInfoDTO> response =
-                    clientApiService.getClientInfo(buildHeader());
+            ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader());
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 username.setText(response.getBody().getUsername().toUpperCase());
                 nameField.setText(response.getBody().getUsername());
                 emailField.setText(response.getBody().getEmail());
-                passwordField.setText(
-                        buildStingWithCharsof(response.getBody().getPasswordCharacter())
-                );
+                passwordField.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
             }
-            ResponseEntity<String> loadedBio =
-                    clientApiService.getBio(buildHeader());
+            ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
                 bio.setText(loadedBio.getBody());
             }
-            ResponseEntity<byte[]> image =
-                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-            setAvatar(image.getBody());
+            ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+            if (image.getStatusCode().value() == 200) {
+                setCoverImage(image.getBody(), profileImage, 180);
+                profileIcon.setVisible(false);
+                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,34 +131,24 @@ public class ProfileController implements Initializable {
         if (serverResponse.getStatusCode().value() == 200) {
             System.out.println("Bio updated");
             stageManager.reloadCurrentScene();
-        }
-        else {
+        } else {
             assert serverResponse.getBody() != null;
             System.out.println(serverResponse.getBody().getMessage());
         }
         stageManager.reloadCurrentScene();
     }
+
     @FXML
     public void uploadProfilePicture() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-        );
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile == null) return;
         try {
             String mimeType = Files.probeContentType(selectedFile.toPath());
             byte[] bytes = Files.readAllBytes(selectedFile.toPath());
-            FileUploadDTO dto = new FileUploadDTO(
-                    selectedFile.getName(),
-                    mimeType,
-                    bytes
-            );
-            ResponseEntity<ServerResponseDTO> response =
-                    clientApiService.uploadProfilePicture(
-                            buildHeader(),
-                            dto
-                    );
+            FileUploadDTO dto = new FileUploadDTO(selectedFile.getName(), mimeType, bytes);
+            ResponseEntity<ServerResponseDTO> response = clientApiService.uploadProfilePicture(buildHeader(), dto);
             if (response.getStatusCode().value() == 200) {
                 System.out.println("Profile picture updated");
                 profileImage.setImage(new Image(selectedFile.toURI().toString()));
@@ -161,31 +156,6 @@ public class ProfileController implements Initializable {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-    private void setAvatar(byte[] imageBytes) {
-        double size = 180;
-        profileImage.setFitWidth(size);
-        profileImage.setFitHeight(size);
-        profileImage.setSmooth(true);
-        profileImage.setPreserveRatio(false); // IMPORTANTE
-        if (imageBytes != null && imageBytes.length > 0) {
-            Image image = new Image(new ByteArrayInputStream(imageBytes));
-            profileImage.setImage(image);
-            // CENTRADO tipo "cover"
-            double imgW = image.getWidth();
-            double imgH = image.getHeight();
-            double ratio = Math.max(size / imgW, size / imgH);
-            double newW = size / ratio;
-            double newH = size / ratio;
-            double x = (imgW - newW) / 2;
-            double y = (imgH - newH) / 2;
-            profileImage.setViewport(new Rectangle2D(x, y, newW, newH));
-            profileImage.setVisible(true);
-            profileIcon.setVisible(false);
-        } else {
-            profileImage.setVisible(false);
-            profileIcon.setVisible(true);
         }
     }
 }
