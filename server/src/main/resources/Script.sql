@@ -101,13 +101,12 @@ CREATE INDEX idx_auth_token_client_id
     ON auth_token(client_id);
 
 ALTER TABLE client
-    ADD COLUMN profile_image_key VARCHAR(255);
+    ADD COLUMN profile_image_key VARCHAR(255),
+    ADD COLUMN character_counter_password INT NOT NULL;
 
 ALTER TABLE game
-    ADD COLUMN game_logo_key VARCHAR(255),
+    ADD COLUMN game_logo_key VARCHAR(255);
 
-ALTER TABLE client
-    ADD COLUMN character_counter_password INT NOT NULL;
 
 INSERT INTO tag (name, description) VALUES
                                         ('Romance', 'Romantic stories and relationships'),
