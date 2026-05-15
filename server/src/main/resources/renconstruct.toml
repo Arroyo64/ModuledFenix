@@ -1,0 +1,32 @@
+[build]
+win = true
+pc = false
+linux = false
+mac = false
+web = false
+steam = false
+market = false
+android_apk = false
+android_aab = false
+custom_build = false
+
+[options]
+clear_output_dir = false
+
+[renutil]
+version = "8.5.2"
+registry = "cache"
+update_pickle = true
+
+# -----------------------------------------
+#   CONVERTIR TODAS LAS IMÁGENES DEL JUEGO
+# -----------------------------------------
+[tasks.convert_images]
+type = "convert_images"
+enabled = true
+format = "webp"
+priorities = { pre_build = 0 }
+on_builds = ["win"]
+
+# Escanea TODAS las carpetas dentro de game/
+paths."game" = { recursive = true }

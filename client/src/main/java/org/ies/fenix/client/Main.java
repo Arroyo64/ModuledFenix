@@ -58,10 +58,6 @@ public class Main extends Application {
                 return new EmailFormController(stageManager);
             }
 
-            if (clazz == HomeController.class) {
-                return new HomeController(stageManager);
-            }
-
             if (clazz == MarketplaceController.class) {
                 return new MarketplaceController(stageManager, clientApiService, gamesApiService, sessionManager);
             }

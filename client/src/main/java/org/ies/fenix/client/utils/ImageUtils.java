@@ -1,10 +1,15 @@
 package org.ies.fenix.client.utils;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
+import org.ies.fenix.client.api.SessionManager;
+import org.ies.fenix.controller.IClientController;
+import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 
@@ -97,6 +102,21 @@ public class ImageUtils {
 
         } else {
             imageView.setVisible(false);
+        }
+    }
+    public static void initialConfig(IClientController clientApiService, SessionManager sessionManager, Hyperlink username, ImageView topProfileImage, FontIcon topProfileIcon) {
+        if (sessionManager.getUsername() != null)
+            username.setText(sessionManager.getUsername().toUpperCase());
+        try {
+            ResponseEntity<byte[]> image =
+                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
+
+            if (image.getStatusCode().value() == 200) {
+                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
+            }
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
     }
 }

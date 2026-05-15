@@ -15,6 +15,7 @@ import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
 
+import static org.ies.fenix.client.utils.ImageUtils.initialConfig;
 import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
 
 public class LibraryController {
@@ -60,24 +61,7 @@ public class LibraryController {
 
     @FXML
     private void initialize() {
-        try {
-            ResponseEntity<ClientInfoDTO> response =
-                    clientApiService.getClientInfo(sessionManager.getAuthorizationHeader());
-
-            if (response.getStatusCode().value() == 200 && response.getBody() != null) {
-                username.setText(response.getBody().getUsername().toUpperCase());
-            }
-
-            ResponseEntity<byte[]> image =
-                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-
-            if (image.getStatusCode().value() == 200) {
-                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
-            }
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
+        initialConfig(clientApiService, sessionManager, username, topProfileImage, topProfileIcon);
     }
 
     @FXML
