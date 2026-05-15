@@ -81,7 +81,7 @@ public class ProfileController implements Initializable {
                 username.setText(response.getBody().getUsername().toUpperCase());
                 nameField.setText(response.getBody().getUsername());
                 emailField.setText(response.getBody().getEmail());
-                passwordField.setText(buildStingWithCharsof(response.getBody().getPasswordCharacter()));
+                passwordField.setText(buildStingWithCharsOf(response.getBody().getPasswordCharacter()));
             }
             ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
@@ -98,13 +98,14 @@ public class ProfileController implements Initializable {
         }
     }
 
-    private String buildStingWithCharsof(int passwordCharacter) {
+    private String buildStingWithCharsOf(int passwordCharacter) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < passwordCharacter; i++) {
             sb.append("*");
         }
         return sb.toString();
     }
+
 
     private String buildHeader() {
         return sessionManager.getAuthorizationHeader();
