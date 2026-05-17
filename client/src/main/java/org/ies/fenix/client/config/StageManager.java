@@ -116,6 +116,10 @@ public class StageManager {
         switchScene(currentView);
     }
 
+    public BaseLayoutController getBaseLayoutController() {
+        return baseLayoutController;
+    }
+
     public void switchToFullScreenMode() {
         primaryStage.setFullScreen(true);
     }

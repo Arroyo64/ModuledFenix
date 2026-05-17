@@ -1,5 +1,6 @@
 package org.ies.fenix.client.controller;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -94,6 +95,7 @@ public class GameController {
         this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
         this.restClient = restClient;
+        BaseLayoutController base = stageManager.getBaseLayoutController();
     }
 
     @FXML
@@ -136,7 +138,11 @@ public class GameController {
                 return;
             }
 
-            progressBar.setProgress(0); // resetear barra
+            //  Obtener barra global
+            BaseLayoutController base = stageManager.getBaseLayoutController();
+            base.showProgress(); // mostrar barra global en modo indeterminado
+
+            progressBar.setProgress(0); // si quieres mantener la barra local
 
             // 1. Llamar al servidor
             ResponseEntity<Resource> response = restClient.get()
@@ -146,12 +152,14 @@ public class GameController {
                     .toEntity(Resource.class);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
+                base.hideProgress();
                 showError("Download failed", "The server returned an error.");
                 return;
             }
 
             Resource resource = response.getBody();
             if (resource == null) {
+                base.hideProgress();
                 showError("Download failed", "Empty file received.");
                 return;
             }
@@ -168,6 +176,7 @@ public class GameController {
             File target = chooser.showSaveDialog(progressBar.getScene().getWindow());
 
             if (target == null) {
+                base.hideProgress();
                 return;
             }
 
@@ -190,6 +199,9 @@ public class GameController {
                             totalRead += read;
 
                             updateProgress(totalRead, fileSize);
+
+                            double progress = (double) totalRead / fileSize;
+                            Platform.runLater(() -> base.setProgress(progress));
                         }
                     }
 
@@ -197,17 +209,24 @@ public class GameController {
                 }
             };
 
-            // 5. Enlazar barra de progreso
+            // 5. Enlazar barra local
             progressBar.progressProperty().bind(downloadTask.progressProperty());
 
-            // 6. Ejecutar en background
+            // 6. Ocultar barra global al terminar
+            downloadTask.setOnSucceeded(e -> base.hideProgress());
+            downloadTask.setOnFailed(e -> base.hideProgress());
+            downloadTask.setOnCancelled(e -> base.hideProgress());
+
+            // 7. Ejecutar en background
             new Thread(downloadTask).start();
 
         } catch (Exception e) {
             e.printStackTrace();
+            stageManager.getBaseLayoutController().hideProgress();
             showError("Download failed", "There was an error downloading the game.");
         }
     }
+
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

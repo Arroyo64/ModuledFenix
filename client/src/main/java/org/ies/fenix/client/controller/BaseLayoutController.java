@@ -14,7 +14,7 @@ public class BaseLayoutController {
     @FXML
     private StackPane contentArea;
     @FXML
-    private ProgressBar globalProgressBar;
+    private ProgressBar progressBar;
     @FXML
     private BorderPane root;
     @FXML
@@ -28,8 +28,23 @@ public class BaseLayoutController {
         contentArea.getChildren().setAll(node);
     }
 
+    public void showProgress() {
+        progressBar.setVisible(true);
+        progressBar.setProgress(-1); // modo indeterminado
+    }
+
+    public void hideProgress() {
+        progressBar.setVisible(false);
+        progressBar.setProgress(0);
+    }
+
+    public void setProgress(double value) {
+        progressBar.setVisible(true);
+        progressBar.setProgress(value);
+    }
+
     public ProgressBar getGlobalProgressBar() {
-        return globalProgressBar;
+        return progressBar;
     }
 
     public NavbarController getNavbarController() {

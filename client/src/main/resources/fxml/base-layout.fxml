@@ -26,6 +26,7 @@
         <HBox alignment="BOTTOM_RIGHT">
             <ProgressBar fx:id="globalProgressBar"
                          prefWidth="260"
+                         prefHeight="4"
                          progress="0"
                          visible="false"
                          managed="false"/>
