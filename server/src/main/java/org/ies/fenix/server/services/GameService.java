@@ -350,4 +350,54 @@ public class GameService {
                 ? String.format("%.0f%s", rounded, units[unitIndex])
                 : rounded + units[unitIndex];
     }
+
+    public byte[] loadLogo(Integer id) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        if (game.getGameLogoKey() == null) {
+            throw new IllegalStateException("Logo not available");
+        }
+
+        String folder = "uploads/games/" + game.getDev().getId();
+        File file = findFileByKey(folder, game.getGameLogoKey());
+
+        try {
+            return java.nio.file.Files.readAllBytes(file.toPath());
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading logo", e);
+        }
+    }
+
+    public byte[] getVerticalImage(Integer id) {
+        return loadTeaserByType(id, "VERTICAL");
+    }
+
+    public byte[] getHorizontal1Image(Integer id) {
+        return loadTeaserByType(id, "HORIZONTAL_1");
+    }
+
+    public byte[] getHorizontal2Image(Integer id) {
+        return loadTeaserByType(id, "HORIZONTAL_2");
+    }
+
+    private byte[] loadTeaserByType(Integer gameId, String type) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        Teaser teaser = game.getTeasers().stream()
+                .filter(t -> type.equals(t.getType()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Teaser not found: " + type));
+
+        String folder = "uploads/games/" + game.getDev().getId();
+        File file = findFileByKey(folder, teaser.getObjectKey());
+
+        try {
+            return java.nio.file.Files.readAllBytes(file.toPath());
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading teaser: " + type, e);
+        }
+    }
+
 }

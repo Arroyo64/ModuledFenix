@@ -10,6 +10,8 @@ import org.ies.fenix.client.controller.*;
 import org.ies.fenix.client.listener.SceneResizeListener;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
+import org.ies.fenix.controller.IPurchaseController;
+import org.ies.fenix.controller.ITagController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -36,7 +38,8 @@ public class Main extends Application {
 
         var clientApiService = factory.createClient(IClientController.class);
         var gamesApiService = factory.createClient(IGameController.class);
-
+        var purchaseApiService = factory.createClient(IPurchaseController.class);
+        var tagApiService = factory.createClient(ITagController.class);
         SessionManager sessionManager = new SessionManager();
 
         stageManager = new StageManager(
@@ -61,7 +64,7 @@ public class Main extends Application {
             }
 
             if (clazz == LibraryController.class) {
-                return new LibraryController(stageManager, clientApiService, gamesApiService, sessionManager);
+                return new LibraryController(stageManager, clientApiService, gamesApiService, sessionManager, purchaseApiService);
             }
 
             if (clazz == ProfileController.class) {
@@ -69,7 +72,7 @@ public class Main extends Application {
             }
 
             if (clazz == GameController.class) {
-                return new GameController(stageManager, clientApiService, gamesApiService, sessionManager, restClient);
+                return new GameController(stageManager, clientApiService, gamesApiService, sessionManager, restClient, purchaseApiService);
             }
 
             if (clazz == UploadGameController.class) {

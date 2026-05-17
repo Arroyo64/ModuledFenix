@@ -48,6 +48,41 @@ public class GameController implements IGameController {
     }
 
     @Override
+    @GetMapping("/api/games/{id}/logo")
+    public ResponseEntity<byte[]> getLogo(String authorization, Integer id) {
+        byte[] bytes = gameService.loadLogo(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+
+    @Override
+    @GetMapping("/api/games/{id}/vertical")
+    public ResponseEntity<byte[]> getVertical(String authorization, Integer id) {
+        byte[] bytes = gameService.getVerticalImage(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+
+    @Override
+    @GetMapping("/api/games/{id}/horizontal1")
+    public ResponseEntity<byte[]> getHorizontal1(String authorization, Integer id) {
+        byte[] bytes = gameService.getHorizontal1Image(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+    @Override
+    @GetMapping("/api/games/{id}/horizontal2")
+    public ResponseEntity<byte[]> getHorizontal2(String authorization, Integer id) {
+        byte[] bytes = gameService.getHorizontal2Image(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<GameResponseDTO> getById(@PathVariable Integer id) {
         try {

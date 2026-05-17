@@ -15,8 +15,6 @@ import java.io.ByteArrayInputStream;
 
 public class NavbarController {
 
-
-
     @FXML
     private FontIcon topProfileIcon;
 
@@ -95,5 +93,13 @@ public class NavbarController {
 
         if (!username.getStyleClass().contains("tab-active"))
             username.getStyleClass().add("tab-inactive");
+    }
+
+    public ImageView getTopProfileImage() {
+        return topProfileImage;
+    }
+
+    public FontIcon getTopProfileIcon() {
+        return topProfileIcon;
     }
 }
