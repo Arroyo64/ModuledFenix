@@ -1,5 +1,6 @@
 package org.ies.fenix.client.utils;
 
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
@@ -51,22 +52,27 @@ public class ImageUtils {
 
             Image image = new Image(new ByteArrayInputStream(imageBytes));
 
-            applyCoverCrop(imageView, image, size);
+            // Esperar a que el ImageView esté renderizado
+            Platform.runLater(() -> {
 
-            Circle clip = new Circle(size / 2);
-            clip.setCenterX(size / 2);
-            clip.setCenterY(size / 2);
+                applyCoverCrop(imageView, image, size);
 
-            imageView.setClip(clip);
+                Circle clip = new Circle(size / 2);
+                clip.setCenterX(size / 2);
+                clip.setCenterY(size / 2);
 
-            imageView.setVisible(true);
-            icon.setVisible(false);
+                imageView.setClip(clip);
+
+                imageView.setVisible(true);
+                icon.setVisible(false);
+            });
 
         } else {
             imageView.setVisible(false);
             icon.setVisible(true);
         }
     }
+
     public static void setCoverImage(
             byte[] imageBytes,
             ImageView imageView,

@@ -19,4 +19,11 @@ public class FileUtils {
         metadata.add(TikaCoreProperties.RESOURCE_NAME_KEY, filenameWithExtension);
         return detector.detect(stream, metadata).toString();
     }
+
+    public static String getExtension(String filename) {
+        if (filename == null) return "";
+        int dot = filename.lastIndexOf('.');
+        if (dot == -1 || dot == filename.length() - 1) return "";
+        return filename.substring(dot + 1);
+    }
 }

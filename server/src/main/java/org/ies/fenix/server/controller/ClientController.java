@@ -3,10 +3,13 @@ package org.ies.fenix.server.controller;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.*;
 import org.ies.fenix.server.services.ClientService;
+import org.ies.fenix.server.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.ies.fenix.controller.IClientController;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 import static org.ies.fenix.server.services.TokenService.extractBearerToken;
 
@@ -86,31 +89,39 @@ public class ClientController implements IClientController {
         return ResponseEntity.badRequest().build();
     }
     @Override
-    public ResponseEntity<ServerResponseDTO> uploadProfilePicture(String authorization, FileUploadDTO dto){
-        String token = extractBearerToken(authorization);
-        if (token != null) {
-            return ResponseEntity.ok(clientService.uploadImageProfile(dto, token));
+    public ResponseEntity<ServerResponseDTO> uploadProfilePicture(
+            @RequestHeader("Authorization") String authorization,
+            @RequestBody FileUploadDTO dto
+    ) {
+        ServerResponseDTO result = clientService.uploadImageProfile(dto, extractBearerToken(authorization));
+
+        if ("ERROR".equals(result.getStatus())) {
+            return ResponseEntity.badRequest().body(result);
         }
-        return ResponseEntity.badRequest().build();
+
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public ResponseEntity<byte[]> getProfileImage(String authorization) {
-        byte[] bytes = clientService.getProfilePicture(extractBearerToken(authorization));
+    public ResponseEntity<byte[]> getProfileImage(
+            @RequestHeader("Authorization") String authorization
+    ) {
+        try {
+            byte[] bytes = clientService.getProfilePicture(extractBearerToken(authorization));
 
-        // Si no hay imagen → devolver 200 con array vacío
-        if (bytes.length == 0) {
+            if (bytes.length == 0) {
+                return ResponseEntity.status(404).build();
+            }
+
+            String contentType = FileUtils.getContentType(bytes, "profile");
+
             return ResponseEntity
                     .ok()
-                    .header("Content-Type", "application/octet-stream")
-                    .body(new byte[0]);
+                    .header("Content-Type", contentType)
+                    .body(bytes);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
-
-        // Si hay imagen → devolverla con el tipo correcto
-        return ResponseEntity
-                .ok()
-                .header("Content-Type", "image/png") // o dinámico si quieres
-                .body(bytes);
     }
-
 }

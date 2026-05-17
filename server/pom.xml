@@ -53,7 +53,6 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>org.ies.fenix</groupId>
             <artifactId>common</artifactId>
