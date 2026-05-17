@@ -22,22 +22,7 @@ import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
 public class MarketplaceController implements Initializable {
 
     @FXML
-    public FontIcon topProfileIcon;
-
-    @FXML
-    public ImageView topProfileImage;
-
-    @FXML
     private TextField searchField;
-
-    @FXML
-    private Hyperlink username;
-
-    @FXML
-    private Hyperlink marketplace;
-
-    @FXML
-    private Hyperlink library;
 
     private final StageManager stageManager;
     private final IClientController clientApiService;
@@ -54,45 +39,28 @@ public class MarketplaceController implements Initializable {
         this.sessionManager = sessionManager;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        try {
-            ResponseEntity<ClientInfoDTO> response =
-                    clientApiService.getClientInfo(sessionManager.getAuthorizationHeader());
-
-            if (response.getStatusCode().value() == 200 && response.getBody() != null) {
-                username.setText(response.getBody().getUsername().toUpperCase());
-            }
-
-            ResponseEntity<byte[]> image =
-                    clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-
-            if (image.getStatusCode().value() == 200) {
-                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
-            }
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-    }
-
     @FXML
     void switchProfileScene() {
-        stageManager.switchToNextScene(FxmlView.PROFILE);
+        stageManager.switchScene(FxmlView.PROFILE);
     }
 
     @FXML
     void switchToLibraryScene() {
-        stageManager.switchToNextScene(FxmlView.LIBRARY);
+        stageManager.switchScene(FxmlView.LIBRARY);
     }
 
     @FXML
     void switchToUploadGameScene() {
-        stageManager.switchToNextScene(FxmlView.UPLOAD_GAME);
+        stageManager.switchScene(FxmlView.UPLOAD_GAME);
     }
 
     @FXML
     public void reloadView() {
         stageManager.reloadCurrentScene();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        //todo setear las cartas de los videojuegos
     }
 }

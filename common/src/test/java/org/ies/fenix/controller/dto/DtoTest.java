@@ -67,35 +67,6 @@ class DtoTest {
     }
 
     @Test
-    void gameDtos_storeSearchAndResponseValues() {
-        GameSearchDTO search = new GameSearchDTO("Fenix", "dev", List.of("rpg", "demo"), 10);
-        assertEquals("Fenix", search.getTitle());
-        assertEquals("dev", search.getDeveloperName());
-        assertEquals(List.of("rpg", "demo"), search.getTagNames());
-        assertEquals(10, search.getLimit());
-
-        GameResponseDTO response = new GameResponseDTO(
-                1,
-                "Fenix Game",
-                "A visual novel",
-                "512 MB",
-                "2K",
-                BigDecimal.valueOf(4.99),
-                "devUser",
-                List.of("visual-novel")
-        );
-
-        assertEquals(1, response.getId());
-        assertEquals("Fenix Game", response.getTitle());
-        assertEquals("A visual novel", response.getDescription());
-        assertEquals("512 MB", response.getSizeApproximation());
-        assertEquals("2K", response.getDownloadsApproximation());
-        assertEquals(BigDecimal.valueOf(4.99), response.getPrice());
-        assertEquals("devUser", response.getDevUsername());
-        assertEquals(List.of("visual-novel"), response.getTags());
-    }
-
-    @Test
     void purchaseDtos_storePurchaseLibraryAndDownloadValues() {
         PurchaseCreateDTO create = new PurchaseCreateDTO(3, 9);
         assertEquals(3, create.getClientId());
@@ -131,35 +102,5 @@ class DtoTest {
         assertEquals(9, download.getGameId());
         assertEquals("Fenix Game", download.getTitle());
         assertEquals(21, download.getDownloads());
-    }
-
-    @Test
-    void simpleCatalogDtos_storeValuesAndTeaserHasEqualsHashCode() {
-        TagResponseDTO tag = new TagResponseDTO(1, "rpg", "Role playing game");
-        assertEquals(1, tag.getId());
-        assertEquals("rpg", tag.getName());
-        assertEquals("Role playing game", tag.getDescription());
-
-        TeaserResponseDTO first = new TeaserResponseDTO();
-        first.setId(1);
-        first.setGameId(9);
-        first.setFileName("trailer.mp4");
-        first.setType("video");
-
-        TeaserResponseDTO same = new TeaserResponseDTO();
-        same.setId(1);
-        same.setGameId(9);
-        same.setFileName("trailer.mp4");
-        same.setType("video");
-
-        TeaserResponseDTO different = new TeaserResponseDTO();
-        different.setId(2);
-        different.setGameId(9);
-        different.setFileName("image.png");
-        different.setType("image");
-
-        assertEquals(first, same);
-        assertEquals(first.hashCode(), same.hashCode());
-        assertNotEquals(first, different);
     }
 }

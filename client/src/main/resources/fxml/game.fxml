@@ -25,80 +25,6 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ies.fenix.client.controller.GameController">
 
-    <!-- TOP NAVBAR -->
-    <top>
-        <HBox alignment="CENTER_LEFT"
-              spacing="20.0"
-              styleClass="content-container">
-
-            <padding>
-                <Insets top="30.0" right="30.0" bottom="0.0" left="30.0"/>
-            </padding>
-
-<!--            <Button text="&lt;" styleClass="nav-button"/>-->
-<!--            <Button text="&gt;" styleClass="nav-button"/>-->
-            <Button styleClass="nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
-                </graphic>
-            </Button>
-
-            <Button styleClass="nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
-                </graphic>
-            </Button>
-            <!--Cambiado por icon-->
-
-            <Hyperlink text="MARKET PLACE"
-                       styleClass="tab-inactive"
-                       onAction="#switchToMarketplaceScene"/>
-
-            <Hyperlink text="LIBRARY"
-                       styleClass="tab-active"
-                       onAction="#switchToLibraryScene"/>
-
-            <Hyperlink fx:id="username"
-                       text="USERNAME"
-                       styleClass="tab-inactive"
-                       onAction="#switchProfileScene"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <Button text="Create your own visual novel"
-                    styleClass="main-action-button"
-                    onAction="#switchToUploadGameScene"/>
-
-            <StackPane prefWidth="40"
-                       prefHeight="40"
-                       minWidth="40"
-                       minHeight="40"
-                       maxWidth="40"
-                       maxHeight="40"
-                       styleClass="profile-wrapper">
-
-                <!-- Icono por defecto -->
-                <FontIcon fx:id="topProfileIcon"
-                          iconLiteral="mdi2a-account-outline"
-                          iconSize="22"
-                          iconColor="#B8B8B8"/>
-
-                <!-- Imagen -->
-                <ImageView fx:id="topProfileImage"
-                           fitWidth="40"
-                           fitHeight="40"
-                           preserveRatio="true"
-                           visible="false"/>
-            </StackPane>
-            <Label styleClass="dropdown-icon">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
-                </graphic>
-            </Label>
-            <!--                        Cambiado por icon-->
-        </HBox>
-    </top>
-
     <!-- MAIN CONTENT -->
     <center>
         <ScrollPane fitToWidth="true"
@@ -115,7 +41,7 @@
                           prefHeight="360.0"
                           styleClass="game-banner-wrapper">
 
-                        <ImageView fitHeight="320.0"
+                        <ImageView fx:id="selectedGameBannerImage" fitHeight="320.0"
                                    fitWidth="1200.0"
                                    preserveRatio="false"
                                    styleClass="game-banner-image"/>
@@ -143,20 +69,24 @@
                                         left="40.0"/>
                             </padding>
 
-                            <Label text="GAME"
+                            <Label fx:id="selectedGameMainQuote"
+                                    text="GAME"
                                    styleClass="game-main-quote"/>
 
                             <VBox spacing="18.0">
 
-                                <Label wrapText="true"
+                                <Label fx:id="selectedGameDescription1"
+                                        wrapText="true"
                                        styleClass="game-description"
                                        text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
 
-                                <Label wrapText="true"
+                                <Label fx:id="selectedGameDescription2"
+                                       wrapText="true"
                                        styleClass="game-description"
                                        text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
 
-                                <Label wrapText="true"
+                                <Label fx:id="selectedGameDescription3"
+                                       wrapText="true"
                                        styleClass="game-description"
                                        text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
 
@@ -175,21 +105,22 @@
                                         left="40.0"/>
                             </padding>
 
-                            <Label text="GAME"
+                            <Label fx:id="selectedGameTitle"
+                                    text="GAME"
                                    styleClass="game-title"/>
 
                             <!-- TAGS -->
-                            <VBox spacing="10.0">
+                            <VBox  fx:id="tagContainerFather" spacing="10.0">
 
                                 <HBox spacing="10.0">
-                                    <Label text="Tag-1" styleClass="tag"/>
-                                    <Label text="Tag-2" styleClass="tag"/>
-                                    <Label text="Tag-3" styleClass="tag"/>
+                                    <Label fx:id="selectedGameTag1" text="Tag-1" styleClass="tag"/>
+                                    <Label fx:id="selectedGameTag12" styleClass="tag"/>
+                                    <Label fx:id="selectedGameTag13" styleClass="tag"/>
                                 </HBox>
 
                                 <HBox spacing="10.0">
-                                    <Label text="Tag-4" styleClass="tag"/>
-                                    <Label text="Tag-5" styleClass="tag"/>
+                                    <Label fx:id="selectedGameTag2" text="Tag-4" styleClass="tag"/>
+                                    <Label fx:id="selectedGameTag22" text="Tag-5" styleClass="tag"/>
                                 </HBox>
 
                             </VBox>
@@ -197,25 +128,29 @@
                             <!-- INFO -->
                             <VBox spacing="14.0">
 
-                                <Label text="Title: GAME"
+                                <Label fx:id="selectedGameTitle2"
+                                        text="Title: GAME"
                                        styleClass="game-info"/>
 
-                                <Label text="Genre: Genre"
+                                <Label fx:id="selectedGameGenre"
+                                        text="Genre: Genre"
                                        styleClass="game-info"/>
 
-                                <Label text="Developer: Developer"
+                                <Label fx:id="selectedGameDeveloper"
+                                        text="Developer: Developer"
                                        styleClass="game-info"/>
 
                             </VBox>
 
                             <!-- BUTTONS -->
                             <HBox spacing="18.0">
-
+                                <!-- todo deberia eliminarse el play en el game.fxml -->
                                 <Button text="Play"
                                         styleClass="game-play-button"/>
 
                                 <Button text="Download"
-                                        styleClass="game-download-button"/>
+                                        styleClass="game-download-button"
+                                        onAction="#onDownload"/>
 
                             </HBox>
 
