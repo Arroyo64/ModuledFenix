@@ -113,12 +113,12 @@ public class ProfileController implements Initializable {
 
     @FXML
     void switchLibraryScene() {
-        stageManager.switchToNextScene(FxmlView.LIBRARY);
+        stageManager.switchScene(FxmlView.LIBRARY);
     }
 
     @FXML
     void switchToMarketplaceScene() {
-        stageManager.switchToNextScene(FxmlView.MARKETPLACE);
+        stageManager.switchScene(FxmlView.MARKETPLACE);
     }
 
     @FXML
@@ -162,7 +162,7 @@ public class ProfileController implements Initializable {
 
     @FXML
     void switchToUploadGameScene() {
-        stageManager.switchToNextScene(FxmlView.UPLOAD_GAME);
+        stageManager.switchScene(FxmlView.UPLOAD_GAME);
     }
 }
 

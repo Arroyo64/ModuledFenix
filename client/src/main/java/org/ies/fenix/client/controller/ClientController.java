@@ -124,7 +124,7 @@ public class ClientController implements Initializable {
             );
 
             errorProperty.set(""); // limpia error
-            stageManager.switchToNextScene(FxmlView.MARKETPLACE);
+            stageManager.switchScene(FxmlView.MARKETPLACE);
 
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -168,7 +168,7 @@ public class ClientController implements Initializable {
             }
 
             errorProperty.set("");
-            stageManager.switchToNextScene(FxmlView.LOGIN);
+            stageManager.switchScene(FxmlView.LOGIN);
 
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -178,7 +178,7 @@ public class ClientController implements Initializable {
 
     @FXML
     void switchEmailFormView() {
-        stageManager.switchToNextScene(FxmlView.EMAIL);
+        stageManager.switchScene(FxmlView.EMAIL);
     }
 
     void setEmail(String email) {

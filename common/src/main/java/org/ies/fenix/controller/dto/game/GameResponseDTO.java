@@ -36,4 +36,7 @@ public class GameResponseDTO {
     private List<String> tags;
 
     private List<TeaserResponseDTO> teasers;
+
+    public GameResponseDTO(Integer id, String title, String description, BigDecimal sizeMb, BigDecimal price, Integer downloads) {
+    }
 }

@@ -58,4 +58,10 @@ public class TokenService {
             authTokenRepository.save(token);
         });
     }
+    public static String extractBearerToken(String authorization) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return null;
+        }
+        return authorization.substring(7);
+    }
 }

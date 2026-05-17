@@ -17,16 +17,13 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class Main extends Application {
 
     private static Stage stage;
-
     private StageManager stageManager;
 
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
 
-        SceneResizeListener resizeListener = newWidth -> {
-            System.out.println("Scene resized: " + newWidth);
-        };
+        SceneResizeListener resizeListener = newWidth -> System.out.println("Scene resized: " + newWidth);
 
         FxmlLoader fxmlLoader = new FxmlLoader();
         String applicationTitle = "Fenix";
@@ -50,6 +47,7 @@ public class Main extends Application {
         );
 
         fxmlLoader.setControllerFactory(clazz -> {
+
             if (clazz == ClientController.class) {
                 return new ClientController(stageManager, clientApiService, sessionManager);
             }
@@ -71,11 +69,19 @@ public class Main extends Application {
             }
 
             if (clazz == GameController.class) {
-                return new GameController(stageManager, clientApiService, gamesApiService, sessionManager);
+                return new GameController(stageManager, clientApiService, gamesApiService, sessionManager, restClient);
             }
 
             if (clazz == UploadGameController.class) {
                 return new UploadGameController(stageManager, gamesApiService, sessionManager, restClient);
+            }
+
+            if (clazz == BaseLayoutController.class) {
+                return new BaseLayoutController();
+            }
+
+            if (clazz == NavbarController.class) {
+                return new NavbarController(stageManager, clientApiService, sessionManager);
             }
 
             try {

@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.ies.fenix.controller.IClientController;
 import org.springframework.web.bind.annotation.*;
 
+import static org.ies.fenix.server.services.TokenService.extractBearerToken;
+
 @RestController
 public class ClientController implements IClientController {
 
     @Autowired
     private ClientService clientService;
 
+    @Override
     public ResponseEntity<RegisterResponseDTO> register(ClientRegisterDTO dto) {
         if (dto == null) {
             return ResponseEntity.badRequest().build();
@@ -21,7 +24,7 @@ public class ClientController implements IClientController {
         return ResponseEntity.ok(clientService.register(dto));
     }
 
-
+    @Override
     public ResponseEntity<LoginResponseDTO> login(ClientLoginDTO dto) {
         if (dto == null) {
             return ResponseEntity.badRequest().build();
@@ -29,6 +32,7 @@ public class ClientController implements IClientController {
         return ResponseEntity.ok(clientService.login(dto));
     }
 
+    @Override
     public ResponseEntity<Void> logout(String authorization) {
         String token = extractBearerToken(authorization);
         if (token != null) {
@@ -37,12 +41,6 @@ public class ClientController implements IClientController {
         return ResponseEntity.ok().build();
     }
 
-    private String extractBearerToken(String authorization) {
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            return null;
-        }
-        return authorization.substring(7);
-    }
 
     @Override
     public ResponseEntity<ClientInfoDTO> getClientInfo(String authorization) {

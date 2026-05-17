@@ -93,7 +93,7 @@ public class EmailFormController implements Initializable {
     }
 
     @FXML
-    void switchLogInView(){ stageManager.switchToNextScene(FxmlView.LOGIN);}
+    void switchLogInView(){ stageManager.switchScene(FxmlView.LOGIN);}
 
 
 

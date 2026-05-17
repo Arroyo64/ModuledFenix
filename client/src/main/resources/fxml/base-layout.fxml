@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ProgressBar?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ies.fenix.client.controller.BaseLayoutController"
+            prefWidth="1400" prefHeight="850">
+
+    <!-- NAVBAR GLOBAL -->
+    <top>
+        <fx:include fx:id="navbar" source="navbar.fxml"/>    </top>
+
+    <!-- CONTENIDO DINÁMICO -->
+    <center>
+        <StackPane fx:id="contentArea"/>
+    </center>
+
+    <!-- PROGRESS BAR GLOBAL -->
+    <bottom>
+        <HBox alignment="BOTTOM_RIGHT">
+            <ProgressBar fx:id="globalProgressBar"
+                         prefWidth="260"
+                         progress="0"
+                         visible="false"
+                         managed="false"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -66,17 +66,17 @@ public class LibraryController {
 
     @FXML
     void switchProfileScene() {
-        stageManager.switchToNextScene(FxmlView.PROFILE);
+        stageManager.switchScene(FxmlView.PROFILE);
     }
 
     @FXML
     void switchToMarketplaceScene() {
-        stageManager.switchToNextScene(FxmlView.MARKETPLACE);
+        stageManager.switchScene(FxmlView.MARKETPLACE);
     }
 
     @FXML
     void switchToUploadGameScene() {
-        stageManager.switchToNextScene(FxmlView.UPLOAD_GAME);
+        stageManager.switchScene(FxmlView.UPLOAD_GAME);
     }
 
     @FXML

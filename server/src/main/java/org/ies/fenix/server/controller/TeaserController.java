@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/teasers")
 public class TeaserController implements ITeaserController {
 
     @Autowired

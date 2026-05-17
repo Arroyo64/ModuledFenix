@@ -24,64 +24,6 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ies.fenix.client.controller.LibraryController">
 
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="content-container">
-            <padding>
-                <Insets top="30.0" right="30.0" bottom="0.0" left="30.0"/>
-            </padding>
-
-            <Button styleClass="nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="22" iconColor="#9A9A9A"/>
-                </graphic>
-            </Button>
-
-            <Button styleClass="nav-button">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="22" iconColor="#9A9A9A"/>
-                </graphic>
-            </Button>
-
-            <Hyperlink text="MARKET PLACE" styleClass="tab-inactive" onAction="#switchToMarketplaceScene"/>
-            <Hyperlink text="LIBRARY" styleClass="tab-active" onAction="#reloadView"/>
-            <Hyperlink fx:id="username" text="USERNAME" styleClass="tab-inactive" onAction="#switchProfileScene"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <Button text="Create your own visual novel"
-                    styleClass="main-action-button"
-                    onAction="#switchToUploadGameScene"/>
-
-            <StackPane prefWidth="40"
-                       prefHeight="40"
-                       minWidth="40"
-                       minHeight="40"
-                       maxWidth="40"
-                       maxHeight="40"
-                       styleClass="profile-wrapper">
-
-                <!-- Icono por defecto -->
-                <FontIcon fx:id="topProfileIcon"
-                          iconLiteral="mdi2a-account-outline"
-                          iconSize="22"
-                          iconColor="#B8B8B8"/>
-
-                <!-- Imagen -->
-                <ImageView fx:id="topProfileImage"
-                           fitWidth="40"
-                           fitHeight="40"
-                           preserveRatio="true"
-                           visible="false"/>
-            </StackPane>
-
-            <Label styleClass="dropdown-icon">
-                <graphic>
-                    <FontIcon iconLiteral="mdi2c-chevron-down" iconSize="18" iconColor="#9A9A9A"/>
-                </graphic>
-            </Label>
-        </HBox>
-    </top>
-
     <center>
         <HBox spacing="0.0" styleClass="library-main-container">
 

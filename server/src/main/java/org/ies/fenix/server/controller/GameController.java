@@ -5,6 +5,7 @@ import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.ies.fenix.controller.dto.game.GameSearchDTO;
 import org.ies.fenix.server.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -102,4 +103,24 @@ public class GameController implements IGameController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> downloadGame(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
+        try {
+            Resource file = gameService.downloadGame(id);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=\"" + file.getFilename() + "\"")
+                    .body(file);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
