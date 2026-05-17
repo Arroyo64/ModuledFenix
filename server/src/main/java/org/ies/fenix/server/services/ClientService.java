@@ -127,38 +127,65 @@ public class ClientService {
     }
     public ServerResponseDTO uploadImageProfile(FileUploadDTO dto, String token) {
         Client client = getClient(token);
-        if (client == null) {
-            return new ServerResponseDTO("ERROR", "Token is not valid");
-        }
-        if (dto.getBytes() == null) {
-            return new ServerResponseDTO("ERROR", "No image provided");
-        }
+        if (client == null) return new ServerResponseDTO("ERROR", "Token is not valid");
+        if (dto.getBytes() == null) return new ServerResponseDTO("ERROR", "No image provided");
+
         try {
-            String contentType = FileUtils.getContentType(dto.getBytes(), dto.getFileName());
-            if (!contentType.startsWith("image/")) {
+            // Validación EXACTA como antes
+            String detectedType = FileUtils.getContentType(dto.getBytes(), dto.getFileName());
+            if (!detectedType.startsWith("image/")) {
                 return new ServerResponseDTO("ERROR", "File type not supported");
             }
-            if (!contentType.equals(dto.getFileType())) {
+
+            if (!detectedType.equals(dto.getFileType())) {
                 return new ServerResponseDTO("ERROR", "Invalid file type");
             }
+
+            // UUID estable
             String key = client.getProfileImageKey();
             if (key == null) {
-                key = UUID.randomUUID().toString().replace("-", "");
+                key = java.util.UUID.randomUUID().toString().replace("-", "");
             }
-            String folder = "uploads/profile/" + client.getId();
-            new File(folder).mkdirs();
-            String extension = "." + FilenameUtils.getExtension(dto.getFileName());
-            String path = folder + "/" + key + extension;
-            try (FileOutputStream fos = new FileOutputStream(path)) {
+            final String finalKey = key;
+
+            // Carpeta del usuario
+            String folderPath = "uploads/profile/" + client.getId();
+            File folder = new File(folderPath);
+            if (!folder.exists()) folder.mkdirs();
+
+            // BORRAR cualquier archivo previo con el mismo UUID
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    if (f.getName().startsWith(finalKey + ".")) {
+                        f.delete();
+                    }
+                }
+            }
+
+            // Extensión original
+            String ext = FileUtils.getExtension(dto.getFileName());
+            if (ext.isEmpty()) {
+                // fallback mínimo
+                ext = "img";
+            }
+
+            // Guardar archivo tal cual
+            String filePath = folderPath + "/" + finalKey + "." + ext;
+            try (FileOutputStream fos = new FileOutputStream(filePath)) {
                 fos.write(dto.getBytes());
             }
-            client.setProfileImageKey(key);
+
+            client.setProfileImageKey(finalKey);
             clientRepository.save(client);
+
             return new ServerResponseDTO("OK", "Image uploaded successfully");
+
         } catch (IOException e) {
-            return new ServerResponseDTO("ERROR", "Error getting content type");
+            return new ServerResponseDTO("ERROR", "Error saving image");
         }
     }
+
     public ServerResponseDTO deleteImageProfile(String token) {
         Client client = getClient(token);
         if (client == null) {
@@ -195,26 +222,26 @@ public class ClientService {
 
     public byte[] getProfilePicture(String authorization) {
         Client client = getClient(authorization);
-        if (client == null) {
-            return new byte[0];
-        }
+        if (client == null) return new byte[0];
+
         String key = client.getProfileImageKey();
-        if (key == null) {
-            return new byte[0];
-        }
-        Path folder = Paths.get("uploads", "profile", String.valueOf(client.getId()));
-        File dir = folder.toFile();
+        if (key == null) return new byte[0];
 
-        File[] files = dir.listFiles((d, name) -> name.startsWith(key + "."));
-        if (files == null || files.length == 0) {
-            return new byte[0];
+        File folder = new File("uploads/profile/" + client.getId());
+        if (!folder.exists()) return new byte[0];
+
+        File[] files = folder.listFiles();
+        if (files == null) return new byte[0];
+
+        for (File f : files) {
+            if (f.getName().startsWith(key + ".")) {
+                try {
+                    return java.nio.file.Files.readAllBytes(f.toPath());
+                } catch (IOException ignored) {}
+            }
         }
 
-        try {
-            return Files.readAllBytes(files[0].toPath());
-        } catch (IOException e) {
-            // log.error(...)
-            return new byte[0];
-        }
+        return new byte[0];
     }
+
 }

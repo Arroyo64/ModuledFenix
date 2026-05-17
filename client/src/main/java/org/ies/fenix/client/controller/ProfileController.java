@@ -2,16 +2,14 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
-import org.ies.fenix.client.utils.ImageUtils;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
@@ -19,7 +17,6 @@ import org.ies.fenix.controller.dto.client.FileUploadDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -125,7 +122,7 @@ public class ProfileController implements Initializable {
     public void uploadProfilePicture() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
         );
 
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -137,26 +134,77 @@ public class ProfileController implements Initializable {
 
             FileUploadDTO dto = new FileUploadDTO(selectedFile.getName(), mimeType, bytes);
 
-            ResponseEntity<ServerResponseDTO> response =
-                    clientApiService.uploadProfilePicture(buildHeader(), dto);
+            ResponseEntity<ServerResponseDTO> response;
 
-            if (response.getStatusCode().value() == 200) {
+            try {
+                response = clientApiService.uploadProfilePicture(buildHeader(), dto);
 
-                // 1. Actualizar imagen en Profile.fxml
-                profileImage.setImage(new Image(selectedFile.toURI().toString()));
+            } catch (org.springframework.web.client.HttpClientErrorException e) {
+                showAlert("no se pudo subir la imagen", e.getResponseBodyAsString());
+                return;
+            }
+
+            if (response.getStatusCode().value() != 200) {
+                showAlert(
+                        "no se pudo subir la imagen",
+                        response.getBody() != null ? response.getBody().getMessage() : "error desconocido"
+                );
+                return;
+            }
+
+            ResponseEntity<byte[]> updatedImage =
+                    clientApiService.getProfileImage(buildHeader());
+
+            if (updatedImage.getStatusCode().value() == 200) {
+                setCoverImage(updatedImage.getBody(), profileImage, 180);
                 profileIcon.setVisible(false);
 
-                // 2. Actualizar imagen en NAVBAR
                 NavbarController navbar = stageManager.getBaseLayoutController().getNavbarController();
-                setAvatar(bytes, navbar.getTopProfileImage(), navbar.getTopProfileIcon(), 40);
+                setAvatar(updatedImage.getBody(), navbar.getTopProfileImage(), navbar.getTopProfileIcon(), 40);
 
-                System.out.println("Profile picture updated");
+                System.out.println("profile picture updated");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    private void showAlert(String header, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+
+        if (message == null || message.isBlank()) {
+            message = "Ha ocurrido un error desconocido.";
+        }
+
+        // icono Ikonli
+        FontIcon icon = new FontIcon("mdi2a-alert-circle");
+        icon.setIconSize(48);
+        icon.getStyleClass().add("alert-icon");
+
+        Label title = new Label(header);
+        title.getStyleClass().add("alert-title");
+
+        Label text = new Label(message);
+        text.setWrapText(true);
+        text.getStyleClass().add("alert-message");
+
+        VBox content = new VBox(12, icon, title, text);
+        content.setAlignment(Pos.CENTER);
+        content.getStyleClass().add("alert-content");
+
+        alert.getDialogPane().setContent(content);
+
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/styles/alert.css").toExternalForm()
+        );
+        alert.setGraphic(null);
+        alert.showAndWait();
+    }
+
 
 
     @FXML
