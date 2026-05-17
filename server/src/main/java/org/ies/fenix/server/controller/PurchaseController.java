@@ -2,7 +2,6 @@ package org.ies.fenix.server.controller;
 
 
 import org.ies.fenix.controller.IPurchaseController;
-import org.ies.fenix.controller.dto.purchase.DownloadResponseDTO;
 import org.ies.fenix.controller.dto.purchase.LibraryGameDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseResponseDTO;
@@ -21,7 +20,7 @@ public class PurchaseController implements IPurchaseController {
     private PurchaseService purchaseService;
 
     @Override
-    public ResponseEntity<?> createPurchase(PurchaseCreateDTO dto) {
+    public ResponseEntity<?> createPurchase(String authorization, PurchaseCreateDTO dto) {
         try {
             PurchaseResponseDTO response = purchaseService.createPurchase(dto);
             if (response == null) {
@@ -36,16 +35,7 @@ public class PurchaseController implements IPurchaseController {
     }
 
     @Override
-    public ResponseEntity<List<PurchaseResponseDTO>> getByClientId(Integer clientId) {
-        try {
-            return ResponseEntity.ok(purchaseService.getByClientId(clientId));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<List<LibraryGameDTO>> getLibraryByClientId(Integer clientId) {
+    public ResponseEntity<List<LibraryGameDTO>> getLibraryByClientId(String authorization, Integer clientId) {
         try {
             return ResponseEntity.ok(purchaseService.getLibraryByClientId(clientId));
         } catch (Exception e) {
@@ -54,15 +44,18 @@ public class PurchaseController implements IPurchaseController {
     }
 
     @Override
-    public ResponseEntity<DownloadResponseDTO> downloadGame(Integer clientId, Integer gameId) {
+    @GetMapping("/api/purchases/hasPurchased")
+    public ResponseEntity<Boolean> hasPurchased(
+            String authorization,
+            Integer clientId,
+            Integer gameId
+    ) {
         try {
-            DownloadResponseDTO response = purchaseService.downloadGame(clientId, gameId);
-            if (response == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(response);
+            boolean purchased = purchaseService.hasPurchased(clientId, gameId);
+            return ResponseEntity.ok(purchased);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(false);
         }
     }
+
 }

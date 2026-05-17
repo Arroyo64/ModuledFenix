@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryGameDTO {
+    //Para filtrar los games que se cargen
     private Integer gameId;
+    //Cargar el name de los game en el fxml
     private String title;
-    private String description;
-    private BigDecimal tamanoMb;
-    private Integer downloads;
-    private BigDecimal price;
 }

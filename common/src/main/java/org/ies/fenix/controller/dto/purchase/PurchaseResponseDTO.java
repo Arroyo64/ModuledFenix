@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseResponseDTO {
+public class PurchaseResponseDTO { //para crear una factura asi como hicimos con Diego-San
     private Integer id;
     private Integer clientId;
     private Integer gameId;

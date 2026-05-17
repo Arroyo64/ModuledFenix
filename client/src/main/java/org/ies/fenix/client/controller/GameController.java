@@ -13,7 +13,9 @@ import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
+import org.ies.fenix.controller.IPurchaseController;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
+import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -83,18 +85,24 @@ public class GameController {
     private final IGameController gameApiService;
     private final SessionManager sessionManager;
     private final RestClient restClient;
+    private final IPurchaseController purchaseApiService;
 
     private Integer selectedGameId;
+
+    public void setSelectedGameId(Integer selectedGameId) {
+        this.selectedGameId = selectedGameId;
+    }
 
     public GameController(StageManager stageManager,
                           IClientController clientApiService,
                           IGameController gameApiService,
-                          SessionManager sessionManager, RestClient restClient) {
+                          SessionManager sessionManager, RestClient restClient, IPurchaseController purchaseApiService) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
         this.restClient = restClient;
+        this.purchaseApiService = purchaseApiService;
         BaseLayoutController base = stageManager.getBaseLayoutController();
     }
 
@@ -132,7 +140,31 @@ public class GameController {
 
     @FXML
     private void onDownload() {
+
         try {
+            if (selectedGameId == null) {
+                showError("No game selected", "Please select a game to download.");
+                return;
+            }
+
+            // 1. Comprobar si ya lo tiene comprado
+            boolean purchased = hasPurchased(selectedGameId);
+
+            if (!purchased) {
+                // 2. Mostrar confirmación
+                boolean confirmed = showPurchaseConfirmation();
+
+                if (!confirmed) {
+                    return; // usuario canceló
+                }
+
+                // 3. Ejecutar compra
+                boolean success = performPurchase(selectedGameId);
+
+                if (!success) {
+                    return; // no continuar si la compra falló
+                }
+            }
             if (selectedGameId == null) {
                 showError("No game selected", "Please select a game to download.");
                 return;
@@ -234,4 +266,50 @@ public class GameController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    private boolean hasPurchased(Integer gameId) {
+        Integer clientId = sessionManager.getClientId();
+
+        try {
+            ResponseEntity<Boolean> response =
+                    purchaseApiService.hasPurchased(sessionManager.getAuthorizationHeader(),clientId, gameId);
+
+            Boolean purchased = response.getBody();
+            return purchased != null && purchased;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    private boolean showPurchaseConfirmation() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm purchase");
+        alert.setHeaderText("You don't own this game");
+        alert.setContentText("Do you want to acquire this game?");
+
+        ButtonType yes = new ButtonType("Yes");
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(yes, no);
+
+        return alert.showAndWait().orElse(no) == yes;
+    }
+
+    private boolean performPurchase(Integer gameId) {
+        Integer clientId = sessionManager.getClientId();
+
+        try {
+            PurchaseCreateDTO dto = new PurchaseCreateDTO();
+            dto.setClientId(clientId);
+            dto.setGameId(gameId);
+
+            ResponseEntity<?> response = purchaseApiService.createPurchase(sessionManager.getAuthorizationHeader(),dto);
+
+            return response.getStatusCode().is2xxSuccessful();
+
+        } catch (Exception e) {
+            showError("Purchase failed", "Could not complete the purchase.");
+            return false;
+        }
+    }
+
 }

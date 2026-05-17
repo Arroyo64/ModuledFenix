@@ -38,18 +38,6 @@ public class ProfileController implements Initializable {
 
     @FXML
     public PasswordField passwordField;
-    @FXML
-    public FontIcon topProfileIcon;
-    @FXML
-    public ImageView topProfileImage;
-    @FXML
-    private Hyperlink username;
-
-    @FXML
-    private Hyperlink marketplace;
-
-    @FXML
-    private Hyperlink library;
 
     @FXML
     private TextArea bio;
@@ -63,22 +51,17 @@ public class ProfileController implements Initializable {
     private final StageManager stageManager;
     private final IClientController clientApiService;
     private final SessionManager sessionManager;
-    private static final String SERVER_URL = "http://localhost:8080";
 
     public ProfileController(StageManager stageManager, IClientController clientApiService, SessionManager sessionManager) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.sessionManager = sessionManager;
-
-
     }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader());
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
-                username.setText(response.getBody().getUsername().toUpperCase());
                 nameField.setText(response.getBody().getUsername());
                 emailField.setText(response.getBody().getEmail());
                 passwordField.setText(buildStingWithCharsOf(response.getBody().getPasswordCharacter()));
@@ -91,7 +74,6 @@ public class ProfileController implements Initializable {
             if (image.getStatusCode().value() == 200) {
                 setCoverImage(image.getBody(), profileImage, 180);
                 profileIcon.setVisible(false);
-                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,23 +124,40 @@ public class ProfileController implements Initializable {
     @FXML
     public void uploadProfilePicture() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile == null) return;
+
         try {
             String mimeType = Files.probeContentType(selectedFile.toPath());
             byte[] bytes = Files.readAllBytes(selectedFile.toPath());
+
             FileUploadDTO dto = new FileUploadDTO(selectedFile.getName(), mimeType, bytes);
-            ResponseEntity<ServerResponseDTO> response = clientApiService.uploadProfilePicture(buildHeader(), dto);
+
+            ResponseEntity<ServerResponseDTO> response =
+                    clientApiService.uploadProfilePicture(buildHeader(), dto);
+
             if (response.getStatusCode().value() == 200) {
-                System.out.println("Profile picture updated");
+
+                // 1. Actualizar imagen en Profile.fxml
                 profileImage.setImage(new Image(selectedFile.toURI().toString()));
-                stageManager.reloadCurrentScene();
+                profileIcon.setVisible(false);
+
+                // 2. Actualizar imagen en NAVBAR
+                NavbarController navbar = stageManager.getBaseLayoutController().getNavbarController();
+                setAvatar(bytes, navbar.getTopProfileImage(), navbar.getTopProfileIcon(), 40);
+
+                System.out.println("Profile picture updated");
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     void switchToUploadGameScene() {

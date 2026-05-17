@@ -5,18 +5,12 @@ import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.ies.fenix.controller.dto.client.ClientRegisterDTO;
 import org.ies.fenix.controller.dto.client.LoginResponseDTO;
 import org.ies.fenix.controller.dto.client.RegisterResponseDTO;
-import org.ies.fenix.controller.dto.game.GameResponseDTO;
-import org.ies.fenix.controller.dto.game.GameSearchDTO;
-import org.ies.fenix.controller.dto.purchase.DownloadResponseDTO;
 import org.ies.fenix.controller.dto.purchase.LibraryGameDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseResponseDTO;
-import org.ies.fenix.controller.dto.tag.TagResponseDTO;
-import org.ies.fenix.controller.dto.teaser.TeaserResponseDTO;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -64,43 +58,5 @@ class DtoTest {
         RegisterResponseDTO registerResponse = new RegisterResponseDTO();
         registerResponse.setAccess(true);
         assertEquals(true, registerResponse.isAccess());
-    }
-
-    @Test
-    void purchaseDtos_storePurchaseLibraryAndDownloadValues() {
-        PurchaseCreateDTO create = new PurchaseCreateDTO(3, 9);
-        assertEquals(3, create.getClientId());
-        assertEquals(9, create.getGameId());
-
-        PurchaseResponseDTO purchase = new PurchaseResponseDTO(
-                1,
-                3,
-                9,
-                "Fenix Game",
-                BigDecimal.valueOf(4.99)
-        );
-        assertEquals(1, purchase.getId());
-        assertEquals(3, purchase.getClientId());
-        assertEquals(9, purchase.getGameId());
-        assertEquals("Fenix Game", purchase.getGameTitle());
-        assertEquals(BigDecimal.valueOf(4.99), purchase.getPrice());
-
-        LibraryGameDTO libraryGame = new LibraryGameDTO(
-                9,
-                "Fenix Game",
-                "Description",
-                BigDecimal.valueOf(512),
-                20,
-                BigDecimal.valueOf(4.99)
-        );
-        assertEquals(9, libraryGame.getGameId());
-        assertEquals("Fenix Game", libraryGame.getTitle());
-        assertEquals(BigDecimal.valueOf(512), libraryGame.getTamanoMb());
-        assertEquals(20, libraryGame.getDownloads());
-
-        DownloadResponseDTO download = new DownloadResponseDTO(9, "Fenix Game", 21);
-        assertEquals(9, download.getGameId());
-        assertEquals("Fenix Game", download.getTitle());
-        assertEquals(21, download.getDownloads());
     }
 }

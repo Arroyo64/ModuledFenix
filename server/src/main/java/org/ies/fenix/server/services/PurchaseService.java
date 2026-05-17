@@ -1,6 +1,5 @@
 package org.ies.fenix.server.services;
 
-import org.ies.fenix.controller.dto.purchase.DownloadResponseDTO;
 import org.ies.fenix.controller.dto.purchase.LibraryGameDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseResponseDTO;
@@ -31,36 +30,25 @@ public class PurchaseService {
 
     public PurchaseResponseDTO createPurchase(PurchaseCreateDTO dto) {
         Client client = clientRepository.findById(dto.getClientId()).orElse(null);
-        if (client == null) {
-            return null;
-        }
+        if (client == null) return null;
 
         Game game = gameRepository.findById(dto.getGameId()).orElse(null);
-        if (game == null) {
-            return null;
-        }
+        if (game == null) return null;
 
-        boolean alreadyPurchased = purchaseRepository.existsByClientIdAndGameId(dto.getClientId(), dto.getGameId());
-        if (alreadyPurchased) {
+        if (purchaseRepository.existsByClientIdAndGameId(dto.getClientId(), dto.getGameId())) {
             throw new AlreadyPurchasedException("El cliente ya compró este juego");
         }
 
+        // Registrar compra
         Purchase purchase = new Purchase();
         purchase.setClient(client);
         purchase.setGame(game);
         Purchase saved = purchaseRepository.save(purchase);
+
+        // Incrementar descargas aquí
+        game.setDownloads(game.getDownloads() + 1);
+        gameRepository.save(game);
         return toResponseDTO(saved);
-    }
-
-    public List<PurchaseResponseDTO> getByClientId(Integer clientId) {
-        List<Purchase> purchases = purchaseRepository.findByClientId(clientId);
-        List<PurchaseResponseDTO> response = new ArrayList<>();
-
-        for (Purchase purchase : purchases) {
-            response.add(toResponseDTO(purchase));
-        }
-
-        return response;
     }
 
     public List<LibraryGameDTO> getLibraryByClientId(Integer clientId) {
@@ -69,50 +57,13 @@ public class PurchaseService {
 
         for (Purchase purchase : purchases) {
             Game game = purchase.getGame();
-
             LibraryGameDTO dto = new LibraryGameDTO();
             dto.setGameId(game.getId());
             dto.setTitle(game.getTitle());
-            dto.setDescription(game.getDescription());
-            dto.setTamanoMb(game.getSizeMb());
-            dto.setDownloads(game.getDownloads());
-            dto.setPrice(game.getPrice());
-
             library.add(dto);
         }
 
         return library;
-    }
-
-    public DownloadResponseDTO downloadGame(Integer clientId, Integer gameId) {
-        boolean purchased = purchaseRepository.existsByClientIdAndGameId(clientId, gameId);
-        if (!purchased) {
-            return null;
-        }
-
-        Game game = gameRepository.findById(gameId).orElse(null);
-        if (game == null) {
-            return null;
-        }
-
-        Integer downloads = game.getDownloads();
-        if (downloads == null) {
-            downloads = 0;
-        }
-
-        game.setDownloads(downloads + 1);
-        Game updatedGame = gameRepository.save(game);
-
-        DownloadResponseDTO dto = new DownloadResponseDTO();
-        dto.setGameId(updatedGame.getId());
-        dto.setTitle(updatedGame.getTitle());
-        dto.setDownloads(updatedGame.getDownloads());
-
-        return dto;
-    }
-
-    public boolean hasPurchased(Integer clientId, Integer gameId) {
-        return purchaseRepository.existsByClientIdAndGameId(clientId, gameId);
     }
 
     private PurchaseResponseDTO toResponseDTO(Purchase purchase) {
@@ -124,4 +75,9 @@ public class PurchaseService {
         dto.setPrice(purchase.getGame().getPrice());
         return dto;
     }
+
+    public boolean hasPurchased(Integer clientId, Integer gameId) {
+        return purchaseRepository.existsByClientIdAndGameId(clientId, gameId);
+    }
+
 }
