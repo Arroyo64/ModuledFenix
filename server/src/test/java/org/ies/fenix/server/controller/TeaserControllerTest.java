@@ -69,7 +69,7 @@ class TeaserControllerTest {
         TeaserResponseDTO dto = new TeaserResponseDTO();
         dto.setId(10);
         dto.setGameId(1);
-        dto.setFileName("cover.png");
+        dto.setObjectKey("cover.png");
         dto.setType("image");
         return dto;
     }

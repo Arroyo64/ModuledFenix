@@ -6,7 +6,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
@@ -141,14 +145,15 @@ public class MarketplaceController implements Initializable {
             index++;
         }
     }
+
     private Label createEmptyGamesMessage(String text) {
         Label emptyLabel = new Label(text);
         emptyLabel.setStyle("""
-            -fx-font-size: 18px;
-            -fx-text-fill: #777777;
-            -fx-font-weight: bold;
-            -fx-padding: 20 0 20 0;
-            """);
+                -fx-font-size: 18px;
+                -fx-text-fill: #777777;
+                -fx-font-weight: bold;
+                -fx-padding: 20 0 20 0;
+                """);
         return emptyLabel;
     }
 
@@ -177,21 +182,23 @@ public class MarketplaceController implements Initializable {
 
         Label titleLabel = new Label(getSafeText(game.getTitle(), "Untitled"));
         titleLabel.getStyleClass().add("card-title");
+        titleLabel.setWrapText(true);
+        titleLabel.setMaxWidth(110.0);
 
-        HBox tagsContainer = new HBox();
-        tagsContainer.setSpacing(8.0);
+        System.out.println("Marketplace game: " + game.getTitle() + " tags: " + game.getTags());
 
-        if (game.getTags() != null) {
-            game.getTags().stream()
-                    .limit(3)
-                    .forEach(tagName -> {
-                        Label tagLabel = new Label(tagName);
-                        tagLabel.getStyleClass().add("tag");
-                        tagsContainer.getChildren().add(tagLabel);
-                    });
-        }
+        GridPane tagsGrid = createMarketplaceTagsGrid(game.getTags());
 
-        card.getChildren().addAll(imageWrapper, titleLabel, tagsContainer);
+        HBox infoRow = new HBox(10.0);
+        infoRow.setAlignment(Pos.TOP_LEFT);
+        infoRow.setPrefWidth(280.0);
+        infoRow.setMaxWidth(280.0);
+
+        HBox.setHgrow(titleLabel, Priority.ALWAYS);
+
+        infoRow.getChildren().addAll(titleLabel, tagsGrid);
+
+        card.getChildren().addAll(imageWrapper, infoRow);
 
         wrapper.getChildren().add(card);
 
@@ -199,6 +206,39 @@ public class MarketplaceController implements Initializable {
         wrapper.setStyle("-fx-cursor: hand;");
 
         return wrapper;
+    }
+
+    private GridPane createMarketplaceTagsGrid(List<String> tags) {
+        GridPane tagsGrid = new GridPane();
+        tagsGrid.setHgap(4.0);
+        tagsGrid.setVgap(4.0);
+        tagsGrid.setAlignment(Pos.TOP_RIGHT);
+
+        if (tags == null || tags.isEmpty()) {
+            return tagsGrid;
+        }
+
+        List<String> visibleTags = tags.stream()
+                .limit(6)
+                .toList();
+
+        for (int i = 0; i < visibleTags.size(); i++) {
+            Label tagLabel = new Label(visibleTags.get(i));
+            tagLabel.getStyleClass().add("tag");
+
+            tagLabel.setStyle("""
+                    -fx-font-size: 9px;
+                    -fx-padding: 2 6 2 6;
+                    -fx-background-radius: 5px;
+                    """);
+
+            int col = i % 3;
+            int row = i / 3;
+
+            tagsGrid.add(tagLabel, col, row);
+        }
+
+        return tagsGrid;
     }
 
     private void loadHorizontalOneIntoImageView(GameResponseDTO game, ImageView imageView) {
@@ -229,7 +269,6 @@ public class MarketplaceController implements Initializable {
             }
 
             setCoverImage(response.getBody(), imageView, 260.0, 150.0);
-
 
         } catch (Exception e) {
             e.printStackTrace();

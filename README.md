@@ -1,24 +1,77 @@
-# ModuleFenix
+# Fenix
 
-Repositorio principal actual del proyecto Fenix.
+Fenix es una aplicación de escritorio desarrollada en JavaFX con backend en Spring Boot.  
+El objetivo del proyecto es crear una plataforma para publicar, descubrir, adquirir y gestionar novelas visuales o juegos narrativos.
 
-## Desarrollo activo
+El proyecto está organizado como una aplicación modular con tres partes principales:
 
-El desarrollo actual del proyecto se realiza sobre la rama `master`.
+- `client`: aplicación JavaFX.
+- `server`: backend REST con Spring Boot.
+- `common`: interfaces y DTO compartidos entre cliente y servidor.
 
-## Ramas históricas
+---
 
-Este repositorio conserva historial de proyectos anteriores en las siguientes ramas:
+## Tecnologías utilizadas
 
-- `archive/clientapp`
-- `archive/fenixserver`
-- `archive/gui-app`
-- `archive/demo-repository`
+### General
 
-Estas ramas se mantienen únicamente con fines históricos, para poder consultar commits, autores y evolución del trabajo previo.
+- Java 21
+- Maven
+- Lombok
 
-## Importante
+### Cliente
 
-- Las ramas `archive/*` no forman parte del desarrollo actual.
-- Las ramas `archive/*` no deben fusionarse en `master`.
-- No deben abrirse Pull Requests desde las ramas `archive/*`, salvo para revisión histórica puntual.
+- JavaFX
+- FXML
+- CSS
+- Spring RestClient
+- Ikonli / Material Design Icons
+
+### Servidor
+
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- MySQL
+- Apache Tika
+- Commons IO
+
+---
+
+## Estructura del proyecto
+
+```text
+ModuledFenix/
+├── client/
+│   ├── src/main/java/org/ies/fenix/client/
+│   │   ├── api/
+│   │   ├── config/
+│   │   ├── controller/
+│   │   ├── listener/
+│   │   └── utils/
+│   └── src/main/resources/
+│       ├── fxml/
+│       ├── graphics/
+│       └── styles/
+│
+├── common/
+│   └── src/main/java/org/ies/fenix/controller/
+│       ├── dto/
+│       ├── IClientController.java
+│       ├── IGameController.java
+│       ├── IPurchaseController.java
+│       ├── ITagController.java
+│       └── ITeaserController.java
+│
+├── server/
+│   └── src/main/java/org/ies/fenix/server/
+│       ├── config/
+│       ├── controller/
+│       ├── exception/
+│       ├── models/
+│       ├── repositories/
+│       ├── services/
+│       └── utils/
+│
+└── pom.xml

@@ -30,17 +30,18 @@ class GameServiceFlowTest {
     private GameService gameService;
 
     @Test
-    void getGames_whenFilteringByTags_transformsGamesIntoDtos() {
-        List<String> tags = List.of("RPG", "Fantasy");
-        GameSearchDTO search = new GameSearchDTO(null, null, tags, null);
+    void getAllGames_returnsMarketplaceDtosWithTags() {
         Game game = gameWithTags();
 
-        when(gameRepository.findByAllTagNames(tags, tags.size())).thenReturn(List.of(game));
+        when(gameRepository.findAllWithDevAndTagsOrderByIdDesc())
+                .thenReturn(List.of(game));
 
-        List<GameResponseDTO> response = gameService.getGames(search);
+        List<GameResponseDTO> response = gameService.getAllGames();
 
         assertEquals(1, response.size());
-        GameResponseDTO dto = response.get(0);
+
+        GameResponseDTO dto = response.getFirst();
+
         assertEquals(10, dto.getId());
         assertEquals("Fenix Quest", dto.getTitle());
         assertEquals("Adventure game", dto.getDescription());
@@ -48,22 +49,58 @@ class GameServiceFlowTest {
         assertEquals("1.5K", dto.getDownloadsApproximation());
         assertEquals(BigDecimal.valueOf(19.99), dto.getPrice());
         assertEquals("devUser", dto.getDevUsername());
+        assertEquals("logo-key", dto.getGameLogoKey());
+        assertEquals("file-key", dto.getGameFileKey());
         assertEquals(List.of("RPG", "Fantasy"), dto.getTags());
-        verify(gameRepository).findByAllTagNames(tags, 2);
+
+        verify(gameRepository).findAllWithDevAndTagsOrderByIdDesc();
     }
 
     @Test
-    void getGameById_whenGameExists_fetchesEntityAndReturnsDto() {
+    void getGameById_whenGameExists_returnsDetailDtoWithTags() {
         Game game = gameWithTags();
-        when(gameRepository.findById(10)).thenReturn(Optional.of(game));
+
+        when(gameRepository.findByIdWithDevAndTags(10))
+                .thenReturn(Optional.of(game));
 
         GameResponseDTO dto = gameService.getGameById(10);
 
         assertNotNull(dto);
         assertEquals(10, dto.getId());
         assertEquals("Fenix Quest", dto.getTitle());
+        assertEquals("devUser", dto.getDevUsername());
         assertEquals(List.of("RPG", "Fantasy"), dto.getTags());
-        verify(gameRepository).findById(10);
+
+        verify(gameRepository).findByIdWithDevAndTags(10);
+    }
+
+    @Test
+    void getGameById_whenGameDoesNotExist_returnsNull() {
+        when(gameRepository.findByIdWithDevAndTags(99))
+                .thenReturn(Optional.empty());
+
+        GameResponseDTO dto = gameService.getGameById(99);
+
+        assertNull(dto);
+        verify(gameRepository).findByIdWithDevAndTags(99);
+    }
+
+    @Test
+    void getGames_whenFilteringByTags_usesTagRepositoryQueryAndReturnsDtos() {
+        List<String> tags = List.of("RPG", "Fantasy");
+        GameSearchDTO search = new GameSearchDTO(null, null, tags, null);
+        Game game = gameWithTags();
+
+        when(gameRepository.findByAllTagNames(tags, tags.size()))
+                .thenReturn(List.of(game));
+
+        List<GameResponseDTO> response = gameService.getGames(search);
+
+        assertEquals(1, response.size());
+        assertEquals("Fenix Quest", response.getFirst().getTitle());
+        assertEquals(List.of("RPG", "Fantasy"), response.getFirst().getTags());
+
+        verify(gameRepository).findByAllTagNames(tags, 2);
     }
 
     private Game gameWithTags() {
@@ -74,6 +111,7 @@ class GameServiceFlowTest {
         Tag rpg = new Tag();
         rpg.setId(1);
         rpg.setName("RPG");
+
         Tag fantasy = new Tag();
         fantasy.setId(2);
         fantasy.setName("Fantasy");
@@ -87,6 +125,9 @@ class GameServiceFlowTest {
         game.setPrice(BigDecimal.valueOf(19.99));
         game.setDev(dev);
         game.setTags(List.of(rpg, fantasy));
+        game.setGameLogoKey("logo-key");
+        game.setGameFileKey("file-key");
+
         return game;
     }
 }
