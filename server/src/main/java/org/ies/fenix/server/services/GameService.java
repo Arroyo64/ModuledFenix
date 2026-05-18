@@ -218,15 +218,45 @@ public class GameService {
     // ============================================================
 
     public GameResponseDTO getGameById(Integer id) {
-        return gameRepository.findById(id)
-                .map(this::toResponseDTO)
+        return gameRepository.findByIdWithDevAndTags(id)
+                .map(this::toGameDetailResponseDTO)
                 .orElse(null);
     }
 
+    private GameResponseDTO toGameDetailResponseDTO(Game game) {
+        GameResponseDTO dto = new GameResponseDTO();
+
+        dto.setId(game.getId());
+        dto.setTitle(game.getTitle());
+        dto.setDescription(game.getDescription());
+        dto.setSizeApproximation(formatSizeFromMB(game.getSizeMb()));
+        dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
+        dto.setPrice(game.getPrice());
+
+        if (game.getDev() != null) {
+            dto.setDevUsername(game.getDev().getUsername());
+        } else {
+            dto.setDevUsername("Unknown");
+        }
+
+        dto.setGameLogoKey(game.getGameLogoKey());
+        dto.setGameFileKey(game.getGameFileKey());
+
+        if (game.getTags() != null) {
+            dto.setTags(game.getTags().stream().map(Tag::getName).toList());
+        } else {
+            dto.setTags(List.of());
+        }
+
+        dto.setTeasers(List.of());
+
+        return dto;
+    }
+
     public List<GameResponseDTO> getAllGames() {
-        return gameRepository.findAllByOrderByIdDesc()
+        return gameRepository.findAllWithDevOrderByIdDesc()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(this::toMarketplaceResponseDTO)
                 .toList();
     }
 
@@ -296,6 +326,31 @@ public class GameService {
         return dto;
     }
 
+    private GameResponseDTO toMarketplaceResponseDTO(Game game) {
+        GameResponseDTO dto = new GameResponseDTO();
+
+        dto.setId(game.getId());
+        dto.setTitle(game.getTitle());
+        dto.setDescription(game.getDescription());
+        dto.setSizeApproximation(formatSizeFromMB(game.getSizeMb()));
+        dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
+        dto.setPrice(game.getPrice());
+
+        if (game.getDev() != null) {
+            dto.setDevUsername(game.getDev().getUsername());
+        } else {
+            dto.setDevUsername("Unknown");
+        }
+
+        dto.setGameLogoKey(game.getGameLogoKey());
+        dto.setGameFileKey(game.getGameFileKey());
+
+        dto.setTags(List.of());
+        dto.setTeasers(List.of());
+
+        return dto;
+    }
+
     private TeaserResponseDTO toTeaserResponseDTO(Teaser teaser) {
         TeaserResponseDTO dto = new TeaserResponseDTO();
         dto.setId(teaser.getId());
@@ -359,11 +414,10 @@ public class GameService {
             throw new IllegalStateException("Logo not available");
         }
 
-        String folder = "uploads/games/" + game.getDev().getId();
-        File file = findFileByKey(folder, game.getGameLogoKey());
-
         try {
-            return java.nio.file.Files.readAllBytes(file.toPath());
+            return java.nio.file.Files.readAllBytes(
+                    fileStorageService.resolvePath(game.getGameLogoKey())
+            );
         } catch (Exception e) {
             throw new RuntimeException("Error loading logo", e);
         }
@@ -382,22 +436,17 @@ public class GameService {
     }
 
     private byte[] loadTeaserByType(Integer gameId, String type) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
-
-        Teaser teaser = game.getTeasers().stream()
-                .filter(t -> type.equals(t.getType()))
+        Teaser teaser = teaserRepository.findByGameIdAndType(gameId, type)
+                .stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Teaser not found: " + type));
 
-        String folder = "uploads/games/" + game.getDev().getId();
-        File file = findFileByKey(folder, teaser.getObjectKey());
-
         try {
-            return java.nio.file.Files.readAllBytes(file.toPath());
+            return java.nio.file.Files.readAllBytes(
+                    fileStorageService.resolvePath(teaser.getObjectKey())
+            );
         } catch (Exception e) {
             throw new RuntimeException("Error loading teaser: " + type, e);
         }
     }
-
 }

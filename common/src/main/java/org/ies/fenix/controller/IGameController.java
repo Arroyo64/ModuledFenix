@@ -17,7 +17,9 @@ import java.util.List;
 public interface IGameController {
 
     @GetExchange
-    ResponseEntity<List<GameResponseDTO>> getAllGames();
+    ResponseEntity<List<GameResponseDTO>> getAllGames(
+            @RequestHeader("Authorization") String authorization
+    );
 
     @PostExchange("/search")
     ResponseEntity<List<GameResponseDTO>> getManyGames(
@@ -26,18 +28,31 @@ public interface IGameController {
 
     @GetExchange("/{id}")
     ResponseEntity<GameResponseDTO> getById(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     );
 
-    @GetExchange("/api/games/{id}/vertical")
-    ResponseEntity<byte[]> getVertical(@RequestHeader String authorization,@PathVariable Integer id);
+    @GetExchange("/{id}/vertical")
+    ResponseEntity<byte[]> getVertical(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    );
 
-    @GetExchange("/api/games/{id}/horizontal1")
-    ResponseEntity<byte[]> getHorizontal1(@RequestHeader String authorization, @PathVariable Integer id);
+    @GetExchange("/{id}/horizontal1")
+    ResponseEntity<byte[]> getHorizontal1(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    );
 
-    @GetExchange("/api/games/{id}/horizontal2")
-    public ResponseEntity<byte[]> getHorizontal2(@RequestHeader String authorization, @PathVariable Integer id);
+    @GetExchange("/{id}/horizontal2")
+    ResponseEntity<byte[]> getHorizontal2(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    );
 
-    @GetExchange("/api/games/{id}/logo")
-    public ResponseEntity<byte[]> getLogo(@RequestHeader String authorization, @PathVariable Integer id);
+    @GetExchange("/{id}/logo")
+    ResponseEntity<byte[]> getLogo(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    );
 }

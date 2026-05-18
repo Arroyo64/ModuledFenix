@@ -6,10 +6,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GameRepository extends JpaRepository<Game, Integer> {
 
     List<Game> findAllByOrderByIdDesc();
+
+    @Query("""
+        SELECT g
+        FROM Game g
+        LEFT JOIN FETCH g.dev
+        ORDER BY g.id DESC
+    """)
+    List<Game> findAllWithDevOrderByIdDesc();
 
     boolean existsByTitleIgnoreCase(String title);
 
@@ -31,4 +40,13 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
     """)
     List<Game> findByAllTagNames(@Param("names") List<String> names,
                                  @Param("size") long size);
+
+    @Query("""
+    SELECT DISTINCT g
+    FROM Game g
+    LEFT JOIN FETCH g.dev
+    LEFT JOIN FETCH g.tags
+    WHERE g.id = :id
+""")
+    Optional<Game> findByIdWithDevAndTags(@Param("id") Integer id);
 }

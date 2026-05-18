@@ -2,32 +2,45 @@ package org.ies.fenix.client.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Hyperlink;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
-import org.ies.fenix.controller.dto.client.ClientInfoDTO;
-import org.kordamp.ikonli.javafx.FontIcon;
+import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
+import static org.ies.fenix.client.utils.ImageUtils.setCoverImage;
 
 public class MarketplaceController implements Initializable {
 
     @FXML
     private TextField searchField;
 
+    @FXML
+    private HBox latestReleasedContainer;
+
+    @FXML
+    private HBox recommendationsContainer;
+
     private final StageManager stageManager;
     private final IClientController clientApiService;
     private final IGameController gameApiService;
     private final SessionManager sessionManager;
+
+    private List<GameResponseDTO> loadedGames = new ArrayList<>();
 
     public MarketplaceController(StageManager stageManager,
                                  IClientController clientApiService,
@@ -37,6 +50,197 @@ public class MarketplaceController implements Initializable {
         this.clientApiService = clientApiService;
         this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadMarketplaceGames();
+        configureSearch();
+    }
+
+    private void loadMarketplaceGames() {
+        try {
+            ResponseEntity<List<GameResponseDTO>> response =
+                    gameApiService.getAllGames(sessionManager.getAuthorizationHeader());
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                clearCarousels();
+                return;
+            }
+
+            loadedGames = response.getBody();
+
+            renderLatestReleased(loadedGames);
+            renderRecommendations(loadedGames);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            clearCarousels();
+        }
+    }
+
+    private void configureSearch() {
+        if (searchField == null) {
+            return;
+        }
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String searchText = newValue == null ? "" : newValue.trim().toLowerCase();
+
+            if (searchText.isBlank()) {
+                renderLatestReleased(loadedGames);
+                renderRecommendations(loadedGames);
+                return;
+            }
+
+            List<GameResponseDTO> filteredGames = loadedGames.stream()
+                    .filter(game -> game.getTitle() != null
+                            && game.getTitle().toLowerCase().contains(searchText))
+                    .toList();
+
+            renderLatestReleased(filteredGames);
+            renderRecommendations(filteredGames);
+        });
+    }
+
+    private void renderLatestReleased(List<GameResponseDTO> games) {
+        latestReleasedContainer.getChildren().clear();
+
+        if (games == null || games.isEmpty()) {
+            return;
+        }
+
+        for (GameResponseDTO game : games) {
+            latestReleasedContainer.getChildren().add(createGameCard(game));
+        }
+    }
+
+    private void renderRecommendations(List<GameResponseDTO> games) {
+        recommendationsContainer.getChildren().clear();
+
+        if (games == null || games.isEmpty()) {
+            return;
+        }
+
+        games.stream()
+                .limit(8)
+                .forEach(game -> recommendationsContainer.getChildren().add(createGameCard(game)));
+    }
+
+    private StackPane createGameCard(GameResponseDTO game) {
+        StackPane wrapper = new StackPane();
+        wrapper.getStyleClass().add("card-click-wrapper");
+
+        VBox card = new VBox();
+        card.getStyleClass().add("card");
+
+        HBox imageWrapper = new HBox();
+        imageWrapper.setAlignment(Pos.CENTER);
+        imageWrapper.setPrefHeight(170.0);
+        imageWrapper.setPrefWidth(280.0);
+        imageWrapper.getStyleClass().add("card-image-wrapper");
+
+        ImageView imageView = new ImageView();
+        imageView.setFitHeight(150.0);
+        imageView.setFitWidth(260.0);
+        imageView.setPreserveRatio(false);
+        imageView.getStyleClass().add("card-image");
+
+        loadHorizontalOneIntoImageView(game, imageView);
+
+        imageWrapper.getChildren().add(imageView);
+
+        Label titleLabel = new Label(getSafeText(game.getTitle(), "Untitled"));
+        titleLabel.getStyleClass().add("card-title");
+
+        HBox tagsContainer = new HBox();
+        tagsContainer.setSpacing(8.0);
+
+        if (game.getTags() != null) {
+            game.getTags().stream()
+                    .limit(3)
+                    .forEach(tagName -> {
+                        Label tagLabel = new Label(tagName);
+                        tagLabel.getStyleClass().add("tag");
+                        tagsContainer.getChildren().add(tagLabel);
+                    });
+        }
+
+        card.getChildren().addAll(imageWrapper, titleLabel, tagsContainer);
+
+        wrapper.getChildren().add(card);
+
+        wrapper.setOnMouseClicked(event -> openGame(game));
+        wrapper.setStyle("-fx-cursor: hand;");
+
+        return wrapper;
+    }
+
+    private void loadHorizontalOneIntoImageView(GameResponseDTO game, ImageView imageView) {
+        if (game == null || game.getId() == null) {
+            return;
+        }
+
+        try {
+            System.out.println("Loading horizontal 1 for game id: " + game.getId());
+
+            ResponseEntity<byte[]> response = gameApiService.getHorizontal1(
+                    sessionManager.getAuthorizationHeader(),
+                    game.getId()
+            );
+
+            System.out.println("Horizontal 1 status: " + response.getStatusCode());
+
+            if (response.getBody() == null) {
+                System.out.println("Horizontal 1 body is null");
+                return;
+            }
+
+            System.out.println("Horizontal 1 bytes: " + response.getBody().length);
+
+            if (!response.getStatusCode().is2xxSuccessful()
+                    || response.getBody().length == 0) {
+                return;
+            }
+
+            setCoverImage(response.getBody(), imageView, 260.0, 150.0);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openGame(GameResponseDTO game) {
+        if (game == null || game.getId() == null) {
+            return;
+        }
+
+        System.out.println("Opening game with id: " + game.getId());
+
+        GameController gameController = stageManager.switchSceneAndGetController(FxmlView.GAME);
+
+        if (gameController != null) {
+            gameController.setSelectedGameId(game.getId());
+        }
+    }
+
+    private void clearCarousels() {
+        if (latestReleasedContainer != null) {
+            latestReleasedContainer.getChildren().clear();
+        }
+
+        if (recommendationsContainer != null) {
+            recommendationsContainer.getChildren().clear();
+        }
+    }
+
+    private String getSafeText(String text, String fallback) {
+        if (text == null || text.isBlank()) {
+            return fallback;
+        }
+
+        return text;
     }
 
     @FXML
@@ -57,10 +261,5 @@ public class MarketplaceController implements Initializable {
     @FXML
     public void reloadView() {
         stageManager.reloadCurrentScene();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        //todo setear las cartas de los videojuegos
     }
 }

@@ -41,6 +41,42 @@ public class ImageUtils {
 
         imageView.setImage(image);
     }
+
+    public static void setCoverImage(
+            byte[] imageBytes,
+            ImageView imageView,
+            double width,
+            double height
+    ) {
+        if (imageBytes != null && imageBytes.length > 0) {
+            Image image = new Image(new ByteArrayInputStream(imageBytes));
+
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            imageView.setSmooth(true);
+            imageView.setPreserveRatio(false);
+
+            double imgW = image.getWidth();
+            double imgH = image.getHeight();
+
+            double ratio = Math.max(width / imgW, height / imgH);
+
+            double newW = width / ratio;
+            double newH = height / ratio;
+
+            double x = (imgW - newW) / 2;
+            double y = (imgH - newH) / 2;
+
+            imageView.setViewport(new Rectangle2D(x, y, newW, newH));
+            imageView.setClip(null);
+            imageView.setImage(image);
+            imageView.setVisible(true);
+
+        } else {
+            imageView.setVisible(false);
+        }
+    }
+
     public static void setAvatar(
             byte[] imageBytes,
             ImageView imageView,
@@ -110,9 +146,21 @@ public class ImageUtils {
             imageView.setVisible(false);
         }
     }
-    public static void initialConfig(IClientController clientApiService, SessionManager sessionManager, Hyperlink username, ImageView topProfileImage, FontIcon topProfileIcon) {
-        if (sessionManager.getUsername() != null)
+    public static void initialConfig(
+            IClientController clientApiService,
+            SessionManager sessionManager,
+            Hyperlink username,
+            ImageView topProfileImage,
+            FontIcon topProfileIcon
+    ) {
+        if (username != null && sessionManager.getUsername() != null) {
             username.setText(sessionManager.getUsername().toUpperCase());
+        }
+
+        if (topProfileImage == null || topProfileIcon == null) {
+            return;
+        }
+
         try {
             ResponseEntity<byte[]> image =
                     clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
@@ -124,5 +172,4 @@ public class ImageUtils {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-    }
-}
+    }}
