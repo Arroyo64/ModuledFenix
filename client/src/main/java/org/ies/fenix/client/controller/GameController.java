@@ -14,7 +14,7 @@ import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
 import org.ies.fenix.controller.IPurchaseController;
-import org.ies.fenix.controller.dto.client.ClientInfoDTO;
+import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.core.io.Resource;
@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static org.ies.fenix.client.utils.ImageUtils.initialConfig;
-import static org.ies.fenix.client.utils.ImageUtils.setAvatar;
 
 public class GameController {
 
@@ -91,6 +90,7 @@ public class GameController {
 
     public void setSelectedGameId(Integer selectedGameId) {
         this.selectedGameId = selectedGameId;
+        loadSelectedGame();
     }
 
     public GameController(StageManager stageManager,
@@ -309,6 +309,46 @@ public class GameController {
         } catch (Exception e) {
             showError("Purchase failed", "Could not complete the purchase.");
             return false;
+        }
+    }
+
+    private void loadSelectedGame() {
+        if (selectedGameId == null) {
+            return;
+        }
+
+        try {
+            ResponseEntity<GameResponseDTO> response =
+                    gameApiService.getById(sessionManager.getAuthorizationHeader(), selectedGameId);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                return;
+            }
+
+            GameResponseDTO game = response.getBody();
+
+            String title = game.getTitle() != null ? game.getTitle() : "Untitled";
+            String developer = game.getDevUsername() != null ? game.getDevUsername() : "Unknown";
+            String description = game.getDescription() != null ? game.getDescription() : "No description available.";
+
+            selectedGameTitle.setText(title);
+            selectedGameTitle2.setText("Title: " + title);
+            selectedGameDeveloper.setText("Developer: " + developer);
+
+            if (game.getTags() != null && !game.getTags().isEmpty()) {
+                selectedGameGenre.setText("Genre: " + game.getTags().get(0));
+            } else {
+                selectedGameGenre.setText("Genre: Unknown");
+            }
+
+            selectedGameDescription1.setText(description);
+            selectedGameDescription2.setText("");
+            selectedGameDescription3.setText("");
+
+            selectedGameMainQuote.setText(title);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

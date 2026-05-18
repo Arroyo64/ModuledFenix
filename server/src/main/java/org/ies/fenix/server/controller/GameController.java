@@ -23,7 +23,9 @@ public class GameController implements IGameController {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<GameResponseDTO>> getAllGames() {
+    public ResponseEntity<List<GameResponseDTO>> getAllGames(
+            @RequestHeader("Authorization") String authorization
+    ) {
         try {
             return ResponseEntity.ok(gameService.getAllGames());
         } catch (Exception e) {
@@ -48,8 +50,11 @@ public class GameController implements IGameController {
     }
 
     @Override
-    @GetMapping("/api/games/{id}/logo")
-    public ResponseEntity<byte[]> getLogo(String authorization, Integer id) {
+    @GetMapping("/{id}/logo")
+    public ResponseEntity<byte[]> getLogo(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
         byte[] bytes = gameService.loadLogo(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
@@ -57,8 +62,11 @@ public class GameController implements IGameController {
     }
 
     @Override
-    @GetMapping("/api/games/{id}/vertical")
-    public ResponseEntity<byte[]> getVertical(String authorization, Integer id) {
+    @GetMapping("/{id}/vertical")
+    public ResponseEntity<byte[]> getVertical(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
         byte[] bytes = gameService.getVerticalImage(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
@@ -66,16 +74,23 @@ public class GameController implements IGameController {
     }
 
     @Override
-    @GetMapping("/api/games/{id}/horizontal1")
-    public ResponseEntity<byte[]> getHorizontal1(String authorization, Integer id) {
+    @GetMapping("/{id}/horizontal1")
+    public ResponseEntity<byte[]> getHorizontal1(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
         byte[] bytes = gameService.getHorizontal1Image(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(bytes);
     }
+
     @Override
-    @GetMapping("/api/games/{id}/horizontal2")
-    public ResponseEntity<byte[]> getHorizontal2(String authorization, Integer id) {
+    @GetMapping("/{id}/horizontal2")
+    public ResponseEntity<byte[]> getHorizontal2(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
         byte[] bytes = gameService.getHorizontal2Image(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
@@ -84,7 +99,10 @@ public class GameController implements IGameController {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<GameResponseDTO> getById(@PathVariable Integer id) {
+    public ResponseEntity<GameResponseDTO> getById(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Integer id
+    ) {
         try {
             if (id == null) {
                 return ResponseEntity.badRequest().build();

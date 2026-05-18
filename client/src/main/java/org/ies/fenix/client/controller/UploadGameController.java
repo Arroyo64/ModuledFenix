@@ -136,7 +136,7 @@ public class UploadGameController {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 showInfo("Game published", "Your game has been published successfully.");
-                stageManager.switchScene(FxmlView.LIBRARY);
+                stageManager.switchScene(FxmlView.MARKETPLACE);
             } else {
                 showError("Upload failed", "The server could not publish the game.");
             }
