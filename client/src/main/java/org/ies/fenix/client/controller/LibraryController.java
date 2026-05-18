@@ -21,6 +21,7 @@ import org.ies.fenix.controller.IGameController;
 import org.ies.fenix.controller.IPurchaseController;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
 import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
@@ -140,7 +141,7 @@ public class LibraryController {
                 // BOTÓN PLAY (visible solo en hover)
                 // ============================
                 Button playButton = new Button("  PLAY");
-                playButton.setGraphic(new FontIcon("mdi-play"));
+                playButton.setGraphic(new FontIcon(MaterialDesignP.PLAY));
                 playButton.setStyle("""
                             -fx-background-color: #2ecc71;
                             -fx-text-fill: white;
@@ -191,25 +192,6 @@ public class LibraryController {
 
                 // Añadir elementos al wrapper
                 cardWrapper.getChildren().addAll(card, playButton);
-
-                libraryGrid.add(cardWrapper, col, row);
-
-
-                try {
-                    byte[] bytes = gameApiService.getVertical(sessionManager.getAuthorizationHeader(),game.getGameId()).getBody();
-                    cover.setImage(new Image(new ByteArrayInputStream(bytes)));
-                } catch (Exception ignored) {
-                }
-
-                coverWrapper.getChildren().add(cover);
-                card.getChildren().add(coverWrapper);
-
-                Button invisible = new Button();
-                invisible.getStyleClass().add("invisible-game-button");
-                invisible.setPrefSize(230, 285);
-
-
-                cardWrapper.getChildren().addAll(card, invisible);
 
                 libraryGrid.add(cardWrapper, col, row);
 

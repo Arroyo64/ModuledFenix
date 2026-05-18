@@ -1,7 +1,5 @@
 package org.ies.fenix.server.utils;
 
-import java.io.File;
-
 public class Mano {
     public static void main(String[] args) {
         try {

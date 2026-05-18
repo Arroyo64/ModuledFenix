@@ -12,18 +12,26 @@ public class LauncherRpyBuilder {
     private final String configPath = "server/src/main/resources/renconstruct.toml";
     private final String renpyVersion = "8.5.2";
 
+    private final File renutilExe;
+    private final File renconstructExe;
+
     private String projectName;
     private File logFile;
 
     public LauncherRpyBuilder(String projectName) {
-        // Forzar content root al módulo server
         this.contentRoot = new File("").getAbsoluteFile();
         this.projectName = projectName;
+
+        String cargoBin = System.getProperty("user.home") + "\\.cargo\\bin";
+
+        this.renutilExe = new File(cargoBin, "renutil.exe");
+        this.renconstructExe = new File(cargoBin, "renconstruct.exe");
+
         validateProject();
     }
 
     // -------------------------------
-    // Validar proyecto
+    // VALIDACIÓN
     // -------------------------------
     private void validateProject() {
         File projectDir = new File(contentRoot, baseProjectsDir + projectName);
@@ -37,36 +45,15 @@ public class LauncherRpyBuilder {
         }
 
         File toml = new File(contentRoot, configPath);
-        System.out.println("toml = " + toml.getPath());
-
         if (!toml.exists()) {
-            throw new IllegalArgumentException("No existe el archivo de configuración: " + toml.getPath());
+            throw new IllegalArgumentException("No existe config: " + toml.getPath());
         }
 
-        File out = new File(contentRoot, outputPath);
-        if (!out.exists()) {
-            out.mkdirs();
-        }
+        new File(contentRoot, outputPath).mkdirs();
     }
 
     // -------------------------------
-    // Validar TOML
-    // -------------------------------
-    public boolean validateToml() {
-        File toml = new File(contentRoot, configPath);
-        try (BufferedReader br = new BufferedReader(new FileReader(toml))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains("[")) return true;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    // -------------------------------
-    // Log a archivo
+    // LOG
     // -------------------------------
     public void logToFile(String logPath) {
         this.logFile = new File(contentRoot, logPath);
@@ -81,14 +68,20 @@ public class LauncherRpyBuilder {
     }
 
     // -------------------------------
-    // Ejecutar comandos
+    // EJECUTAR PROCESOS (ABSOLUTO)
     // -------------------------------
-    private int runCommand(String command, File workingDir) throws IOException, InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", command);
-        builder.directory(workingDir);
-        builder.redirectErrorStream(true);
+    private int runProcess(File exe, String... args) throws IOException, InterruptedException {
 
-        Process process = builder.start();
+        if (!exe.exists()) {
+            throw new RuntimeException("No existe ejecutable: " + exe.getAbsolutePath());
+        }
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(buildCommand(exe.getAbsolutePath(), args));
+        pb.directory(contentRoot);
+        pb.redirectErrorStream(true);
+
+        Process process = pb.start();
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()))) {
@@ -103,42 +96,81 @@ public class LauncherRpyBuilder {
         return process.waitFor();
     }
 
+    private String[] buildCommand(String exe, String... args) {
+        String[] cmd = new String[args.length + 1];
+        cmd[0] = exe;
+        System.arraycopy(args, 0, cmd, 1, args.length);
+        return cmd;
+    }
+
     // -------------------------------
-    // Verificar instalación Ren'Py
+    // INSTALAR RENKIT SI NO EXISTE
+    // -------------------------------
+    private void installRenkitIfNeeded() throws IOException, InterruptedException {
+
+        if (renutilExe.exists() && renconstructExe.exists()) {
+            writeLog("RenKit ya instalado");
+            return;
+        }
+
+        writeLog("Instalando RenKit...");
+
+        String cmd =
+                "powershell -ExecutionPolicy Bypass -c " +
+                        "\"irm https://github.com/kobaltcore/renkit/releases/download/v6.1.0/renkit-installer.ps1 | iex\"";
+
+        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", cmd);
+        pb.inheritIO();
+
+        int code = pb.start().waitFor();
+
+        if (code != 0) {
+            throw new RuntimeException("Error instalando RenKit");
+        }
+
+        writeLog("RenKit instalado");
+    }
+
+    // -------------------------------
+    // RENUTIL CHECK (SIN CMD)
     // -------------------------------
     private boolean isRenpyInstalled() throws IOException, InterruptedException {
-        ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "renutil list");
-        builder.directory(contentRoot);
-        builder.redirectErrorStream(true);
 
-        Process process = builder.start();
+        ProcessBuilder pb = new ProcessBuilder(
+                renutilExe.getAbsolutePath(),
+                "list"
+        );
 
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream()))) {
+        Process p = pb.start();
 
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 if (line.contains(renpyVersion)) {
                     return true;
                 }
             }
         }
 
-        process.waitFor();
+        p.waitFor();
         return false;
     }
 
     // -------------------------------
-    // Instalar Ren'Py si falta
+    // INSTALL RENPY
     // -------------------------------
     public void ensureRenpyInstalled() throws IOException, InterruptedException {
+
+        installRenkitIfNeeded();
+
         if (isRenpyInstalled()) {
             writeLog("Ren'Py ya instalado");
             return;
         }
 
         writeLog("Instalando Ren'Py...");
-        int code = runCommand("renutil install " + renpyVersion, contentRoot);
+
+        int code = runProcess(renutilExe, "install", renpyVersion);
 
         if (code != 0) {
             throw new RuntimeException("Error instalando Ren'Py");
@@ -146,38 +178,38 @@ public class LauncherRpyBuilder {
     }
 
     // -------------------------------
-    // Build Windows
+    // BUILD
     // -------------------------------
     public void buildWindows() throws IOException, InterruptedException {
 
         String inputDir = baseProjectsDir + projectName;
 
-        String cmd = String.format(
-                "renconstruct build -c \"%s\" \"%s\" \"%s\"",
-                configPath, inputDir, outputPath
+        writeLog("Ejecutando build...");
+
+        int code = runProcess(
+                renconstructExe,
+                "build",
+                "-c",
+                configPath,
+                inputDir,
+                outputPath
         );
 
-        writeLog("Ejecutando build...");
-        int code = runCommand(cmd, contentRoot);
-
         if (code != 0) {
-            throw new RuntimeException("Error construyendo la build");
+            throw new RuntimeException("Error construyendo build");
         }
 
         writeLog("Build completada");
     }
 
     // -------------------------------
-    // Flujo completo
+    // FLUJO
     // -------------------------------
     public void run() throws IOException, InterruptedException {
         ensureRenpyInstalled();
         buildWindows();
     }
 
-    // -------------------------------
-    // Ejecución asíncrona
-    // -------------------------------
     public CompletableFuture<Void> runAsync() {
         return CompletableFuture.runAsync(() -> {
             try {

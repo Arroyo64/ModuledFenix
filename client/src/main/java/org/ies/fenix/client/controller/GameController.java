@@ -76,9 +76,6 @@ public class GameController {
     @FXML
     private Hyperlink library;
 
-    @FXML
-    private ProgressBar progressBar;
-
     private final StageManager stageManager;
     private final IClientController clientApiService;
     private final IGameController gameApiService;
@@ -174,8 +171,6 @@ public class GameController {
             BaseLayoutController base = stageManager.getBaseLayoutController();
             base.showProgress(); // mostrar barra global en modo indeterminado
 
-            progressBar.setProgress(0); // si quieres mantener la barra local
-
             // 1. Llamar al servidor
             ResponseEntity<Resource> response = restClient.get()
                     .uri("/api/games/download/" + selectedGameId)
@@ -205,8 +200,9 @@ public class GameController {
             // 3. Elegir dónde guardar el archivo
             FileChooser chooser = new FileChooser();
             chooser.setInitialFileName(filename);
-            File target = chooser.showSaveDialog(progressBar.getScene().getWindow());
-
+            File target = chooser.showSaveDialog(
+                    stageManager.getPrimaryStage()
+            );
             if (target == null) {
                 base.hideProgress();
                 return;
@@ -242,8 +238,9 @@ public class GameController {
             };
 
             // 5. Enlazar barra local
-            progressBar.progressProperty().bind(downloadTask.progressProperty());
-
+            base.getGlobalProgressBar()
+                    .progressProperty()
+                    .bind(downloadTask.progressProperty());
             // 6. Ocultar barra global al terminar
             downloadTask.setOnSucceeded(e -> base.hideProgress());
             downloadTask.setOnFailed(e -> base.hideProgress());

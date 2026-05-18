@@ -24,7 +24,7 @@
     <!-- PROGRESS BAR GLOBAL -->
     <bottom>
         <HBox alignment="BOTTOM_RIGHT">
-            <ProgressBar fx:id="globalProgressBar"
+            <ProgressBar fx:id="progressBar"
                          prefWidth="260"
                          prefHeight="4"
                          progress="0"
