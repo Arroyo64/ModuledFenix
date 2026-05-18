@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -29,8 +30,8 @@ public class GameService {
     @Autowired private TeaserRepository teaserRepository;
     @Autowired private ClientService clientService;
 
-    private static final String BASE_UPLOAD_DIR =
-            System.getProperty("user.home") + "/fenix/uploads/games/";
+    private static final String BASE_UPLOAD_DIR = Paths.get("").toAbsolutePath() + "/uploads/games/";
+
 
     // ============================================================
     //                      CREATE GAME
