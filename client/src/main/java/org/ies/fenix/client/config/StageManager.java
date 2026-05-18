@@ -188,4 +188,8 @@ public class StageManager {
         }
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
 }
