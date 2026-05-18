@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
+import org.ies.fenix.client.utils.ImageUtils;
 import org.ies.fenix.controller.IClientController;
 import org.ies.fenix.controller.IGameController;
 import org.ies.fenix.controller.IPurchaseController;
@@ -95,14 +96,21 @@ public class LibraryController {
                 icon.setPreserveRatio(true);
 
                 try {
-                    byte[] bytes = gameApiService.getLogo(
-                            sessionManager.getAuthorizationHeader(),
-                            game.getGameId()
-                    ).getBody();
+                    try {
+                        byte[] bytes = gameApiService.getLogo(
+                                sessionManager.getAuthorizationHeader(),
+                                game.getGameId()
+                        ).getBody();
 
-                    if (bytes != null && bytes.length > 0) {
-                        icon.setImage(new Image(new ByteArrayInputStream(bytes)));
+                        ImageUtils.setAvatar(
+                                bytes,
+                                icon,          // ImageView
+                                36             // tamaño del avatar
+                        );
+
+                    } catch (Exception ignored) {
                     }
+
 
                 } catch (Exception ignored) {
                 }
