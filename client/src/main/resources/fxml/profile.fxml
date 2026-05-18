@@ -3,18 +3,19 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="root"
             prefHeight="800.0"
             prefWidth="1300.0"
@@ -31,7 +32,9 @@
                     styleClass="main-scroll">
 
             <content>
-                <VBox spacing="28.0" styleClass="profile-container">
+                <VBox spacing="28.0"
+                      styleClass="profile-container">
+
                     <padding>
                         <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
                     </padding>
@@ -40,51 +43,47 @@
                     <Label text="USER PROFILE"
                            styleClass="profile-section-title"/>
 
-                    <!-- Cambia estos bloques para que los recuadros sí se vean claramente -->
-
                     <!-- MAIN CARD -->
-                    <HBox spacing="0.0" styleClass="profile-main-card">
+                    <GridPane styleClass="profile-main-card"
+                              hgap="0.0"
+                              vgap="0.0">
 
-                        <!-- LEFT -->
-                        <VBox alignment="TOP_CENTER"
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25.0"/>
+                            <ColumnConstraints percentWidth="32.0"/>
+                            <ColumnConstraints percentWidth="43.0"/>
+                        </columnConstraints>
+
+                        <!-- LEFT: PROFILE IMAGE -->
+                        <VBox GridPane.columnIndex="0"
+                              alignment="CENTER"
                               spacing="28.0"
-                              prefWidth="330.0"
+                              maxWidth="Infinity"
                               styleClass="profile-left-panel">
 
                             <padding>
                                 <Insets top="35.0" right="30.0" bottom="35.0" left="30.0"/>
                             </padding>
 
-<!--                            <HBox alignment="CENTER"-->
-<!--                                  styleClass="profile-avatar-wrapper">-->
-<!--                                <ImageView fitWidth="240.0"-->
-<!--                                           fitHeight="260.0"-->
-<!--                                           preserveRatio="false"-->
-<!--                                           styleClass="profile-avatar-image"/>-->
-<!--                            </HBox>-->
-                            <StackPane prefWidth="180"
-                                       prefHeight="180"
-                                       minWidth="180"
-                                       minHeight="180"
-                                       maxWidth="180"
-                                       maxHeight="180"
+                            <StackPane prefWidth="180.0"
+                                       prefHeight="180.0"
+                                       minWidth="180.0"
+                                       minHeight="180.0"
+                                       maxWidth="180.0"
+                                       maxHeight="180.0"
                                        styleClass="profile-avatar-wrapper">
 
-                                <!-- Icono por defecto (cuando no hay foto) -->
                                 <FontIcon fx:id="profileIcon"
                                           iconLiteral="mdi2a-account-outline"
                                           iconSize="180"
                                           iconColor="#C6C6C6"/>
 
-                                <!-- Imagen de perfil -->
                                 <ImageView fx:id="profileImage"
-                                           fitWidth="180"
-                                           fitHeight="180"
+                                           fitWidth="180.0"
+                                           fitHeight="180.0"
                                            preserveRatio="true"
                                            visible="false"/>
                             </StackPane>
-
-                            <!--                            Cambiado por icono de profile-->
 
                             <Button text="EDIT"
                                     styleClass="profile-edit-button"
@@ -92,71 +91,99 @@
                                     onAction="#uploadProfilePicture"
                                     graphicTextGap="4">
                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2p-play" iconSize="13" iconColor="WHITE"/>
+                                    <FontIcon iconLiteral="mdi2p-play"
+                                              iconSize="13"
+                                              iconColor="WHITE"/>
                                 </graphic>
                             </Button>
                         </VBox>
 
-                        <!-- CENTER -->
-                        <VBox spacing="22.0"
-                              prefWidth="430.0"
+                        <!-- CENTER: IMPORTANT DATA -->
+                        <VBox GridPane.columnIndex="1"
+                              alignment="CENTER"
+                              spacing="22.0"
+                              maxWidth="Infinity"
                               styleClass="profile-center-panel">
 
                             <padding>
                                 <Insets top="40.0" right="35.0" bottom="35.0" left="35.0"/>
                             </padding>
 
-                            <Label text="Name" styleClass="profile-label"/>
-                            <TextField fx:id="nameField" promptText="[USER-NAME]"
-                                       editable="false"
-                                       styleClass="profile-input"/>
+                            <VBox spacing="8.0"
+                                  maxWidth="Infinity">
+                                <Label text="Name"
+                                       styleClass="profile-label"/>
 
-                            <Label text="Email" styleClass="profile-label"/>
-                            <TextField fx:id="emailField" promptText="user@gmail.com"
-                                       editable="false"
-                                       styleClass="profile-input"/>
-
-                            <Label text="Password" styleClass="profile-label"/>
-                            <PasswordField fx:id="passwordField" promptText="esto es una contraseña"
+                                <TextField fx:id="nameField"
+                                           promptText="[USER-NAME]"
                                            editable="false"
+                                           maxWidth="Infinity"
                                            styleClass="profile-input"/>
+                            </VBox>
+
+                            <VBox spacing="8.0"
+                                  maxWidth="Infinity">
+                                <Label text="Email"
+                                       styleClass="profile-label"/>
+
+                                <TextField fx:id="emailField"
+                                           promptText="user@gmail.com"
+                                           editable="false"
+                                           maxWidth="Infinity"
+                                           styleClass="profile-input"/>
+                            </VBox>
+
+                            <VBox spacing="8.0"
+                                  maxWidth="Infinity">
+                                <Label text="Password"
+                                       styleClass="profile-label"/>
+
+                                <PasswordField fx:id="passwordField"
+                                               promptText="esto es una contraseña"
+                                               editable="false"
+                                               maxWidth="Infinity"
+                                               styleClass="profile-input"/>
+                            </VBox>
                         </VBox>
 
-                        <!-- RIGHT -->
-                        <VBox spacing="22.0"
-                              prefWidth="420.0"
+                        <!-- RIGHT: DESCRIPTION -->
+                        <VBox GridPane.columnIndex="2"
+                              alignment="CENTER"
+                              spacing="22.0"
+                              maxWidth="Infinity"
                               styleClass="profile-right-panel">
 
                             <padding>
                                 <Insets top="40.0" right="35.0" bottom="35.0" left="35.0"/>
                             </padding>
 
-                            <Label text="Description"
-                                   styleClass="profile-label"/>
+                            <VBox spacing="8.0"
+                                  maxWidth="Infinity">
+                                <Label text="Description"
+                                       styleClass="profile-label"/>
 
-                            <TextArea wrapText="true"
-                                      fx:id="bio"
-                                      prefHeight="220.0"
-                                      promptText="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."
-                                      styleClass="profile-description"/>
+                                <TextArea fx:id="bio"
+                                          wrapText="true"
+                                          prefHeight="220.0"
+                                          maxWidth="Infinity"
+                                          promptText="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."
+                                          styleClass="profile-description"/>
+                            </VBox>
 
-                            <Region VBox.vgrow="ALWAYS"/>
-
-                            <HBox alignment="CENTER">
-                                <Button text="EDIT"
-                                        onAction="#updateProfileBio"
-                                        styleClass="profile-edit-button"
-                                        contentDisplay="RIGHT"
-                                        graphicTextGap="4">
-                                    <graphic>
-                                        <FontIcon iconLiteral="mdi2p-play" iconSize="13" iconColor="WHITE"/>
-                                    </graphic>
-                                </Button>
-                            </HBox>
+                            <Button text="EDIT"
+                                    onAction="#updateProfileBio"
+                                    styleClass="profile-edit-button"
+                                    contentDisplay="RIGHT"
+                                    graphicTextGap="4">
+                                <graphic>
+                                    <FontIcon iconLiteral="mdi2p-play"
+                                              iconSize="13"
+                                              iconColor="WHITE"/>
+                                </graphic>
+                            </Button>
                         </VBox>
 
-                    </HBox>
-
+                    </GridPane>
 
                     <!-- OVERVIEW -->
                     <HBox spacing="28.0">
@@ -170,23 +197,19 @@
                                 <Insets top="24.0" right="28.0" bottom="24.0" left="28.0"/>
                             </padding>
 
-<!--                            <HBox alignment="CENTER"-->
-<!--                                  styleClass="profile-overview-icon">-->
-<!--                                <ImageView fitWidth="34.0"-->
-<!--                                           fitHeight="34.0"-->
-<!--                                           preserveRatio="true"/>-->
-<!--                            </HBox>-->
                             <HBox alignment="CENTER"
                                   styleClass="profile-overview-icon">
-                                <FontIcon iconLiteral="mdi2g-gamepad-outline" iconSize="34" iconColor="#D3D3D3"/>
+                                <FontIcon iconLiteral="mdi2g-gamepad-outline"
+                                          iconSize="34"
+                                          iconColor="#D3D3D3"/>
                             </HBox>
-<!--                            Cambiado por icon-->
 
                             <VBox spacing="6.0"
                                   alignment="CENTER_LEFT"
                                   HBox.hgrow="ALWAYS">
                                 <Label text="Games acquired"
                                        styleClass="profile-overview-title"/>
+
                                 <Label text="0"
                                        styleClass="profile-overview-value"/>
                             </VBox>
@@ -201,23 +224,19 @@
                                 <Insets top="24.0" right="28.0" bottom="24.0" left="28.0"/>
                             </padding>
 
-<!--                            <HBox alignment="CENTER"-->
-<!--                                  styleClass="profile-overview-icon">-->
-<!--                                <ImageView fitWidth="34.0"-->
-<!--                                           fitHeight="34.0"-->
-<!--                                           preserveRatio="true"/>-->
-<!--                            </HBox>-->
                             <HBox alignment="CENTER"
                                   styleClass="profile-overview-icon">
-                                <FontIcon iconLiteral="mdi2b-brush-outline" iconSize="34" iconColor="#D3D3D3"/>
+                                <FontIcon iconLiteral="mdi2b-brush-outline"
+                                          iconSize="34"
+                                          iconColor="#D3D3D3"/>
                             </HBox>
-<!--                            Cambiado icon-->
 
                             <VBox spacing="6.0"
                                   alignment="CENTER_LEFT"
                                   HBox.hgrow="ALWAYS">
                                 <Label text="Games created"
                                        styleClass="profile-overview-title"/>
+
                                 <Label fx:id="gamesCreatedValue"
                                        text="0"
                                        styleClass="profile-overview-value"/>
