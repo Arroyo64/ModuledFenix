@@ -108,6 +108,33 @@ public class ImageUtils {
         }
     }
 
+    public static void setAvatar(
+            byte[] imageBytes,
+            ImageView imageView,
+            double size
+    ) {
+        if (imageBytes != null && imageBytes.length > 0) {
+
+            Image image = new Image(new ByteArrayInputStream(imageBytes));
+
+            Platform.runLater(() -> {
+
+                applyCoverCrop(imageView, image, size);
+
+                Circle clip = new Circle(size / 2);
+                clip.setCenterX(size / 2);
+                clip.setCenterY(size / 2);
+
+                imageView.setClip(clip);
+                imageView.setVisible(true);
+            });
+
+        } else {
+            imageView.setVisible(false);
+        }
+    }
+
+
     public static void setCoverImage(
             byte[] imageBytes,
             ImageView imageView,
