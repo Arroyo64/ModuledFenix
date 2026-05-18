@@ -52,15 +52,6 @@
                                    styleClass="create-game-subtitle"/>
                         </VBox>
 
-                        <Region HBox.hgrow="ALWAYS"/>
-
-                        <Button text="Clear"
-                                styleClass="game-download-button"
-                                onAction="#clearForm"/>
-
-                        <Button text="Publish game"
-                                styleClass="main-action-button"
-                                onAction="#submitGame"/>
                     </HBox>
 
                     <!-- MAIN LAYOUT -->
@@ -325,7 +316,7 @@
                                         styleClass="game-play-button"
                                         onAction="#submitGame"/>
 
-                                <Button text="Clear form"
+                                <Button text="Cancel"
                                         styleClass="game-download-button"
                                         onAction="#clearForm"/>
                             </HBox>

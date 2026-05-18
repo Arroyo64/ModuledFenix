@@ -304,7 +304,7 @@
 }
 
 .game-banner-image {
-    -fx-opacity: 0.0;
+    -fx-opacity: 1.0;
 }
 
 .game-main-grid {
