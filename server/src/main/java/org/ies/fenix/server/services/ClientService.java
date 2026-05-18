@@ -31,6 +31,9 @@ public class ClientService {
     @Autowired
     private TokenService tokenService;
 
+    private static final String BASE_UPLOAD_DIR_PROFILE =
+            Paths.get("").toAbsolutePath() + "/uploads/profile/";
+
     public RegisterResponseDTO register(ClientRegisterDTO dto) {
         if (clientRepository.findByUsername(dto.getUsername()).isPresent()) {
             return aResponseRegister("This username already exists", "WARN", false);
@@ -131,7 +134,6 @@ public class ClientService {
         if (dto.getBytes() == null) return new ServerResponseDTO("ERROR", "No image provided");
 
         try {
-            // Validación EXACTA como antes
             String detectedType = FileUtils.getContentType(dto.getBytes(), dto.getFileName());
             if (!detectedType.startsWith("image/")) {
                 return new ServerResponseDTO("ERROR", "File type not supported");
@@ -141,19 +143,22 @@ public class ClientService {
                 return new ServerResponseDTO("ERROR", "Invalid file type");
             }
 
-            // UUID estable
             String key = client.getProfileImageKey();
             if (key == null) {
-                key = java.util.UUID.randomUUID().toString().replace("-", "");
+                key = UUID.randomUUID().toString().replace("-", "");
             }
             final String finalKey = key;
 
-            // Carpeta del usuario
-            String folderPath = "uploads/profile/" + client.getId();
+            // === RUTA PROFESIONAL USANDO VARIABLE ===
+            String folderPath = Paths.get(BASE_UPLOAD_DIR_PROFILE, String.valueOf(client.getId()))
+                    .toAbsolutePath()
+                    .normalize()
+                    .toString();
+
             File folder = new File(folderPath);
             if (!folder.exists()) folder.mkdirs();
 
-            // BORRAR cualquier archivo previo con el mismo UUID
+            // Borrar anteriores
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File f : files) {
@@ -163,15 +168,10 @@ public class ClientService {
                 }
             }
 
-            // Extensión original
             String ext = FileUtils.getExtension(dto.getFileName());
-            if (ext.isEmpty()) {
-                // fallback mínimo
-                ext = "img";
-            }
+            if (ext.isEmpty()) ext = "img";
 
-            // Guardar archivo tal cual
-            String filePath = folderPath + "/" + finalKey + "." + ext;
+            String filePath = folderPath + File.separator + finalKey + "." + ext;
             try (FileOutputStream fos = new FileOutputStream(filePath)) {
                 fos.write(dto.getBytes());
             }
@@ -185,41 +185,6 @@ public class ClientService {
             return new ServerResponseDTO("ERROR", "Error saving image");
         }
     }
-
-    public ServerResponseDTO deleteImageProfile(String token) {
-        Client client = getClient(token);
-        if (client == null) {
-            return new ServerResponseDTO("ERROR", "Token is not valid");
-        }
-        String key = client.getProfileImageKey();
-        if (key == null) {
-            return new ServerResponseDTO("ERROR", "No profile image to delete");
-        }
-        String folder = "uploads/profile/" + client.getId();
-        File dir = new File(folder);
-        File[] matches = dir.listFiles((d, name) -> name.startsWith(key + "."));
-        if (matches != null && matches.length > 0) {
-            File file = matches[0];
-            if (file.delete()) {
-                System.out.println("Deleted image: " + file.getAbsolutePath());
-            } else {
-                System.err.println("Failure deleting image: " + file.getAbsolutePath());
-            }
-        }
-        client.setProfileImageKey(null);
-        clientRepository.save(client);
-        return new ServerResponseDTO("OK", "Image deleted successfully");
-    }
-    public ServerResponseDTO updateBio(String token, String bio) {
-        Client client = getClient(token);
-        if (client == null) {
-            return new ServerResponseDTO("ERROR", "Token is not valid");
-        }
-        client.setBio(bio);
-        clientRepository.save(client);
-        return new ServerResponseDTO("OK", "Bio updated successfully");
-    }
-
     public byte[] getProfilePicture(String authorization) {
         Client client = getClient(authorization);
         if (client == null) return new byte[0];
@@ -227,7 +192,13 @@ public class ClientService {
         String key = client.getProfileImageKey();
         if (key == null) return new byte[0];
 
-        File folder = new File("uploads/profile/" + client.getId());
+        // === RUTA PROFESIONAL ===
+        String folderPath = Paths.get(BASE_UPLOAD_DIR_PROFILE, String.valueOf(client.getId()))
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+
+        File folder = new File(folderPath);
         if (!folder.exists()) return new byte[0];
 
         File[] files = folder.listFiles();
@@ -236,12 +207,48 @@ public class ClientService {
         for (File f : files) {
             if (f.getName().startsWith(key + ".")) {
                 try {
-                    return java.nio.file.Files.readAllBytes(f.toPath());
+                    return Files.readAllBytes(f.toPath());
                 } catch (IOException ignored) {}
             }
         }
 
         return new byte[0];
+    }
+
+    public ServerResponseDTO deleteImageProfile(String token) {
+        Client client = getClient(token);
+        if (client == null) return new ServerResponseDTO("ERROR", "Token is not valid");
+
+        String key = client.getProfileImageKey();
+        if (key == null) return new ServerResponseDTO("ERROR", "No profile image to delete");
+
+        // === RUTA PROFESIONAL ===
+        String folderPath = Paths.get(BASE_UPLOAD_DIR_PROFILE, String.valueOf(client.getId()))
+                .toAbsolutePath()
+                .normalize()
+                .toString();
+
+        File dir = new File(folderPath);
+        File[] matches = dir.listFiles((d, name) -> name.startsWith(key + "."));
+
+        if (matches != null && matches.length > 0) {
+            matches[0].delete();
+        }
+
+        client.setProfileImageKey(null);
+        clientRepository.save(client);
+
+        return new ServerResponseDTO("OK", "Image deleted successfully");
+    }
+
+    public ServerResponseDTO updateBio(String token, String bio) {
+        Client client = getClient(token);
+        if (client == null) {
+            return new ServerResponseDTO("ERROR", "Token is not valid");
+        }
+        client.setBio(bio);
+        clientRepository.save(client);
+        return new ServerResponseDTO("OK", "Bio updated successfully");
     }
 
 }
