@@ -8,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.controller.IClientController;
-import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.http.ResponseEntity;
 
@@ -162,14 +161,36 @@ public class ImageUtils {
         }
 
         try {
-            ResponseEntity<byte[]> image =
+            ResponseEntity<?> image =
                     clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
 
-            if (image.getStatusCode().value() == 200) {
-                setAvatar(image.getBody(), topProfileImage, topProfileIcon, 40);
+            if (image.getStatusCode().is2xxSuccessful() && image.getBody() instanceof byte[] bytes) {
+                setAvatar(bytes, topProfileImage, topProfileIcon, 40);
             }
 
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-    }}
+    }
+    public static Image loadImage(ResponseEntity<byte[]> response) {
+        try {
+            if (response == null) return null;
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                byte[] bytes = response.getBody();
+                if (bytes == null) return null;
+                return new Image(new ByteArrayInputStream(bytes));
+            } else {
+                // Convertir el error (que viene como byte[]) a String
+                byte[] errorBytes = response.getBody();
+                String error = errorBytes != null ? new String(errorBytes) : "Unknown error";
+                System.out.println("API Image Error: " + error);
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Exception loading image: " + e.getMessage());
+            return null;
+        }
+    }
+}

@@ -3,13 +3,9 @@ package org.ies.fenix.server.services;
 import org.ies.fenix.controller.dto.game.GameResponseDTO;
 import org.ies.fenix.controller.dto.game.GameSearchDTO;
 import org.ies.fenix.controller.dto.teaser.TeaserResponseDTO;
-import org.ies.fenix.server.models.Client;
-import org.ies.fenix.server.models.Game;
-import org.ies.fenix.server.models.Tag;
-import org.ies.fenix.server.models.Teaser;
-import org.ies.fenix.server.repositories.GameRepository;
-import org.ies.fenix.server.repositories.TagRepository;
-import org.ies.fenix.server.repositories.TeaserRepository;
+import org.ies.fenix.server.models.*;
+import org.ies.fenix.server.repositories.*;
+import org.ies.fenix.server.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -18,27 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service
 public class GameService {
 
-    @Autowired
-    private GameRepository gameRepository;
-    @Autowired
-    private TagRepository tagRepository;
-    @Autowired
-    private TeaserRepository teaserRepository;
-    @Autowired
-    private ClientService clientService;
-    @Autowired
-    private FileStorageService fileStorageService;
+    @Autowired private GameRepository gameRepository;
+    @Autowired private TagRepository tagRepository;
+    @Autowired private TeaserRepository teaserRepository;
+    @Autowired private ClientService clientService;
+
+    private static final String BASE_UPLOAD_DIR =
+            System.getProperty("user.home") + "/fenix/uploads/games/";
 
     // ============================================================
-    //                      PUBLIC API
+    //                      CREATE GAME
     // ============================================================
 
     @Transactional
@@ -59,9 +54,7 @@ public class GameService {
         validateGameInput(title, gameFile, logoFile);
         ensureTitleIsUnique(title);
 
-        List<Tag> tags = parseExistingTags(tagsText);
-
-        Game game = buildGameEntity(client, title, description, price, gameFile, tags);
+        Game game = buildGameEntity(client, title, description, price, gameFile, parseTags(tagsText));
         game = gameRepository.save(game);
 
         saveMainFiles(game, gameFile, logoFile);
@@ -70,24 +63,18 @@ public class GameService {
         return getGameById(game.getId());
     }
 
+    // ============================================================
+    //                      DOWNLOAD GAME
+    // ============================================================
+
     public Resource downloadGame(Integer gameId) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found"));
 
-        if (game.getGameFileKey() == null) {
-            throw new IllegalStateException("Game file not available");
-        }
+        String key = game.getGameFileKey();
+        if (key == null) throw new IllegalStateException("Game file not available");
 
-        // Ruta donde guardas los juegos
-        String folder = "uploads/games/" + game.getDev().getId();
-
-        // El archivo real: key + extensión original
-        File file = findFileByKey(folder, game.getGameFileKey());
-
-        if (!file.exists()) {
-            throw new IllegalStateException("Stored game file not found");
-        }
-
+        File file = findFile(BASE_UPLOAD_DIR + game.getId() + "/files", key);
         return new FileSystemResource(file);
     }
 
@@ -97,42 +84,28 @@ public class GameService {
 
     private Client validateAndGetClient(String token) {
         Client client = clientService.getClient(token);
-        if (client == null) {
-            throw new IllegalArgumentException("Token is not valid");
-        }
+        if (client == null) throw new IllegalArgumentException("Token is not valid");
         return client;
     }
 
     private void validateGameInput(String title, MultipartFile gameFile, MultipartFile logoFile) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title is required");
-        }
-        if (gameFile == null || gameFile.isEmpty()) {
-            throw new IllegalArgumentException("Game file is required");
-        }
-        if (logoFile == null || logoFile.isEmpty()) {
-            throw new IllegalArgumentException("Logo image is required");
-        }
+        if (title == null || title.isBlank()) throw new IllegalArgumentException("Title is required");
+        if (gameFile == null || gameFile.isEmpty()) throw new IllegalArgumentException("Game file is required");
+        if (logoFile == null || logoFile.isEmpty()) throw new IllegalArgumentException("Logo image is required");
     }
 
     private void ensureTitleIsUnique(String title) {
-        if (gameRepository.existsByTitleIgnoreCase(title)) {
+        if (gameRepository.existsByTitleIgnoreCase(title))
             throw new IllegalArgumentException("A game with this title already exists");
-        }
     }
 
     // ============================================================
-    //                      GAME CREATION
+    //                      GAME ENTITY
     // ============================================================
 
-    private Game buildGameEntity(
-            Client client,
-            String title,
-            String description,
-            BigDecimal price,
-            MultipartFile gameFile,
-            List<Tag> tags
-    ) {
+    private Game buildGameEntity(Client client, String title, String description, BigDecimal price,
+                                 MultipartFile gameFile, List<Tag> tags) {
+
         Game game = new Game();
         game.setTitle(title.trim());
         game.setDescription(description);
@@ -144,73 +117,149 @@ public class GameService {
         return game;
     }
 
-    private void saveMainFiles(Game game, MultipartFile gameFile, MultipartFile logoFile) {
-        String gameFileKey = fileStorageService.saveGameFile(game.getId(), gameFile);
-        String logoKey = fileStorageService.saveGameLogo(game.getId(), logoFile);
-
-        game.setGameFileKey(gameFileKey);
-        game.setGameLogoKey(logoKey);
-
-        gameRepository.save(game);
-    }
-
-    private void saveTeasers(Game game,
-                             MultipartFile vertical,
-                             MultipartFile horizontal1,
-                             MultipartFile horizontal2) {
-
-        saveTeaserIfPresent(game, vertical, "VERTICAL", "vertical");
-        saveTeaserIfPresent(game, horizontal1, "HORIZONTAL_1", "horizontal_1");
-        saveTeaserIfPresent(game, horizontal2, "HORIZONTAL_2", "horizontal_2");
-    }
-
-    // ============================================================
-    //                      TEASERS
-    // ============================================================
-
-    private void saveTeaserIfPresent(Game game,
-                                     MultipartFile file,
-                                     String type,
-                                     String fileBaseName) {
-
-        if (file == null || file.isEmpty()) return;
-
-        String objectKey = fileStorageService.saveTeaser(game.getId(), file, fileBaseName);
-
-        Teaser teaser = new Teaser();
-        teaser.setGame(game);
-        teaser.setObjectKey(objectKey);
-        teaser.setType(type);
-
-        teaserRepository.save(teaser);
-    }
-
-    // ============================================================
-    //                      TAGS
-    // ============================================================
-
-    private List<Tag> parseExistingTags(String tagsText) {
-        if (tagsText == null || tagsText.isBlank()) {
-            return List.of();
-        }
+    private List<Tag> parseTags(String tagsText) {
+        if (tagsText == null || tagsText.isBlank()) return List.of();
 
         return Arrays.stream(tagsText.split(","))
                 .map(String::trim)
-                .filter(tagName -> !tagName.isBlank())
-                .map(tagName -> tagRepository.findByNameIgnoreCase(tagName)
-                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tagName)))
+                .filter(t -> !t.isBlank())
+                .map(t -> tagRepository.findByNameIgnoreCase(t)
+                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + t)))
                 .toList();
     }
 
     // ============================================================
-    //                      UTILITIES
+    //                      FILE SAVE
     // ============================================================
 
-    private BigDecimal calculateSizeMb(MultipartFile file) {
-        if (file == null || file.isEmpty()) return BigDecimal.ZERO;
+    private void saveMainFiles(Game game, MultipartFile gameFile, MultipartFile logoFile) {
+        game.setGameFileKey(saveGameFile(game, gameFile));
+        game.setGameLogoKey(saveImage(game, logoFile, "logo"));
+        gameRepository.save(game);
+    }
 
-        double sizeMb = file.getSize() / 1024.0 / 1024.0;
-        return BigDecimal.valueOf(sizeMb).setScale(2, RoundingMode.HALF_UP);
+    private void saveTeasers(Game game, MultipartFile... teasers) {
+        String[] types = {"VERTICAL", "HORIZONTAL_1", "HORIZONTAL_2"};
+
+        for (int i = 0; i < teasers.length; i++) {
+            MultipartFile file = teasers[i];
+            if (file == null || file.isEmpty()) continue;
+
+            String key = saveImage(game, file, "teasers");
+
+            Teaser teaser = new Teaser();
+            teaser.setGame(game);
+            teaser.setObjectKey(key);
+            teaser.setType(types[i]);
+
+            teaserRepository.save(teaser);
+        }
+    }
+
+    private String saveGameFile(Game game, MultipartFile file) {
+        validateMime(file,
+                "application/zip",
+                "application/x-zip-compressed",
+                "application/octet-stream" // fallback típico en Windows
+        );
+
+        return saveFile(
+                BASE_UPLOAD_DIR + game.getId() + "/files",
+                file,
+                "zip"
+        );
+    }
+
+    private String saveImage(Game game, MultipartFile file, String folder) {
+        validateMimeStartsWith(file, "image/");
+        return saveFile(
+                BASE_UPLOAD_DIR + game.getId() + "/" + folder,
+                file,
+                "png"
+        );
+    }
+
+    private String saveFile(String folderPath, MultipartFile file, String defaultExt) {
+        try {
+            File folder = new File(folderPath);
+            if (!folder.exists()) folder.mkdirs();
+
+            String key = UUID.randomUUID().toString().replace("-", "");
+            String ext = FileUtils.getExtension(file.getOriginalFilename());
+            if (ext.isEmpty()) ext = defaultExt;
+
+            File target = new File(folder, key + "." + ext);
+            file.transferTo(target);
+
+            return key;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving file: " + e.getMessage(), e);
+        }
+    }
+
+    private void validateMime(MultipartFile file, String... allowed) {
+        try {
+            String detected = FileUtils.getContentType(file.getBytes(), file.getOriginalFilename());
+            if (Arrays.stream(allowed).noneMatch(detected::equals))
+                throw new IllegalArgumentException("Invalid file type: " + detected);
+        } catch (IOException e) {
+            throw new RuntimeException("Error validating file type", e);
+        }
+    }
+
+    private void validateMimeStartsWith(MultipartFile file, String prefix) {
+        try {
+            String detected = FileUtils.getContentType(file.getBytes(), file.getOriginalFilename());
+            if (!detected.startsWith(prefix))
+                throw new IllegalArgumentException("Invalid image type: " + detected);
+        } catch (IOException e) {
+            throw new RuntimeException("Error validating image type", e);
+        }
+    }
+
+    // ============================================================
+    //                      FILE LOAD
+    // ============================================================
+
+    public byte[] loadLogo(Integer id) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        File file = findFile(BASE_UPLOAD_DIR + game.getId() + "/logo", game.getGameLogoKey());
+
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading logo", e);
+        }
+    }
+
+    public byte[] getVerticalImage(Integer id) { return loadTeaser(id, "VERTICAL"); }
+    public byte[] getHorizontal1Image(Integer id) { return loadTeaser(id, "HORIZONTAL_1"); }
+    public byte[] getHorizontal2Image(Integer id) { return loadTeaser(id, "HORIZONTAL_2"); }
+
+    private byte[] loadTeaser(Integer gameId, String type) {
+        Teaser teaser = teaserRepository.findByGameIdAndType(gameId, type)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Teaser not found: " + type));
+
+        File file = findFile(BASE_UPLOAD_DIR + gameId + "/teasers", teaser.getObjectKey());
+
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading teaser: " + type, e);
+        }
+    }
+
+    private File findFile(String folder, String key) {
+        File dir = new File(folder);
+        File[] matches = dir.listFiles((d, name) -> name.startsWith(key + "."));
+        if (matches == null || matches.length == 0)
+            throw new IllegalStateException("File with key " + key + " not found");
+        return matches[0];
     }
 
     // ============================================================
@@ -223,6 +272,33 @@ public class GameService {
                 .orElse(null);
     }
 
+    public java.util.List<GameResponseDTO> getAllGames() {
+        return gameRepository.findAllWithDevOrderByIdDesc()
+                .stream().map(this::toMarketplaceResponseDTO).toList();
+    }
+
+    public java.util.List<GameResponseDTO> getGames(GameSearchDTO dto) {
+        java.util.List<Game> games;
+
+        if (dto.getTitle() != null && !dto.getTitle().isEmpty())
+            games = gameRepository.findByTitleContainingIgnoreCase(dto.getTitle());
+        else if (dto.getDeveloperName() != null && !dto.getDeveloperName().isEmpty())
+            games = gameRepository.findByDev_Username(dto.getDeveloperName());
+        else if (dto.getTagNames() != null && !dto.getTagNames().isEmpty())
+            games = gameRepository.findByAllTagNames(dto.getTagNames(), dto.getTagNames().size());
+        else {
+            games = gameRepository.findAll();
+            Collections.shuffle(games);
+            games = games.stream().limit(dto.getLimit() != null ? dto.getLimit() : 25).toList();
+        }
+
+        return games.stream().map(this::toResponseDTO).toList();
+    }
+
+    // ============================================================
+    //                      DTO MAPPING
+    // ============================================================
+
     private GameResponseDTO toGameDetailResponseDTO(Game game) {
         GameResponseDTO dto = new GameResponseDTO();
 
@@ -232,80 +308,14 @@ public class GameService {
         dto.setSizeApproximation(formatSizeFromMB(game.getSizeMb()));
         dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
         dto.setPrice(game.getPrice());
-
-        if (game.getDev() != null) {
-            dto.setDevUsername(game.getDev().getUsername());
-        } else {
-            dto.setDevUsername("Unknown");
-        }
-
+        dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-
-        if (game.getTags() != null) {
-            dto.setTags(game.getTags().stream().map(Tag::getName).toList());
-        } else {
-            dto.setTags(List.of());
-        }
-
-        dto.setTeasers(List.of());
+        dto.setTags(game.getTags().stream().map(Tag::getName).toList());
+        dto.setTeasers(java.util.List.of());
 
         return dto;
     }
-
-    public List<GameResponseDTO> getAllGames() {
-        return gameRepository.findAllWithDevOrderByIdDesc()
-                .stream()
-                .map(this::toMarketplaceResponseDTO)
-                .toList();
-    }
-
-    public List<GameResponseDTO> getGames(GameSearchDTO dto) {
-        List<Game> games;
-
-        if (dto.getTitle() != null && !dto.getTitle().isEmpty()) {
-            games = gameRepository.findByTitleContainingIgnoreCase(dto.getTitle());
-        } else if (dto.getDeveloperName() != null && !dto.getDeveloperName().isEmpty()) {
-            games = gameRepository.findByDev_Username(dto.getDeveloperName());
-        } else if (dto.getTagNames() != null && !dto.getTagNames().isEmpty()) {
-            games = gameRepository.findByAllTagNames(dto.getTagNames(), dto.getTagNames().size());
-        } else {
-            games = gameRepository.findAll();
-            Collections.shuffle(games);
-            int limit = dto.getLimit() != null ? dto.getLimit() : 25;
-            games = games.stream().limit(limit).toList();
-        }
-
-        return games.stream().map(this::toResponseDTO).toList();
-    }
-
-    public List<GameResponseDTO> getByTitle(String title) {
-        return gameRepository.findByTitleContainingIgnoreCase(title)
-                .stream().map(this::toResponseDTO).toList();
-    }
-
-    public List<GameResponseDTO> getByDevId(Integer devId) {
-        return gameRepository.findByDevId(devId)
-                .stream().map(this::toResponseDTO).toList();
-    }
-
-    public List<GameResponseDTO> getByTagId(Integer tagId) {
-        return gameRepository.findByTagsId(tagId)
-                .stream().map(this::toResponseDTO).toList();
-    }
-
-    private File findFileByKey(String folder, String key) {
-        File dir = new File(folder);
-        File[] matches = dir.listFiles((d, name) -> name.startsWith(key + "."));
-        if (matches == null || matches.length == 0) {
-            throw new IllegalStateException("File with key " + key + " not found");
-        }
-        return matches[0];
-    }
-
-    // ============================================================
-    //                      DTO MAPPING
-    // ============================================================
 
     private GameResponseDTO toResponseDTO(Game game) {
         GameResponseDTO dto = new GameResponseDTO();
@@ -319,7 +329,6 @@ public class GameService {
         dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-
         dto.setTags(game.getTags().stream().map(Tag::getName).toList());
         dto.setTeasers(game.getTeasers().stream().map(this::toTeaserResponseDTO).toList());
 
@@ -335,18 +344,11 @@ public class GameService {
         dto.setSizeApproximation(formatSizeFromMB(game.getSizeMb()));
         dto.setDownloadsApproximation(formatDownloads(game.getDownloads()));
         dto.setPrice(game.getPrice());
-
-        if (game.getDev() != null) {
-            dto.setDevUsername(game.getDev().getUsername());
-        } else {
-            dto.setDevUsername("Unknown");
-        }
-
+        dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-
-        dto.setTags(List.of());
-        dto.setTeasers(List.of());
+        dto.setTags(java.util.List.of());
+        dto.setTeasers(java.util.List.of());
 
         return dto;
     }
@@ -354,7 +356,7 @@ public class GameService {
     private TeaserResponseDTO toTeaserResponseDTO(Teaser teaser) {
         TeaserResponseDTO dto = new TeaserResponseDTO();
         dto.setId(teaser.getId());
-        dto.setGameId(teaser.getGame() != null ? teaser.getGame().getId() : null);
+        dto.setGameId(teaser.getGame().getId());
         dto.setObjectKey(teaser.getObjectKey());
         dto.setType(teaser.getType());
         return dto;
@@ -406,47 +408,10 @@ public class GameService {
                 : rounded + units[unitIndex];
     }
 
-    public byte[] loadLogo(Integer id) {
-        Game game = gameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+    private BigDecimal calculateSizeMb(MultipartFile file) {
+        if (file == null || file.isEmpty()) return BigDecimal.ZERO;
 
-        if (game.getGameLogoKey() == null) {
-            throw new IllegalStateException("Logo not available");
-        }
-
-        try {
-            return java.nio.file.Files.readAllBytes(
-                    fileStorageService.resolvePath(game.getGameLogoKey())
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading logo", e);
-        }
-    }
-
-    public byte[] getVerticalImage(Integer id) {
-        return loadTeaserByType(id, "VERTICAL");
-    }
-
-    public byte[] getHorizontal1Image(Integer id) {
-        return loadTeaserByType(id, "HORIZONTAL_1");
-    }
-
-    public byte[] getHorizontal2Image(Integer id) {
-        return loadTeaserByType(id, "HORIZONTAL_2");
-    }
-
-    private byte[] loadTeaserByType(Integer gameId, String type) {
-        Teaser teaser = teaserRepository.findByGameIdAndType(gameId, type)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Teaser not found: " + type));
-
-        try {
-            return java.nio.file.Files.readAllBytes(
-                    fileStorageService.resolvePath(teaser.getObjectKey())
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading teaser: " + type, e);
-        }
+        double sizeMb = file.getSize() / 1024.0 / 1024.0;
+        return BigDecimal.valueOf(sizeMb).setScale(2, RoundingMode.HALF_UP);
     }
 }

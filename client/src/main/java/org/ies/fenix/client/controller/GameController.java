@@ -20,6 +20,7 @@ import org.ies.fenix.controller.dto.purchase.PurchaseCreateDTO;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.io.File;
@@ -293,9 +294,6 @@ public class GameController {
                             totalRead += read;
 
                             updateProgress(totalRead, fileSize);
-
-                            double progress = (double) totalRead / fileSize;
-                            Platform.runLater(() -> base.setProgress(progress));
                         }
                     }
 
@@ -303,20 +301,34 @@ public class GameController {
                 }
             };
 
+// BIND
             base.getGlobalProgressBar()
                     .progressProperty()
                     .bind(downloadTask.progressProperty());
 
-            downloadTask.setOnSucceeded(e -> base.hideProgress());
-            downloadTask.setOnFailed(e -> base.hideProgress());
-            downloadTask.setOnCancelled(e -> base.hideProgress());
+// UNBIND + HIDE
+            downloadTask.setOnSucceeded(e -> {
+                base.getGlobalProgressBar().progressProperty().unbind();
+                base.hideProgress();
+            });
+            downloadTask.setOnFailed(e -> {
+                base.getGlobalProgressBar().progressProperty().unbind();
+                base.hideProgress();
+            });
+            downloadTask.setOnCancelled(e -> {
+                base.getGlobalProgressBar().progressProperty().unbind();
+                base.hideProgress();
+            });
 
+// START
             new Thread(downloadTask).start();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        }  catch (HttpClientErrorException e) {
+            String serverMessage = e.getResponseBodyAsString();
             stageManager.getBaseLayoutController().hideProgress();
-            showError("Download failed", "There was an error downloading the game.");
+            showError("Server error", serverMessage);
+        } catch (Exception e) {
+            stageManager.getBaseLayoutController().hideProgress();
+            showError("Download failed", "Unexpected error");
         }
     }
 
