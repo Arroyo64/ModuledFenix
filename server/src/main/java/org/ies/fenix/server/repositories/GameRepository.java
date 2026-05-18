@@ -30,6 +30,8 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
 
     List<Game> findByDev_Username(String username);
 
+    long countByDevId(Integer devId);
+
     @Query("""
         SELECT g
         FROM Game g
