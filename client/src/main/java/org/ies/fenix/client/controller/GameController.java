@@ -3,9 +3,10 @@ package org.ies.fenix.client.controller;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
@@ -26,8 +27,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import static org.ies.fenix.client.utils.ImageUtils.initialConfig;
+import static org.ies.fenix.client.utils.ImageUtils.setCoverImage;
 
 public class GameController {
 
@@ -37,45 +40,35 @@ public class GameController {
     @FXML
     public ImageView topProfileImage;
 
-    //todo lo que dice selected son los datos que se muestran del juego seleccionado, por lo que tiene que ser "SETEADOS"
-
     @FXML
-    public Label selectedGameGenre;
     public Label selectedGameDeveloper;
+
+    @FXML
     public Label selectedGameTitle;
-    public Label selectedGameTitle2; //es un duplicado necesario en el fxml creo
 
-    // TODO Estos tags deberian ser auto creados dependiendo del los tag recibidos de la base de datos
-    public Label selectedGameTag1;
-    public Label selectedGameTag2;
-    public Label selectedGameTag12;
-    public Label selectedGameTag13;
-    public Label selectedGameTag22;
-    // Estan numerados asi porque los q empiezan en 1 estan en una fila y los 2 en otra, consideraciona al crear esto tags
-    // Estos de abajo encontre 3 bloques label en vez de un textArea o algo asi no entiendo porque lo haces asi pero igual le asigno id
+    @FXML
+    public Label selectedGameTitle2;
+
+    @FXML
     public Label selectedGameDescription1;
+
+    @FXML
     public Label selectedGameDescription2;
+
+    @FXML
     public Label selectedGameDescription3;
+
+    @FXML
     public Label selectedGameMainQuote;
+
+    @FXML
     public ImageView selectedGameBannerImage;
-    public VBox tagContainerFather; // por si te sirve para crear los tags automaticamente como punto de anglaje
-    @FXML
-    private TextField searchField;
 
     @FXML
-    private VBox leftGamesList;
-
-    @FXML
-    private GridPane libraryGrid;
+    public VBox tagContainerFather;
 
     @FXML
     private Hyperlink username;
-
-    @FXML
-    private Hyperlink marketplace;
-
-    @FXML
-    private Hyperlink library;
 
     private final StageManager stageManager;
     private final IClientController clientApiService;
@@ -86,93 +79,168 @@ public class GameController {
 
     private Integer selectedGameId;
 
-    public void setSelectedGameId(Integer selectedGameId) {
-        this.selectedGameId = selectedGameId;
-        loadSelectedGame();
-    }
-
     public GameController(StageManager stageManager,
                           IClientController clientApiService,
                           IGameController gameApiService,
-                          SessionManager sessionManager, RestClient restClient, IPurchaseController purchaseApiService) {
+                          SessionManager sessionManager,
+                          RestClient restClient,
+                          IPurchaseController purchaseApiService) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
         this.restClient = restClient;
         this.purchaseApiService = purchaseApiService;
-        BaseLayoutController base = stageManager.getBaseLayoutController();
     }
 
     @FXML
     private void initialize() {
         initialConfig(clientApiService, sessionManager, username, topProfileImage, topProfileIcon);
-        //todo setear el contenido del juego dependiendo de la opcion que haya clickado el cliente y poner el ID del
-        //del juego en el atributo selectedGameId para que se puede ejecutar el onDonwload
     }
 
-    @FXML
-    void switchProfileScene() {
-        stageManager.switchScene(FxmlView.PROFILE);
+    public void setSelectedGameId(Integer selectedGameId) {
+        this.selectedGameId = selectedGameId;
+        loadSelectedGame();
     }
 
-    @FXML
-    void switchToMarketplaceScene() {
-        stageManager.switchScene(FxmlView.MARKETPLACE);
+    private void loadSelectedGame() {
+        if (selectedGameId == null) {
+            return;
+        }
+
+        try {
+            ResponseEntity<GameResponseDTO> response =
+                    gameApiService.getById(sessionManager.getAuthorizationHeader(), selectedGameId);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                return;
+            }
+
+            GameResponseDTO game = response.getBody();
+
+            String title = game.getTitle() != null ? game.getTitle() : "Untitled";
+            String developer = game.getDevUsername() != null ? game.getDevUsername() : "Unknown";
+            String description = game.getDescription() != null ? game.getDescription() : "No description available.";
+
+            selectedGameTitle.setText(title);
+            selectedGameTitle2.setText("Title: " + title);
+            selectedGameDeveloper.setText("Developer: " + developer);
+
+            selectedGameDescription1.setText(description);
+            selectedGameDescription2.setText("");
+            selectedGameDescription3.setText("");
+
+            selectedGameMainQuote.setText(title);
+
+            renderTags(game.getTags());
+            loadHorizontalTwoIntoBanner(selectedGameId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @FXML
-    void switchToLibraryScene() {
-        stageManager.switchScene(FxmlView.LIBRARY);
+    private void renderTags(List<String> tags) {
+        tagContainerFather.getChildren().clear();
+
+        if (tags == null || tags.isEmpty()) {
+            return;
+        }
+
+        HBox firstRow = new HBox(10.0);
+        HBox secondRow = new HBox(10.0);
+
+        firstRow.setAlignment(Pos.CENTER_LEFT);
+        secondRow.setAlignment(Pos.CENTER_LEFT);
+
+        List<String> visibleTags = tags.stream()
+                .limit(6)
+                .toList();
+
+        for (int i = 0; i < visibleTags.size(); i++) {
+            Label tagLabel = new Label(visibleTags.get(i));
+            tagLabel.getStyleClass().add("tag");
+
+            if (i < 3) {
+                firstRow.getChildren().add(tagLabel);
+            } else {
+                secondRow.getChildren().add(tagLabel);
+            }
+        }
+
+        tagContainerFather.getChildren().add(firstRow);
+
+        if (!secondRow.getChildren().isEmpty()) {
+            tagContainerFather.getChildren().add(secondRow);
+        }
     }
 
-    @FXML
-    void switchToUploadGameScene() {
-        stageManager.switchScene(FxmlView.UPLOAD_GAME);
-    }
+    private void loadHorizontalTwoIntoBanner(Integer gameId) {
+        if (gameId == null || selectedGameBannerImage == null) {
+            return;
+        }
 
-    @FXML
-    public void reloadView() {
-        stageManager.reloadCurrentScene();
+        try {
+            System.out.println("Loading horizontal 2 for game id: " + gameId);
+
+            ResponseEntity<byte[]> response = gameApiService.getHorizontal2(
+                    sessionManager.getAuthorizationHeader(),
+                    gameId
+            );
+
+            System.out.println("Horizontal 2 status: " + response.getStatusCode());
+
+            if (response.getBody() == null) {
+                System.out.println("Horizontal 2 body is null");
+                return;
+            }
+
+            System.out.println("Horizontal 2 bytes: " + response.getBody().length);
+
+            if (!response.getStatusCode().is2xxSuccessful()
+                    || response.getBody().length == 0) {
+                return;
+            }
+
+            setCoverImage(response.getBody(), selectedGameBannerImage, 1200.0, 320.0);
+
+            selectedGameBannerImage.setVisible(true);
+            selectedGameBannerImage.setManaged(true);
+            selectedGameBannerImage.setOpacity(1.0);
+            selectedGameBannerImage.toFront();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void onDownload() {
-
         try {
             if (selectedGameId == null) {
                 showError("No game selected", "Please select a game to download.");
                 return;
             }
 
-            // 1. Comprobar si ya lo tiene comprado
             boolean purchased = hasPurchased(selectedGameId);
 
             if (!purchased) {
-                // 2. Mostrar confirmación
                 boolean confirmed = showPurchaseConfirmation();
 
                 if (!confirmed) {
-                    return; // usuario canceló
+                    return;
                 }
 
-                // 3. Ejecutar compra
                 boolean success = performPurchase(selectedGameId);
 
                 if (!success) {
-                    return; // no continuar si la compra falló
+                    return;
                 }
             }
-            if (selectedGameId == null) {
-                showError("No game selected", "Please select a game to download.");
-                return;
-            }
 
-            //  Obtener barra global
             BaseLayoutController base = stageManager.getBaseLayoutController();
-            base.showProgress(); // mostrar barra global en modo indeterminado
+            base.showProgress();
 
-            // 1. Llamar al servidor
             ResponseEntity<Resource> response = restClient.get()
                     .uri("/api/games/download/" + selectedGameId)
                     .header("Authorization", sessionManager.getAuthorizationHeader())
@@ -186,38 +254,36 @@ public class GameController {
             }
 
             Resource resource = response.getBody();
+
             if (resource == null) {
                 base.hideProgress();
                 showError("Download failed", "Empty file received.");
                 return;
             }
 
-            // 2. Obtener nombre del archivo
             String filename = resource.getFilename();
+
             if (filename == null || filename.isBlank()) {
                 filename = "game_" + selectedGameId;
             }
 
-            // 3. Elegir dónde guardar el archivo
             FileChooser chooser = new FileChooser();
             chooser.setInitialFileName(filename);
-            File target = chooser.showSaveDialog(
-                    stageManager.getPrimaryStage()
-            );
+
+            File target = chooser.showSaveDialog(stageManager.getPrimaryStage());
+
             if (target == null) {
                 base.hideProgress();
                 return;
             }
 
-            // 4. Crear tarea con barra de progreso
             Task<Void> downloadTask = new Task<>() {
                 @Override
                 protected Void call() throws Exception {
-
                     long fileSize = resource.contentLength();
-                    InputStream in = resource.getInputStream();
 
-                    try (OutputStream out = new FileOutputStream(target)) {
+                    try (InputStream in = resource.getInputStream();
+                         OutputStream out = new FileOutputStream(target)) {
 
                         byte[] buffer = new byte[8192];
                         long totalRead = 0;
@@ -266,19 +332,16 @@ public class GameController {
         }
     }
 
-    private void showError(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
     private boolean hasPurchased(Integer gameId) {
         Integer clientId = sessionManager.getClientId();
 
         try {
             ResponseEntity<Boolean> response =
-                    purchaseApiService.hasPurchased(sessionManager.getAuthorizationHeader(),clientId, gameId);
+                    purchaseApiService.hasPurchased(
+                            sessionManager.getAuthorizationHeader(),
+                            clientId,
+                            gameId
+                    );
 
             Boolean purchased = response.getBody();
             return purchased != null && purchased;
@@ -287,6 +350,7 @@ public class GameController {
             return false;
         }
     }
+
     private boolean showPurchaseConfirmation() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm purchase");
@@ -309,7 +373,11 @@ public class GameController {
             dto.setClientId(clientId);
             dto.setGameId(gameId);
 
-            ResponseEntity<?> response = purchaseApiService.createPurchase(sessionManager.getAuthorizationHeader(),dto);
+            ResponseEntity<?> response =
+                    purchaseApiService.createPurchase(
+                            sessionManager.getAuthorizationHeader(),
+                            dto
+                    );
 
             return response.getStatusCode().is2xxSuccessful();
 
@@ -319,44 +387,36 @@ public class GameController {
         }
     }
 
-    private void loadSelectedGame() {
-        if (selectedGameId == null) {
-            return;
-        }
-
-        try {
-            ResponseEntity<GameResponseDTO> response =
-                    gameApiService.getById(sessionManager.getAuthorizationHeader(), selectedGameId);
-
-            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-                return;
-            }
-
-            GameResponseDTO game = response.getBody();
-
-            String title = game.getTitle() != null ? game.getTitle() : "Untitled";
-            String developer = game.getDevUsername() != null ? game.getDevUsername() : "Unknown";
-            String description = game.getDescription() != null ? game.getDescription() : "No description available.";
-
-            selectedGameTitle.setText(title);
-            selectedGameTitle2.setText("Title: " + title);
-            selectedGameDeveloper.setText("Developer: " + developer);
-
-            if (game.getTags() != null && !game.getTags().isEmpty()) {
-                selectedGameGenre.setText("Genre: " + game.getTags().get(0));
-            } else {
-                selectedGameGenre.setText("Genre: Unknown");
-            }
-
-            selectedGameDescription1.setText(description);
-            selectedGameDescription2.setText("");
-            selectedGameDescription3.setText("");
-
-            selectedGameMainQuote.setText(title);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void showError(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
+    @FXML
+    void switchProfileScene() {
+        stageManager.switchScene(FxmlView.PROFILE);
+    }
+
+    @FXML
+    void switchToMarketplaceScene() {
+        stageManager.switchScene(FxmlView.MARKETPLACE);
+    }
+
+    @FXML
+    void switchToLibraryScene() {
+        stageManager.switchScene(FxmlView.LIBRARY);
+    }
+
+    @FXML
+    void switchToUploadGameScene() {
+        stageManager.switchScene(FxmlView.UPLOAD_GAME);
+    }
+
+    @FXML
+    public void reloadView() {
+        stageManager.reloadCurrentScene();
+    }
 }
