@@ -9,13 +9,8 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="root"
             prefHeight="850.0"
             prefWidth="1400.0"
@@ -25,7 +20,6 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ies.fenix.client.controller.GameController">
 
-    <!-- MAIN CONTENT -->
     <center>
         <ScrollPane fitToWidth="true"
                     hbarPolicy="NEVER"
@@ -41,7 +35,8 @@
                           prefHeight="360.0"
                           styleClass="game-banner-wrapper">
 
-                        <ImageView fx:id="selectedGameBannerImage" fitHeight="320.0"
+                        <ImageView fx:id="selectedGameBannerImage"
+                                   fitHeight="320.0"
                                    fitWidth="1200.0"
                                    preserveRatio="false"
                                    styleClass="game-banner-image"/>
@@ -70,25 +65,23 @@
                             </padding>
 
                             <Label fx:id="selectedGameMainQuote"
-                                    text="GAME"
+                                   text="GAME"
                                    styleClass="game-main-quote"/>
 
                             <VBox spacing="18.0">
 
                                 <Label fx:id="selectedGameDescription1"
-                                        wrapText="true"
+                                       wrapText="true"
                                        styleClass="game-description"
-                                       text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
+                                       text="Game description"/>
 
                                 <Label fx:id="selectedGameDescription2"
                                        wrapText="true"
-                                       styleClass="game-description"
-                                       text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
+                                       styleClass="game-description"/>
 
                                 <Label fx:id="selectedGameDescription3"
                                        wrapText="true"
-                                       styleClass="game-description"
-                                       text="Lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est lorem ipsum est."/>
+                                       styleClass="game-description"/>
 
                             </VBox>
                         </VBox>
@@ -106,52 +99,34 @@
                             </padding>
 
                             <Label fx:id="selectedGameTitle"
-                                    text="GAME"
+                                   text="GAME"
                                    styleClass="game-title"/>
 
                             <!-- TAGS -->
-                            <VBox  fx:id="tagContainerFather" spacing="10.0">
-
-                                <HBox spacing="10.0">
-                                    <Label fx:id="selectedGameTag1" text="Tag-1" styleClass="tag"/>
-                                    <Label fx:id="selectedGameTag12" styleClass="tag"/>
-                                    <Label fx:id="selectedGameTag13" styleClass="tag"/>
-                                </HBox>
-
-                                <HBox spacing="10.0">
-                                    <Label fx:id="selectedGameTag2" text="Tag-4" styleClass="tag"/>
-                                    <Label fx:id="selectedGameTag22" text="Tag-5" styleClass="tag"/>
-                                </HBox>
-
-                            </VBox>
+                            <VBox fx:id="tagContainerFather"
+                                  spacing="10.0"/>
 
                             <!-- INFO -->
                             <VBox spacing="14.0">
 
                                 <Label fx:id="selectedGameTitle2"
-                                        text="Title: GAME"
-                                       styleClass="game-info"/>
-
-                                <Label fx:id="selectedGameGenre"
-                                        text="Genre: Genre"
+                                       text="Title: GAME"
                                        styleClass="game-info"/>
 
                                 <Label fx:id="selectedGameDeveloper"
-                                        text="Developer: Developer"
+                                       text="Developer: Developer"
                                        styleClass="game-info"/>
 
                             </VBox>
 
                             <!-- BUTTONS -->
                             <HBox spacing="18.0">
-                                <!-- todo deberia eliminarse el play en el game.fxml -->
                                 <Button text="Play"
                                         styleClass="game-play-button"/>
 
                                 <Button text="Download"
                                         styleClass="game-download-button"
                                         onAction="#onDownload"/>
-
                             </HBox>
 
                         </VBox>
