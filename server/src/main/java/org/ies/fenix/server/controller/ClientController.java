@@ -2,6 +2,7 @@ package org.ies.fenix.server.controller;
 
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.*;
+import org.ies.fenix.server.repositories.GameRepository;
 import org.ies.fenix.server.services.ClientService;
 import org.ies.fenix.server.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.ies.fenix.controller.IClientController;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 import static org.ies.fenix.server.services.TokenService.extractBearerToken;
 
@@ -18,6 +18,9 @@ public class ClientController implements IClientController {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     @Override
     public ResponseEntity<RegisterResponseDTO> register(ClientRegisterDTO dto) {
@@ -48,20 +51,31 @@ public class ClientController implements IClientController {
     @Override
     public ResponseEntity<ClientInfoDTO> getClientInfo(String authorization) {
         String token = extractBearerToken(authorization);
+
         if (token != null) {
             System.out.println("Recibido token = " + token);
+
             var client = clientService.getClient(token);
+
+            if (client == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            long createdGamesCount = gameRepository.countByDevId(client.getId());
 
             return ResponseEntity.ok(
                     new ClientInfoDTO(
                             client.getUsername(),
                             client.getEmail(),
-                            client.getCharacterCounterPassword() + 1
+                            client.getCharacterCounterPassword() + 1,
+                            createdGamesCount
                     )
             );
         }
+
         return ResponseEntity.badRequest().build();
     }
+
     @Override
     public ResponseEntity<ServerResponseDTO> updateBio(String authorization, String bio){
         String token = extractBearerToken(authorization);

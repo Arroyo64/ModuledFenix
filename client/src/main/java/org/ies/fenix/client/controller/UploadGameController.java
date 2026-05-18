@@ -28,9 +28,6 @@ public class UploadGameController {
     private TextField titleField;
 
     @FXML
-    private TextField developerField;
-
-    @FXML
     private TextField tagsField;
 
     @FXML
@@ -82,14 +79,6 @@ public class UploadGameController {
         this.gameApiService = gameApiService;
         this.sessionManager = sessionManager;
         this.restClient = restClient;
-    }
-
-    @FXML
-    private void initialize() {
-        if (developerField != null) {
-            developerField.setEditable(false);
-            developerField.setPromptText("Your username will be used automatically");
-        }
     }
 
     @FXML

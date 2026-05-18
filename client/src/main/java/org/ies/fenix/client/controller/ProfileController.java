@@ -45,6 +45,9 @@ public class ProfileController implements Initializable {
     @FXML
     private FontIcon profileIcon;
 
+    @FXML
+    private Label gamesCreatedValue;
+
     private final StageManager stageManager;
     private final IClientController clientApiService;
     private final SessionManager sessionManager;
@@ -59,9 +62,13 @@ public class ProfileController implements Initializable {
         try {
             ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader());
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
-                nameField.setText(response.getBody().getUsername());
-                emailField.setText(response.getBody().getEmail());
-                passwordField.setText(buildStingWithCharsOf(response.getBody().getPasswordCharacter()));
+                ClientInfoDTO clientInfo = response.getBody();
+
+                nameField.setText(clientInfo.getUsername());
+                emailField.setText(clientInfo.getEmail());
+                passwordField.setText(buildStingWithCharsOf(clientInfo.getPasswordCharacter()));
+
+                gamesCreatedValue.setText(String.valueOf(clientInfo.getCreatedGamesCount()));
             }
             ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
             if (loadedBio.getStatusCode().value() != 404) {
