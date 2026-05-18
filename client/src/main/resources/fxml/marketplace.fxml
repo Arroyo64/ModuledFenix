@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -22,17 +23,26 @@
                     hbarPolicy="NEVER"
                     vbarPolicy="AS_NEEDED"
                     styleClass="main-scroll">
+
             <content>
-                <VBox spacing="35.0" styleClass="content-container">
+                <VBox spacing="35.0"
+                      styleClass="content-container">
+
                     <padding>
                         <Insets top="45.0" right="30.0" bottom="30.0" left="30.0"/>
                     </padding>
 
+                    <!-- LATEST RELEASED -->
                     <VBox spacing="18.0">
+
                         <HBox alignment="CENTER_LEFT">
+
                             <VBox spacing="5.0">
-                                <Label text="Latest released" styleClass="section-title"/>
-                                <Label text="New histories to play!" styleClass="section-subtitle"/>
+                                <Label text="Latest released"
+                                       styleClass="section-title"/>
+
+                                <Label text="New histories to play!"
+                                       styleClass="section-subtitle"/>
                             </VBox>
 
                             <Region HBox.hgrow="ALWAYS"/>
@@ -50,6 +60,7 @@
                                     pannable="true"
                                     prefViewportHeight="250.0"
                                     styleClass="horizontal-games-scroll">
+
                             <content>
                                 <HBox fx:id="latestReleasedContainer"
                                       spacing="24.0"
@@ -58,10 +69,15 @@
                         </ScrollPane>
                     </VBox>
 
+                    <!-- RECOMMENDATIONS -->
                     <VBox spacing="18.0">
+
                         <VBox spacing="5.0">
-                            <Label text="Recommendations" styleClass="section-title"/>
-                            <Label text="Based on you like to play" styleClass="section-subtitle"/>
+                            <Label text="Recommendations"
+                                   styleClass="section-title"/>
+
+                            <Label text="Based on you like to play"
+                                   styleClass="section-subtitle"/>
                         </VBox>
 
                         <ScrollPane fitToHeight="true"
@@ -69,12 +85,14 @@
                                     hbarPolicy="AS_NEEDED"
                                     vbarPolicy="NEVER"
                                     pannable="true"
-                                    prefViewportHeight="250.0"
+                                    prefViewportHeight="740.0"
                                     styleClass="horizontal-games-scroll">
+
                             <content>
-                                <HBox fx:id="recommendationsContainer"
-                                      spacing="24.0"
-                                      styleClass="games-row"/>
+                                <GridPane fx:id="recommendationsContainer"
+                                          hgap="24.0"
+                                          vgap="24.0"
+                                          styleClass="games-row"/>
                             </content>
                         </ScrollPane>
                     </VBox>

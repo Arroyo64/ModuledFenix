@@ -6,9 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
@@ -33,7 +31,7 @@ public class MarketplaceController implements Initializable {
     private HBox latestReleasedContainer;
 
     @FXML
-    private HBox recommendationsContainer;
+    private GridPane recommendationsContainer;
 
     private final StageManager stageManager;
     private final IClientController clientApiService;
@@ -107,24 +105,51 @@ public class MarketplaceController implements Initializable {
         latestReleasedContainer.getChildren().clear();
 
         if (games == null || games.isEmpty()) {
+            latestReleasedContainer.getChildren().add(createEmptyGamesMessage("There are no games yet."));
             return;
         }
 
-        for (GameResponseDTO game : games) {
-            latestReleasedContainer.getChildren().add(createGameCard(game));
-        }
+        games.stream()
+                .sorted((g1, g2) -> Integer.compare(g2.getId(), g1.getId()))
+                .limit(10)
+                .forEach(game -> latestReleasedContainer.getChildren().add(createGameCard(game)));
     }
 
     private void renderRecommendations(List<GameResponseDTO> games) {
         recommendationsContainer.getChildren().clear();
 
         if (games == null || games.isEmpty()) {
+            recommendationsContainer.add(
+                    createEmptyGamesMessage("There are no games to recommend yet."),
+                    0,
+                    0
+            );
             return;
         }
 
-        games.stream()
-                .limit(8)
-                .forEach(game -> recommendationsContainer.getChildren().add(createGameCard(game)));
+        List<GameResponseDTO> shuffledGames = new ArrayList<>(games);
+        java.util.Collections.shuffle(shuffledGames);
+
+        int index = 0;
+
+        for (GameResponseDTO game : shuffledGames) {
+            int row = index % 3;
+            int col = index / 3;
+
+            recommendationsContainer.add(createGameCard(game), col, row);
+
+            index++;
+        }
+    }
+    private Label createEmptyGamesMessage(String text) {
+        Label emptyLabel = new Label(text);
+        emptyLabel.setStyle("""
+            -fx-font-size: 18px;
+            -fx-text-fill: #777777;
+            -fx-font-weight: bold;
+            -fx-padding: 20 0 20 0;
+            """);
+        return emptyLabel;
     }
 
     private StackPane createGameCard(GameResponseDTO game) {
