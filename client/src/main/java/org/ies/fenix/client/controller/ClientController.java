@@ -5,14 +5,9 @@ import org.ies.fenix.controller.dto.client.ClientRegisterDTO;
 import org.ies.fenix.controller.dto.client.LoginResponseDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -29,44 +24,20 @@ import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
 
-    @FXML
-    private Text title;
-
-    @FXML
-    private Text subtitle;
-
-    @FXML
-    private VBox center;
-
-    @FXML
-    private HBox upper;
-
-    @FXML
-    private BorderPane root;
-
-    @FXML
-    private ImageView logoImage;
-
-    @FXML
-    private ImageView settingsImage;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
-    private TextField username;
-
-    @FXML
-    private PasswordField password;
-
-    @FXML
-    private PasswordField passwordCheck;
+    @FXML private Text title;
+    @FXML private Text subtitle;
+    @FXML private VBox center;
+    @FXML private HBox upper;
+    @FXML private BorderPane root;
+    @FXML private ImageView logoImage;
+    @FXML private ImageView settingsImage;
+    @FXML private Button loginButton;
+    @FXML private TextField username;
+    @FXML private PasswordField password;
+    @FXML private PasswordField passwordCheck;
+    @FXML private Label clientErrorLabel;
 
     private String email = "";
-
-    @FXML
-    private Label clientErrorLabel;
-
     private final StringProperty errorProperty = new SimpleStringProperty();
 
     private final StageManager stageManager;
@@ -84,27 +55,33 @@ public class ClientController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clientErrorLabel.textProperty().bind(errorProperty);
-        clientErrorLabel.visibleProperty().bind(
-                errorProperty.isNotNull().and(errorProperty.isNotEmpty())
-        );
+        clientErrorLabel.visibleProperty().bind(errorProperty.isNotEmpty());
         clientErrorLabel.managedProperty().bind(clientErrorLabel.visibleProperty());
-        username.textProperty().addListener((observable, oldText, newText) -> {
-            errorProperty.setValue("");
-        });
+
+        username.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
+        password.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
+        if (passwordCheck != null) {
+            passwordCheck.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
+        }
+
     }
+
+    // ============================================================
+    //                      LOGIN
+    // ============================================================
 
     public void loadUserAndOpenMarketPlace() {
 
         String name = username.getText();
         String rawPassword = password.getText();
 
-        if (name == null || name.isBlank()) {
-            errorProperty.set("Username can not be blank.");
+        if (name.isBlank()) {
+            errorProperty.set("Username cannot be blank.");
             return;
         }
 
-        if (rawPassword == null || rawPassword.isBlank()) {
-            errorProperty.set("Password can not be blank.");
+        if (rawPassword.isBlank()) {
+            errorProperty.set("Password cannot be blank.");
             return;
         }
 
@@ -112,25 +89,36 @@ public class ClientController implements Initializable {
             ResponseEntity<LoginResponseDTO> response =
                     clientApiService.login(new ClientLoginDTO(name, rawPassword));
 
-            if (response.getStatusCode().value() != 200 || response.getBody().getToken() == null) {
-                errorProperty.set(response.getBody().getMessage());
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                errorProperty.set(response.getBody() != null
+                        ? response.getBody().getMessage()
+                        : "Login failed.");
+                return;
+            }
+
+            LoginResponseDTO body = response.getBody();
+            if (body == null || body.getToken() == null) {
+                errorProperty.set("Invalid server response.");
                 return;
             }
 
             sessionManager.saveSession(
-                    response.getBody().getToken(),
-                    response.getBody().getClientId(),
-                    response.getBody().getUsername()
+                    body.getToken(),
+                    body.getClientId(),
+                    body.getUsername()
             );
 
-            errorProperty.set(""); // limpia error
+            errorProperty.set("");
             stageManager.switchScene(FxmlView.MARKETPLACE);
 
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             errorProperty.set("Could not connect to server.");
         }
     }
+
+    // ============================================================
+    //                      REGISTER
+    // ============================================================
 
     public void saveUserAndOpenLogInView() {
 
@@ -138,7 +126,7 @@ public class ClientController implements Initializable {
         String rawPassword = password.getText();
         String repeatedPassword = passwordCheck.getText();
 
-        if (name == null || name.isBlank() || name.length() > 20) {
+        if (name.isBlank() || name.length() > 20) {
             errorProperty.set("Username must not be blank or longer than 20 characters.");
             return;
         }
@@ -149,32 +137,36 @@ public class ClientController implements Initializable {
         }
 
         if (rawPassword.length() >= 10) {
-            errorProperty.set("The password must be less than 10 characters long.");
+            errorProperty.set("Password must be less than 10 characters.");
             return;
         }
 
         try {
-            var response = clientApiService.register(
-                    new ClientRegisterDTO(
-                            name,
-                            email,
-                            rawPassword
-                    )
+            ResponseEntity<?> response = clientApiService.register(
+                    new ClientRegisterDTO(name, email, rawPassword)
             );
 
-            if (response.getStatusCode().value() != 200) {
-                errorProperty.set(response.getBody().getMessage());
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                Object body = response.getBody();
+                if (body instanceof String msg) {
+                    errorProperty.set(msg);
+                } else {
+                    errorProperty.set("Registration failed.");
+                }
                 return;
             }
 
             errorProperty.set("");
             stageManager.switchScene(FxmlView.LOGIN);
 
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             errorProperty.set("Could not connect to server.");
         }
     }
+
+    // ============================================================
+    //                      NAVIGATION
+    // ============================================================
 
     @FXML
     void switchEmailFormView() {
@@ -182,6 +174,6 @@ public class ClientController implements Initializable {
     }
 
     void setEmail(String email) {
-        this.email= email;
+        this.email = email;
     }
 }

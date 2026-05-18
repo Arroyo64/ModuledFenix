@@ -21,6 +21,10 @@ public class GameController implements IGameController {
     @Autowired
     private GameService gameService;
 
+    // ============================================================
+    //                      GET ALL GAMES
+    // ============================================================
+
     @Override
     @GetMapping
     public ResponseEntity<List<GameResponseDTO>> getAllGames(
@@ -33,6 +37,10 @@ public class GameController implements IGameController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    // ============================================================
+    //                      SEARCH GAMES
+    // ============================================================
 
     @Override
     @PostMapping("/search")
@@ -49,16 +57,27 @@ public class GameController implements IGameController {
         }
     }
 
+
+    // ============================================================
+    //                      GET IMAGES
+    // ============================================================
+
     @Override
     @GetMapping("/{id}/logo")
     public ResponseEntity<byte[]> getLogo(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     ) {
-        byte[] bytes = gameService.loadLogo(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
+        try {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(gameService.loadLogo(id));
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage().getBytes());
+        }
     }
 
     @Override
@@ -67,10 +86,16 @@ public class GameController implements IGameController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     ) {
-        byte[] bytes = gameService.getVerticalImage(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
+        try {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(gameService.getVerticalImage(id));
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage().getBytes());
+        }
     }
 
     @Override
@@ -79,10 +104,16 @@ public class GameController implements IGameController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     ) {
-        byte[] bytes = gameService.getHorizontal1Image(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
+        try {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(gameService.getHorizontal1Image(id));
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage().getBytes());
+        }
     }
 
     @Override
@@ -91,49 +122,60 @@ public class GameController implements IGameController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     ) {
-        byte[] bytes = gameService.getHorizontal2Image(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
+        try {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(gameService.getHorizontal2Image(id));
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage().getBytes());
+        }
     }
+
+
+    // ============================================================
+    //                      GET GAME BY ID
+    // ============================================================
 
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<GameResponseDTO> getById(
             @RequestHeader("Authorization") String authorization,
-            @PathVariable Integer id
-    ) {
+            @PathVariable Integer id) {
         try {
-            if (id == null) {
-                return ResponseEntity.badRequest().build();
-            }
-
             return ResponseEntity.ok(gameService.getGameById(id));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
+
+
+    // ============================================================
+    //                      UPLOAD GAME
+    // ============================================================
 
     @PostMapping(
             value = "/create/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<GameResponseDTO> uploadGame(
-            @RequestHeader("Authorization") String authorization,
+    public ResponseEntity<?> uploadGame(
+            @RequestHeader("Authorization") String token,
             @RequestParam("title") String title,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "price", required = false) BigDecimal price,
-            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam("description") String description,
+            @RequestParam("price") BigDecimal price,
+            @RequestParam("tags") String tags,
             @RequestParam("gameFile") MultipartFile gameFile,
             @RequestParam("logoFile") MultipartFile logoFile,
             @RequestParam(value = "verticalImage", required = false) MultipartFile verticalImage,
             @RequestParam(value = "horizontalImageOne", required = false) MultipartFile horizontalImageOne,
             @RequestParam(value = "horizontalImageTwo", required = false) MultipartFile horizontalImageTwo
     ) {
+
         try {
-            GameResponseDTO response = gameService.createGame(
-                    authorization,
+            GameResponseDTO dto = gameService.createGame(
+                    token,
                     title,
                     description,
                     price,
@@ -145,20 +187,22 @@ public class GameController implements IGameController {
                     horizontalImageTwo
             );
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(dto);
 
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
+    // ============================================================
+    //                      DOWNLOAD GAME
+    // ============================================================
+
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> downloadGame(
+    public ResponseEntity<?> downloadGame(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Integer id
     ) {
@@ -170,10 +214,11 @@ public class GameController implements IGameController {
                     .header("Content-Disposition", "attachment; filename=\"" + file.getFilename() + "\"")
                     .body(file);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-
 }

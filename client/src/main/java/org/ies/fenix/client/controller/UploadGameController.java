@@ -161,8 +161,7 @@ public class UploadGameController {
         fileChooser.setTitle("Choose game file");
 
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Game files", "*.zip", "*.rar", "*.7z", "*.jar", "*.exe"),
-                new FileChooser.ExtensionFilter("All files", "*.*")
+                new FileChooser.ExtensionFilter("Game files", "*.zip")
         );
 
         File selectedFile = fileChooser.showOpenDialog(null);
