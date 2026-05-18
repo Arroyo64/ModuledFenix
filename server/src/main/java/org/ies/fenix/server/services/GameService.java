@@ -161,7 +161,7 @@ public class GameService {
         validateMime(file,
                 "application/zip",
                 "application/x-zip-compressed",
-                "application/octet-stream" // fallback típico en Windows
+                "application/octet-stream"
         );
 
         return saveFile(
@@ -236,9 +236,17 @@ public class GameService {
         }
     }
 
-    public byte[] getVerticalImage(Integer id) { return loadTeaser(id, "VERTICAL"); }
-    public byte[] getHorizontal1Image(Integer id) { return loadTeaser(id, "HORIZONTAL_1"); }
-    public byte[] getHorizontal2Image(Integer id) { return loadTeaser(id, "HORIZONTAL_2"); }
+    public byte[] getVerticalImage(Integer id) {
+        return loadTeaser(id, "VERTICAL");
+    }
+
+    public byte[] getHorizontal1Image(Integer id) {
+        return loadTeaser(id, "HORIZONTAL_1");
+    }
+
+    public byte[] getHorizontal2Image(Integer id) {
+        return loadTeaser(id, "HORIZONTAL_2");
+    }
 
     private byte[] loadTeaser(Integer gameId, String type) {
         Teaser teaser = teaserRepository.findByGameIdAndType(gameId, type)
@@ -273,9 +281,11 @@ public class GameService {
                 .orElse(null);
     }
 
-    public java.util.List<GameResponseDTO> getAllGames() {
-        return gameRepository.findAllWithDevOrderByIdDesc()
-                .stream().map(this::toMarketplaceResponseDTO).toList();
+    public List<GameResponseDTO> getAllGames() {
+        return gameRepository.findAllWithDevAndTagsOrderByIdDesc()
+                .stream()
+                .map(this::toMarketplaceResponseDTO)
+                .toList();
     }
 
     public java.util.List<GameResponseDTO> getGames(GameSearchDTO dto) {
@@ -312,7 +322,13 @@ public class GameService {
         dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-        dto.setTags(game.getTags().stream().map(Tag::getName).toList());
+
+        if (game.getTags() != null) {
+            dto.setTags(game.getTags().stream().map(Tag::getName).toList());
+        } else {
+            dto.setTags(List.of());
+        }
+
         dto.setTeasers(java.util.List.of());
 
         return dto;
@@ -330,8 +346,18 @@ public class GameService {
         dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-        dto.setTags(game.getTags().stream().map(Tag::getName).toList());
-        dto.setTeasers(game.getTeasers().stream().map(this::toTeaserResponseDTO).toList());
+
+        if (game.getTags() != null) {
+            dto.setTags(game.getTags().stream().map(Tag::getName).toList());
+        } else {
+            dto.setTags(List.of());
+        }
+
+        if (game.getTeasers() != null) {
+            dto.setTeasers(game.getTeasers().stream().map(this::toTeaserResponseDTO).toList());
+        } else {
+            dto.setTeasers(List.of());
+        }
 
         return dto;
     }
@@ -348,8 +374,17 @@ public class GameService {
         dto.setDevUsername(game.getDev() != null ? game.getDev().getUsername() : "Unknown");
         dto.setGameLogoKey(game.getGameLogoKey());
         dto.setGameFileKey(game.getGameFileKey());
-        dto.setTags(java.util.List.of());
-        dto.setTeasers(java.util.List.of());
+
+        if (game.getTags() != null) {
+            dto.setTags(game.getTags()
+                    .stream()
+                    .map(Tag::getName)
+                    .toList());
+        } else {
+            dto.setTags(List.of());
+        }
+
+        dto.setTeasers(List.of());
 
         return dto;
     }

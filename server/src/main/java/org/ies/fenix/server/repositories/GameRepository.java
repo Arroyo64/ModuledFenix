@@ -13,12 +13,13 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
     List<Game> findAllByOrderByIdDesc();
 
     @Query("""
-        SELECT g
-        FROM Game g
-        LEFT JOIN FETCH g.dev
-        ORDER BY g.id DESC
-    """)
-    List<Game> findAllWithDevOrderByIdDesc();
+    SELECT DISTINCT g
+    FROM Game g
+    LEFT JOIN FETCH g.dev
+    LEFT JOIN FETCH g.tags
+    ORDER BY g.id DESC
+""")
+    List<Game> findAllWithDevAndTagsOrderByIdDesc();
 
     boolean existsByTitleIgnoreCase(String title);
 
