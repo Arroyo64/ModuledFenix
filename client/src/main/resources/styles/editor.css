@@ -1,0 +1,27 @@
+.root {
+    -fx-background-color: #ECECEC;
+}
+
+.workspace {
+    -fx-padding: 20;
+}
+
+.palette {
+    -fx-padding: 20;
+    -fx-background-color: #D7B45A;
+}
+
+.block {
+
+    -fx-background-color: white;
+
+    -fx-background-radius: 10;
+
+    -fx-border-radius: 10;
+
+    -fx-border-color: #CCCCCC;
+
+    -fx-border-width: 2;
+
+    -fx-padding: 15;
+}

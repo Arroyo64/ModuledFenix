@@ -39,7 +39,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.dlsc.gemsfx</groupId>
+            <artifactId>gemsfx</artifactId>
+            <version>2.16.0</version>
+        </dependency>
         <dependency>
             <groupId>com.dlsc.formsfx</groupId>
             <artifactId>formsfx-core</artifactId>
@@ -127,6 +131,16 @@
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-materialdesign2-pack</artifactId>
             <version>12.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.brouillard.oss</groupId>
+            <artifactId>cssfx</artifactId>
+            <version>11.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ies.fenix</groupId>
+            <artifactId>server</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

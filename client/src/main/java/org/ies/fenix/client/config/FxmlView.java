@@ -56,7 +56,14 @@ public enum FxmlView {
         public String getFxmlPath() {
             return "/fxml/upload-game.fxml";
         }
+    },
+    GUI(true){
+        @Override
+        public String getFxmlPath() {
+           return "/fxml/script-editor.fxml" ;
+        }
     };
+
 
     private final boolean useBaseLayout;
 
