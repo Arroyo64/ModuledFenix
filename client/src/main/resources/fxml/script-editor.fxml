@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ies.fenix.client.controller.ScriptEditorController">
+
+    <!-- LEFT PANEL -->
+    <left>
+        <VBox spacing="10"
+              prefWidth="250"
+              styleClass="palette">
+
+            <Label text="BLOCKS"/>
+
+            <Button text="Text"
+                    onAction="#addNarrativeBlock"/>
+
+            <Button text="Show Character"
+                    onAction="#addShowBlock"/>
+
+            <Button text="Decision"
+                    onAction="#addDecisionBlock"/>
+
+            <Button text="Background"
+                    onAction="#addBackgroundBlock"/>
+
+<!--            <Button text="Music"-->
+<!--                    onAction="#addMusicBlock"/>-->
+
+        </VBox>
+    </left>
+
+    <!-- CENTER -->
+    <center>
+
+        <ScrollPane fitToWidth="true">
+
+            <content>
+
+                <VBox fx:id="workspace"
+                      spacing="15"
+                      styleClass="workspace"/>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>
