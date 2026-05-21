@@ -210,7 +210,8 @@
                                 <Label text="Games acquired"
                                        styleClass="profile-overview-title"/>
 
-                                <Label text="0"
+                                <Label fx:id="gamesAcquiredValue"
+                                       text="0"
                                        styleClass="profile-overview-value"/>
                             </VBox>
                         </HBox>

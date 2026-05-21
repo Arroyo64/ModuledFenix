@@ -11,6 +11,7 @@ import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
+import org.ies.fenix.controller.IPurchaseController;
 import org.ies.fenix.controller.dto.ServerResponseDTO;
 import org.ies.fenix.controller.dto.client.ClientInfoDTO;
 import org.ies.fenix.controller.dto.client.FileUploadDTO;
@@ -48,50 +49,108 @@ public class ProfileController implements Initializable {
     @FXML
     private Label gamesCreatedValue;
 
+    @FXML
+    private Label gamesAcquiredValue;
+
     private final StageManager stageManager;
     private final IClientController clientApiService;
     private final SessionManager sessionManager;
+    private final IPurchaseController purchaseApiService;
 
-    public ProfileController(StageManager stageManager, IClientController clientApiService, SessionManager sessionManager) {
+    public ProfileController(StageManager stageManager,
+                             IClientController clientApiService,
+                             SessionManager sessionManager,
+                             IPurchaseController purchaseApiService) {
         this.stageManager = stageManager;
         this.clientApiService = clientApiService;
         this.sessionManager = sessionManager;
+        this.purchaseApiService = purchaseApiService;
     }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        loadClientInfo();
+        loadBio();
+        loadProfileImage();
+        loadGamesAcquiredCount();
+    }
+
+    private void loadClientInfo() {
         try {
             ResponseEntity<ClientInfoDTO> response = clientApiService.getClientInfo(buildHeader());
+
             if (response.getStatusCode().value() == 200 && response.getBody() != null) {
                 ClientInfoDTO clientInfo = response.getBody();
 
                 nameField.setText(clientInfo.getUsername());
                 emailField.setText(clientInfo.getEmail());
-                passwordField.setText(buildStingWithCharsOf(clientInfo.getPasswordCharacter()));
+                passwordField.setText(buildStringWithCharsOf(clientInfo.getPasswordCharacter()));
 
                 gamesCreatedValue.setText(String.valueOf(clientInfo.getCreatedGamesCount()));
             }
-            ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
-            if (loadedBio.getStatusCode().value() != 404) {
-                bio.setText(loadedBio.getBody());
-            }
-            ResponseEntity<byte[]> image = clientApiService.getProfileImage(sessionManager.getAuthorizationHeader());
-            if (image.getStatusCode().value() == 200) {
-                setCoverImage(image.getBody(), profileImage, 180);
-                profileIcon.setVisible(false);
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String buildStingWithCharsOf(int passwordCharacter) {
+    private void loadBio() {
+        try {
+            ResponseEntity<String> loadedBio = clientApiService.getBio(buildHeader());
+
+            if (loadedBio.getStatusCode().value() != 404) {
+                bio.setText(loadedBio.getBody());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadProfileImage() {
+        try {
+            ResponseEntity<byte[]> image = clientApiService.getProfileImage(buildHeader());
+
+            if (image.getStatusCode().value() == 200) {
+                setCoverImage(image.getBody(), profileImage, 180);
+                profileIcon.setVisible(false);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadGamesAcquiredCount() {
+        try {
+            Integer clientId = sessionManager.getClientId();
+
+            var response = purchaseApiService.getLibraryByClientId(
+                    sessionManager.getAuthorizationHeader(),
+                    clientId
+            );
+
+            var games = response.getBody();
+
+            int count = games == null ? 0 : games.size();
+
+            gamesAcquiredValue.setText(String.valueOf(count));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            gamesAcquiredValue.setText("0");
+        }
+    }
+
+    private String buildStringWithCharsOf(int passwordCharacter) {
         StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < passwordCharacter; i++) {
             sb.append("*");
         }
+
         return sb.toString();
     }
-
 
     private String buildHeader() {
         return sessionManager.getAuthorizationHeader();
@@ -108,20 +167,28 @@ public class ProfileController implements Initializable {
     }
 
     @FXML
+    void switchToUploadGameScene() {
+        stageManager.switchScene(FxmlView.UPLOAD_GAME);
+    }
+
+    @FXML
     public void reloadView() {
         stageManager.reloadCurrentScene();
     }
 
     @FXML
     public void updateProfileBio() {
-        ResponseEntity<ServerResponseDTO> serverResponse = clientApiService.updateBio("Bearer " + sessionManager.getToken(), bio.getText());
+        ResponseEntity<ServerResponseDTO> serverResponse =
+                clientApiService.updateBio(buildHeader(), bio.getText());
+
         if (serverResponse.getStatusCode().value() == 200) {
             System.out.println("Bio updated");
-            stageManager.reloadCurrentScene();
         } else {
-            assert serverResponse.getBody() != null;
-            System.out.println(serverResponse.getBody().getMessage());
+            if (serverResponse.getBody() != null) {
+                System.out.println(serverResponse.getBody().getMessage());
+            }
         }
+
         stageManager.reloadCurrentScene();
     }
 
@@ -133,7 +200,10 @@ public class ProfileController implements Initializable {
         );
 
         File selectedFile = fileChooser.showOpenDialog(null);
-        if (selectedFile == null) return;
+
+        if (selectedFile == null) {
+            return;
+        }
 
         try {
             String mimeType = Files.probeContentType(selectedFile.toPath());
@@ -177,7 +247,6 @@ public class ProfileController implements Initializable {
         }
     }
 
-
     private void showAlert(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -187,7 +256,6 @@ public class ProfileController implements Initializable {
             message = "Ha ocurrido un error desconocido.";
         }
 
-        // icono Ikonli
         FontIcon icon = new FontIcon("mdi2a-alert-circle");
         icon.setIconSize(48);
         icon.getStyleClass().add("alert-icon");
@@ -208,15 +276,8 @@ public class ProfileController implements Initializable {
         alert.getDialogPane().getStylesheets().add(
                 getClass().getResource("/styles/alert.css").toExternalForm()
         );
+
         alert.setGraphic(null);
         alert.showAndWait();
     }
-
-
-
-    @FXML
-    void switchToUploadGameScene() {
-        stageManager.switchScene(FxmlView.UPLOAD_GAME);
-    }
 }
-

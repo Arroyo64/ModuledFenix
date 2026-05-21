@@ -5,9 +5,12 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import org.ies.fenix.client.api.SessionManager;
 import org.ies.fenix.client.config.FxmlView;
@@ -23,14 +26,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 import static org.ies.fenix.client.utils.ImageUtils.initialConfig;
-import static org.ies.fenix.client.utils.ImageUtils.setCoverImage;
 
 public class GameController {
 
@@ -65,6 +64,9 @@ public class GameController {
     public ImageView selectedGameBannerImage;
 
     @FXML
+    public StackPane bannerWrapper;
+
+    @FXML
     public VBox tagContainerFather;
 
     @FXML
@@ -96,6 +98,19 @@ public class GameController {
     @FXML
     private void initialize() {
         initialConfig(clientApiService, sessionManager, username, topProfileImage, topProfileIcon);
+
+        configureBannerImage();
+        configureBannerClip();
+    }
+
+    private void configureBannerImage() {
+        selectedGameBannerImage.setPreserveRatio(false);
+        selectedGameBannerImage.setSmooth(true);
+        selectedGameBannerImage.setCache(false);
+        selectedGameBannerImage.setViewport(null);
+
+        selectedGameBannerImage.fitWidthProperty().bind(bannerWrapper.widthProperty());
+        selectedGameBannerImage.fitHeightProperty().bind(bannerWrapper.heightProperty());
     }
 
     public void setSelectedGameId(Integer selectedGameId) {
@@ -181,33 +196,28 @@ public class GameController {
         }
 
         try {
-            System.out.println("Loading horizontal 2 for game id: " + gameId);
-
             ResponseEntity<byte[]> response = gameApiService.getHorizontal2(
                     sessionManager.getAuthorizationHeader(),
                     gameId
             );
 
-            System.out.println("Horizontal 2 status: " + response.getStatusCode());
-
-            if (response.getBody() == null) {
-                System.out.println("Horizontal 2 body is null");
-                return;
-            }
-
-            System.out.println("Horizontal 2 bytes: " + response.getBody().length);
-
             if (!response.getStatusCode().is2xxSuccessful()
+                    || response.getBody() == null
                     || response.getBody().length == 0) {
                 return;
             }
 
-            setCoverImage(response.getBody(), selectedGameBannerImage, 1200.0, 320.0);
+            Image image = new Image(new ByteArrayInputStream(response.getBody()));
 
-            selectedGameBannerImage.setVisible(true);
-            selectedGameBannerImage.setManaged(true);
-            selectedGameBannerImage.setOpacity(1.0);
-            selectedGameBannerImage.toFront();
+            Platform.runLater(() -> {
+                selectedGameBannerImage.setViewport(null);
+                selectedGameBannerImage.setPreserveRatio(false);
+                selectedGameBannerImage.setImage(image);
+                selectedGameBannerImage.setVisible(true);
+                selectedGameBannerImage.setManaged(true);
+                selectedGameBannerImage.setOpacity(1.0);
+                selectedGameBannerImage.toFront();
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -301,28 +311,28 @@ public class GameController {
                 }
             };
 
-// BIND
             base.getGlobalProgressBar()
                     .progressProperty()
                     .bind(downloadTask.progressProperty());
 
-// UNBIND + HIDE
             downloadTask.setOnSucceeded(e -> {
                 base.getGlobalProgressBar().progressProperty().unbind();
                 base.hideProgress();
             });
+
             downloadTask.setOnFailed(e -> {
                 base.getGlobalProgressBar().progressProperty().unbind();
                 base.hideProgress();
             });
+
             downloadTask.setOnCancelled(e -> {
                 base.getGlobalProgressBar().progressProperty().unbind();
                 base.hideProgress();
             });
 
-// START
             new Thread(downloadTask).start();
-        }  catch (HttpClientErrorException e) {
+
+        } catch (HttpClientErrorException e) {
             String serverMessage = e.getResponseBodyAsString();
             stageManager.getBaseLayoutController().hideProgress();
             showError("Server error", serverMessage);
@@ -393,6 +403,15 @@ public class GameController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void configureBannerClip() {
+        Rectangle clip = new Rectangle();
+
+        clip.widthProperty().bind(bannerWrapper.widthProperty());
+        clip.heightProperty().bind(bannerWrapper.heightProperty());
+
+        bannerWrapper.setClip(clip);
     }
 
     @FXML

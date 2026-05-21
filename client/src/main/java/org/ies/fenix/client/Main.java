@@ -68,7 +68,7 @@ public class Main extends Application {
             }
 
             if (clazz == ProfileController.class) {
-                return new ProfileController(stageManager, clientApiService, sessionManager);
+                return new ProfileController(stageManager, clientApiService, sessionManager, purchaseApiService);
             }
 
             if (clazz == GameController.class) {

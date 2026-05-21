@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
     -fx-font-family: "Arial";
 }
 
@@ -14,44 +14,85 @@
 }
 
 .content-container {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
+}
+
+/* NAVBAR - usar en navbar.fxml como styleClass="navbar-container" */
+.navbar-container {
+    -fx-background-color: #243B54;
 }
 
 .nav-button {
     -fx-background-color: transparent;
     -fx-font-size: 22px;
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.45;
+    -fx-text-fill: #FAF7F2;
+    -fx-opacity: 0.70;
     -fx-cursor: hand;
     -fx-padding: 6 10 6 10;
 }
 
+.nav-button:hover {
+    -fx-opacity: 1.0;
+}
+
+.hyperlink {
+    -fx-text-fill: #243B54;
+    -fx-underline: false;
+    -fx-border-color: transparent;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #98B6FA;
+}
+
+.navbar-container .hyperlink {
+    -fx-text-fill: #FAF7F2;
+}
+
+.navbar-container .hyperlink:hover {
+    -fx-text-fill: #98B6FA;
+}
+
 .tab-active {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-opacity: 1.0;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .tab-inactive {
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.30;
+    -fx-text-fill: #8C6A52;
+    -fx-opacity: 0.55;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .main-action-button {
-    -fx-background-color: black;
-    -fx-text-fill: white;
+    -fx-background-color: #243B54;
+    -fx-text-fill: #FAF7F2;
     -fx-background-radius: 10px;
     -fx-padding: 10 18 10 18;
     -fx-font-weight: bold;
     -fx-cursor: hand;
 }
 
+.main-action-button:hover {
+    -fx-background-color: #8C6A52;
+}
+
+.navbar-container .main-action-button {
+    -fx-background-color: #D9C5A1;
+    -fx-text-fill: #243B54;
+}
+
+.navbar-container .main-action-button:hover {
+    -fx-background-color: #98B6FA;
+    -fx-text-fill: #243B54;
+}
+
 .profile-wrapper {
-    -fx-background-color: #ebebeb;
-    -fx-border-color: #d2d2d2;
+    -fx-background-color: #D9C5A1;
+    -fx-border-color: #8C6A52;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
     -fx-min-width: 40px;
@@ -60,35 +101,52 @@
     -fx-max-height: 40px;
 }
 
+.navbar-container .profile-wrapper {
+    -fx-background-color: #FAF7F2;
+    -fx-border-color: #D9C5A1;
+}
+
 .profile-image {
     -fx-opacity: 0.0;
 }
 
 .dropdown-icon {
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.45;
+    -fx-text-fill: #243B54;
+    -fx-opacity: 0.65;
     -fx-font-size: 18px;
+}
+
+.navbar-container .dropdown-icon {
+    -fx-text-fill: #FAF7F2;
+    -fx-opacity: 0.85;
 }
 
 .section-title {
     -fx-font-size: 38px;
     -fx-font-weight: bold;
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
 }
 
 .section-subtitle {
     -fx-font-size: 18px;
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.45;
+    -fx-text-fill: #8C6A52;
+    -fx-opacity: 0.85;
 }
 
 .search-field {
-    -fx-background-color: white;
-    -fx-border-color: #d6d6d6;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
     -fx-padding: 10 14 10 14;
     -fx-font-size: 15px;
+    -fx-text-fill: #243B54;
+    -fx-prompt-text-fill: #8C6A52;
+}
+
+.search-field:focused {
+    -fx-border-color: #98B6FA;
+    -fx-border-width: 2px;
 }
 
 .horizontal-games-scroll {
@@ -106,6 +164,15 @@
     -fx-background-color: transparent;
 }
 
+.horizontal-games-scroll .scroll-bar:horizontal .thumb {
+    -fx-background-color: #D9C5A1;
+    -fx-background-radius: 8px;
+}
+
+.horizontal-games-scroll .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #8C6A52;
+}
+
 .games-row {
     -fx-padding: 0;
 }
@@ -118,8 +185,8 @@
 }
 
 .card-image-wrapper {
-    -fx-background-color: #ebebeb;
-    -fx-border-color: #cfcfcf;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-width: 2px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
@@ -129,6 +196,10 @@
     -fx-max-height: 170px;
 }
 
+.card-image-wrapper:hover {
+    -fx-border-color: #98B6FA;
+}
+
 .card-image {
     -fx-opacity: 1.0;
 }
@@ -136,29 +207,30 @@
 .card-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.75;
+    -fx-text-fill: #243B54;
+    -fx-opacity: 1.0;
 }
 
 .tag {
-    -fx-background-color: #dddddd;
+    -fx-background-color: #98B6FA;
     -fx-background-radius: 6px;
     -fx-padding: 4 12 4 12;
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.65;
+    -fx-text-fill: #243B54;
+    -fx-opacity: 0.95;
     -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
-#settingsImage{
+#settingsImage {
     -fx-image: url("../graphics/Setting.png");
 }
 
-#logoImage{
+#logoImage {
     -fx-image: url("../graphics/FenixLogo.png");
 }
 
 #clientErrorLabel {
-    -fx-text-fill: #FF0000;
+    -fx-text-fill: #B3261E;
     -fx-font-size: 12px;
 }
 
@@ -169,16 +241,16 @@
 
 
 .library-root {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .library-main-container {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .library-left-panel {
-    -fx-background-color: #f7f7f7;
-    -fx-border-color: transparent #e5e5e5 transparent transparent;
+    -fx-background-color: #F3EBDC;
+    -fx-border-color: transparent #D9C5A1 transparent transparent;
     -fx-border-width: 0 1px 0 0;
 }
 
@@ -203,8 +275,8 @@
 }
 
 .library-search-wrapper {
-    -fx-background-color: white;
-    -fx-border-color: #d6d6d6;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
     -fx-padding: 0 10 0 0;
@@ -215,11 +287,13 @@
     -fx-border-color: transparent;
     -fx-padding: 10 14 10 14;
     -fx-font-size: 15px;
+    -fx-text-fill: #243B54;
+    -fx-prompt-text-fill: #8C6A52;
 }
 
 .library-filter-icon {
-    -fx-text-fill: #111111;
-    -fx-opacity: 0.25;
+    -fx-text-fill: #243B54;
+    -fx-opacity: 0.45;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
 }
@@ -233,8 +307,8 @@
 }
 
 .library-left-game-icon-wrapper {
-    -fx-background-color: #ebebeb;
-    -fx-border-color: #cfcfcf;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-width: 2px;
     -fx-border-radius: 26px;
     -fx-background-radius: 26px;
@@ -252,7 +326,7 @@
 }
 
 .library-left-game-title {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
@@ -266,8 +340,8 @@
 }
 
 .library-cover-wrapper {
-    -fx-background-color: #ebebeb;
-    -fx-border-color: #cfcfcf;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-width: 2px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
@@ -280,27 +354,35 @@
     -fx-max-height: 285px;
 }
 
+.library-cover-wrapper:hover {
+    -fx-border-color: #98B6FA;
+}
+
 .library-cover-image {
     -fx-opacity: 0.0;
 }
 
+
+
 /* GAME */
 
+
+
 .game-root {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .game-container {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .game-banner-wrapper {
-    -fx-background-color: #ebebeb;
-    -fx-border-color: #cfcfcf;
-    -fx-border-width: 2px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
-    -fx-padding: 20 30 20 30;
+    -fx-padding: 0;
 }
 
 .game-banner-image {
@@ -308,50 +390,50 @@
 }
 
 .game-main-grid {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .game-left-panel {
-    -fx-background-color: #f5f5f5;
-    -fx-border-color: transparent #dcdcdc transparent transparent;
+    -fx-background-color: #FAF7F2;
+    -fx-border-color: transparent #D9C5A1 transparent transparent;
     -fx-border-width: 0 1px 0 0;
 }
 
 .game-right-panel {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .game-main-quote {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 28px;
     -fx-font-weight: bold;
 }
 
 .game-description {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 16px;
     -fx-font-weight: normal;
     -fx-wrap-text: true;
-    -fx-opacity: 1.0;
+    -fx-opacity: 0.95;
 }
 
 .game-title {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 34px;
     -fx-font-weight: bold;
     -fx-opacity: 1.0;
 }
 
 .game-info {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #8C6A52;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-opacity: 1.0;
 }
 
 .game-play-button {
-    -fx-background-color: #d9d9d9;
-    -fx-text-fill: #111111;
+    -fx-background-color: #D9C5A1;
+    -fx-text-fill: #243B54;
     -fx-background-radius: 8px;
     -fx-padding: 12 30 12 30;
     -fx-font-size: 16px;
@@ -359,14 +441,22 @@
     -fx-cursor: hand;
 }
 
+.game-play-button:hover {
+    -fx-background-color: #98B6FA;
+}
+
 .game-download-button {
-    -fx-background-color: #5b8dff;
-    -fx-text-fill: white;
+    -fx-background-color: #243B54;
+    -fx-text-fill: #FAF7F2;
     -fx-background-radius: 8px;
     -fx-padding: 12 30 12 30;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
+}
+
+.game-download-button:hover {
+    -fx-background-color: #8C6A52;
 }
 
 
@@ -376,32 +466,32 @@
 
 
 .profile-root {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 .profile-container {
-    -fx-background-color: #f5f5f5;
+    -fx-background-color: #FAF7F2;
 }
 
 /* CARD PRINCIPAL */
 .profile-main-card {
-    -fx-background-color: #f1efeb; /* tono ligeramente diferente */
-    -fx-border-color: #d8d5cf;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-width: 1px;
     -fx-border-radius: 14px;
     -fx-background-radius: 14px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(36,59,84,0.12), 8, 0, 0, 2);
 }
 
 .profile-left-panel {
     -fx-background-color: transparent;
-    -fx-border-color: transparent #d9d6d0 transparent transparent;
+    -fx-border-color: transparent #D9C5A1 transparent transparent;
     -fx-border-width: 0 1px 0 0;
 }
 
 .profile-center-panel {
     -fx-background-color: transparent;
-    -fx-border-color: transparent #d9d6d0 transparent transparent;
+    -fx-border-color: transparent #D9C5A1 transparent transparent;
     -fx-border-width: 0 1px 0 0;
 }
 
@@ -410,8 +500,8 @@
 }
 
 .profile-avatar-wrapper {
-    -fx-background-color: #e3e0da; /* gris visible para simular imagen */
-    -fx-border-color: #cfcac2;
+    -fx-background-color: #D9C5A1;
+    -fx-border-color: #8C6A52;
     -fx-border-width: 1px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
@@ -425,46 +515,55 @@
 
 /* TEXTOS */
 .profile-section-title {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 
 .profile-label {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
 }
 
 .profile-input {
-    -fx-background-color: #f8f7f4;
-    -fx-border-color: #bdb8b0;
+    -fx-background-color: #FAF7F2;
+    -fx-border-color: #D9C5A1;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
     -fx-padding: 12 14 12 14;
     -fx-font-size: 15px;
-    -fx-text-fill: #111111;
-    -fx-prompt-text-fill: #888888;
+    -fx-text-fill: #243B54;
+    -fx-prompt-text-fill: #8C6A52;
+}
+
+.profile-input:focused {
+    -fx-border-color: #98B6FA;
+    -fx-border-width: 2px;
 }
 
 .profile-description {
-    -fx-background-color: #f8f7f4;
-    -fx-border-color: #bdb8b0;
+    -fx-background-color: #FAF7F2;
+    -fx-border-color: #D9C5A1;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
     -fx-font-size: 15px;
-    -fx-text-fill: #111111;
-    -fx-control-inner-background: #f8f7f4;
+    -fx-text-fill: #243B54;
+    -fx-control-inner-background: #FAF7F2;
 }
 
 .profile-description .content {
-    -fx-background-color: #f8f7f4;
+    -fx-background-color: #FAF7F2;
+}
+
+.profile-description:focused {
+    -fx-border-color: #98B6FA;
 }
 
 /* BOTONES */
 .profile-edit-button {
-    -fx-background-color: #243d5a;
-    -fx-text-fill: white;
+    -fx-background-color: #243B54;
+    -fx-text-fill: #FAF7F2;
     -fx-background-radius: 10px;
     -fx-padding: 12 28 12 28;
     -fx-font-size: 15px;
@@ -472,20 +571,24 @@
     -fx-cursor: hand;
 }
 
+.profile-edit-button:hover {
+    -fx-background-color: #8C6A52;
+}
+
 /* OVERVIEW */
 .profile-overview-card {
-    -fx-background-color: #f1efeb; /* mismo tono suave */
-    -fx-border-color: #d8d5cf;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
     -fx-border-width: 1px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(36,59,84,0.10), 6, 0, 0, 2);
     -fx-min-height: 110px;
 }
 
 .profile-overview-icon {
-    -fx-background-color: #e8e5df;
-    -fx-border-color: #d4d0c9;
+    -fx-background-color: #D9C5A1;
+    -fx-border-color: #8C6A52;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
     -fx-min-width: 52px;
@@ -493,13 +596,13 @@
 }
 
 .profile-overview-title {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
 }
 
 .profile-overview-value {
-    -fx-text-fill: #111111;
+    -fx-text-fill: #8C6A52;
     -fx-font-size: 14px;
 }
 
@@ -535,16 +638,16 @@
 
 
 
-/*UploadGame*/
+/* UploadGame */
 
 
 
 .create-game-root {
-    -fx-background-color: #F7F5F1;
+    -fx-background-color: #FAF7F2;
 }
 
 .create-game-page {
-    -fx-background-color: #F7F5F1;
+    -fx-background-color: #FAF7F2;
 }
 
 .create-game-grid {
@@ -554,50 +657,59 @@
 .create-game-title {
     -fx-font-size: 34px;
     -fx-font-weight: 800;
-    -fx-text-fill: #111111;
+    -fx-text-fill: #243B54;
 }
 
 .create-game-subtitle {
     -fx-font-size: 15px;
-    -fx-text-fill: #6F6F6F;
+    -fx-text-fill: #8C6A52;
 }
 
 .upload-panel {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 16px;
     -fx-border-radius: 16px;
-    -fx-border-color: #E4E0D9;
+    -fx-border-color: #D9C5A1;
 }
 
 .upload-card {
-    -fx-background-color: #FBFBFA;
+    -fx-background-color: #FAF7F2;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
-    -fx-border-color: #E7E2DB;
+    -fx-border-color: #D9C5A1;
 }
 
 .upload-logo-card {
-    -fx-background-color: #FBFBFA;
+    -fx-background-color: #FAF7F2;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
-    -fx-border-color: #E7E2DB;
+    -fx-border-color: #D9C5A1;
 }
 
 .upload-text-field {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
-    -fx-border-color: #D9D4CC;
+    -fx-border-color: #D9C5A1;
     -fx-padding: 11px 14px;
     -fx-font-size: 14px;
+    -fx-text-fill: #243B54;
+    -fx-prompt-text-fill: #8C6A52;
+}
+
+.upload-text-field:focused {
+    -fx-border-color: #98B6FA;
+    -fx-border-width: 2px;
 }
 
 .upload-text-area {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
-    -fx-border-color: #D9D4CC;
+    -fx-border-color: #D9C5A1;
     -fx-font-size: 14px;
+    -fx-text-fill: #243B54;
+    -fx-control-inner-background: #FFFFFF;
 }
 
 .upload-text-area .content {
@@ -605,24 +717,28 @@
     -fx-background-radius: 10px;
 }
 
+.upload-text-area:focused {
+    -fx-border-color: #98B6FA;
+}
+
 .upload-drop-area,
 .upload-drop-area-small {
-    -fx-background-color: #EAE7E2;
+    -fx-background-color: #F3EBDC;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
-    -fx-border-color: #D8D2C9;
+    -fx-border-color: #D9C5A1;
 }
 
 .upload-drop-area:hover,
 .upload-drop-area-small:hover {
-    -fx-background-color: #E4E0DA;
+    -fx-background-color: #D9C5A1;
 }
 
 .upload-logo-circle-wrapper {
-    -fx-background-color: #EAE7E2;
+    -fx-background-color: #F3EBDC;
     -fx-background-radius: 999px;
     -fx-border-radius: 999px;
-    -fx-border-color: #D8D2C9;
+    -fx-border-color: #D9C5A1;
     -fx-alignment: center;
     -fx-min-width: 190px;
     -fx-min-height: 190px;
@@ -631,22 +747,84 @@
 }
 
 .upload-logo-circle-wrapper:hover {
-    -fx-background-color: #E4E0DA;
+    -fx-background-color: #D9C5A1;
 }
 
 .upload-placeholder-text {
-    -fx-text-fill: #9A948C;
+    -fx-text-fill: #8C6A52;
     -fx-font-size: 14px;
     -fx-font-weight: 600;
 }
 
 .upload-file-label {
-    -fx-text-fill: #7C7C7C;
+    -fx-text-fill: #8C6A52;
     -fx-font-size: 13px;
 }
 
 
+
+/* AUTH SCREENS - solo colores, para login/register/email si añades styleClass */
+
+
+
+.auth-root {
+    -fx-background-color: #FAF7F2;
+}
+
+.auth-title {
+    -fx-fill: #243B54;
+}
+
+.auth-subtitle {
+    -fx-fill: #8C6A52;
+}
+
+.auth-footer-text {
+    -fx-fill: #8C6A52;
+}
+
+.auth-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D9C5A1;
+    -fx-text-fill: #243B54;
+    -fx-prompt-text-fill: #8C6A52;
+}
+
+.auth-field:focused {
+    -fx-border-color: #98B6FA;
+}
+
+.auth-main-button {
+    -fx-background-color: #243B54;
+    -fx-text-fill: #FAF7F2;
+}
+
+.auth-main-button:hover {
+    -fx-background-color: #8C6A52;
+}
+
+.auth-secondary-button {
+    -fx-background-color: #D9C5A1;
+    -fx-text-fill: #243B54;
+}
+
+.auth-secondary-button:hover {
+    -fx-background-color: #98B6FA;
+}
+
+.auth-settings-button {
+    -fx-background-color: #D9C5A1;
+    -fx-border-color: #8C6A52;
+}
+
+.auth-settings-button:hover {
+    -fx-background-color: #98B6FA;
+}
+
+
+
 /**/
+
 
 
 .invisible-game-button {

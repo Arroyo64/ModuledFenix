@@ -12,14 +12,14 @@
 
 <HBox alignment="CENTER_LEFT"
       spacing="20.0"
-      styleClass="content-container"
+      styleClass="navbar-container"
       stylesheets="@../styles/styles.css"
       xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.ies.fenix.client.controller.NavbarController">
 
     <padding>
-        <Insets top="30.0" right="30.0" left="30.0"/>
+        <Insets top="30.0" right="30.0" bottom="18.0" left="30.0"/>
     </padding>
 
     <!-- Flechas -->

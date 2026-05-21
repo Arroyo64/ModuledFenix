@@ -282,11 +282,7 @@ public class MarketplaceController implements Initializable {
 
         System.out.println("Opening game with id: " + game.getId());
 
-        GameController gameController = stageManager.switchSceneAndGetController(FxmlView.GAME);
-
-        if (gameController != null) {
-            gameController.setSelectedGameId(game.getId());
-        }
+        stageManager.openGame(game.getId());
     }
 
     private void clearCarousels() {

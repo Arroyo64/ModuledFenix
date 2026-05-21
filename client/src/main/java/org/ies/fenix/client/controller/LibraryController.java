@@ -274,11 +274,6 @@ public class LibraryController {
     }
 
     private void openGame(Integer gameId) {
-        GameController controller =
-                stageManager.switchSceneAndGetController(FxmlView.GAME);
-
-        if (controller != null) {
-            controller.setSelectedGameId(gameId);
-        }
+        stageManager.openGame(gameId);
     }
 }
