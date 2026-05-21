@@ -176,7 +176,7 @@ public class UploadGameController {
 
     @FXML
     private void chooseLogoImage() {
-        File selectedFile = chooseImageFile("Choose logo image");
+        File selectedFile = chooseImageFile("Choose game logo");
 
         if (selectedFile == null) {
             return;
@@ -189,7 +189,7 @@ public class UploadGameController {
 
     @FXML
     private void chooseVerticalImage() {
-        File selectedFile = chooseImageFile("Choose vertical image");
+        File selectedFile = chooseImageFile("Choose marketplace cover");
 
         if (selectedFile == null) {
             return;
@@ -202,7 +202,7 @@ public class UploadGameController {
 
     @FXML
     private void chooseHorizontalImageOne() {
-        File selectedFile = chooseImageFile("Choose horizontal image 1");
+        File selectedFile = chooseImageFile("Choose game page banner");
 
         if (selectedFile == null) {
             return;
@@ -215,7 +215,7 @@ public class UploadGameController {
 
     @FXML
     private void chooseHorizontalImageTwo() {
-        File selectedFile = chooseImageFile("Choose horizontal image 2");
+        File selectedFile = chooseImageFile("Choose preview image");
 
         if (selectedFile == null) {
             return;

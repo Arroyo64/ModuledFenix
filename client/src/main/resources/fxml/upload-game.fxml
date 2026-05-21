@@ -130,7 +130,8 @@
                                        styleClass="section-subtitle"/>
 
                                 <StackPane prefHeight="120.0"
-                                           styleClass="upload-drop-area-small">
+                                           styleClass="upload-drop-area-small"
+                                           onMouseClicked="#chooseGameFile">
 
                                     <Label text="No file selected"
                                            styleClass="upload-placeholder-text"/>
@@ -181,7 +182,7 @@
                                     </padding>
 
                                     <VBox spacing="4.0">
-                                        <Label text="Logo"
+                                        <Label text="Game logo"
                                                styleClass="card-title"/>
 
                                         <Label text="This image will be used as the icon of the game."
@@ -195,7 +196,8 @@
                                                prefHeight="190.0"
                                                maxWidth="190.0"
                                                maxHeight="190.0"
-                                               styleClass="upload-logo-circle-wrapper">
+                                               styleClass="upload-logo-circle-wrapper"
+                                               onMouseClicked="#chooseLogoImage">
 
                                         <ImageView fx:id="logoImageView"
                                                    fitWidth="140.0"
@@ -213,7 +215,7 @@
 
                                     <Region VBox.vgrow="ALWAYS"/>
 
-                                    <Button text="Choose logo"
+                                    <Button text="Choose game logo"
                                             maxWidth="Infinity"
                                             styleClass="game-download-button"
                                             onAction="#chooseLogoImage"/>
@@ -228,11 +230,12 @@
                                 <VBox spacing="10.0"
                                       HBox.hgrow="ALWAYS">
 
-                                    <Label text="Vertical image"
+                                    <Label text="Marketplace cover"
                                            styleClass="card-title"/>
 
                                     <StackPane prefHeight="410.0"
-                                               styleClass="upload-drop-area">
+                                               styleClass="upload-drop-area"
+                                               onMouseClicked="#chooseVerticalImage">
 
                                         <ImageView fx:id="verticalImageView"
                                                    fitWidth="255.0"
@@ -241,7 +244,7 @@
                                                    pickOnBounds="true"/>
                                     </StackPane>
 
-                                    <Button text="Choose vertical image"
+                                    <Button text="Choose marketplace cover"
                                             maxWidth="Infinity"
                                             styleClass="game-download-button"
                                             onAction="#chooseVerticalImage"/>
@@ -257,11 +260,12 @@
                             <!-- HORIZONTAL IMAGE 1 -->
                             <VBox spacing="10.0">
 
-                                <Label text="Horizontal image 1"
+                                <Label text="Game page banner"
                                        styleClass="card-title"/>
 
                                 <StackPane prefHeight="210.0"
-                                           styleClass="upload-drop-area">
+                                           styleClass="upload-drop-area"
+                                           onMouseClicked="#chooseHorizontalImageOne">
 
                                     <ImageView fx:id="horizontalImageOneView"
                                                fitWidth="760.0"
@@ -271,7 +275,7 @@
                                 </StackPane>
 
                                 <HBox alignment="CENTER_LEFT" spacing="12.0">
-                                    <Button text="Choose image"
+                                    <Button text="Choose game page banner"
                                             styleClass="game-download-button"
                                             onAction="#chooseHorizontalImageOne"/>
 
@@ -285,11 +289,12 @@
                             <!-- HORIZONTAL IMAGE 2 -->
                             <VBox spacing="10.0">
 
-                                <Label text="Horizontal image 2"
+                                <Label text="Game preview image"
                                        styleClass="card-title"/>
 
                                 <StackPane prefHeight="210.0"
-                                           styleClass="upload-drop-area">
+                                           styleClass="upload-drop-area"
+                                           onMouseClicked="#chooseHorizontalImageTwo">
 
                                     <ImageView fx:id="horizontalImageTwoView"
                                                fitWidth="760.0"
@@ -299,7 +304,7 @@
                                 </StackPane>
 
                                 <HBox alignment="CENTER_LEFT" spacing="12.0">
-                                    <Button text="Choose image"
+                                    <Button text="Choose preview image"
                                             styleClass="game-download-button"
                                             onAction="#chooseHorizontalImageTwo"/>
 

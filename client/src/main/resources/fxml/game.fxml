@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="root"
             prefHeight="850.0"
             prefWidth="1400.0"
@@ -31,16 +32,18 @@
                       styleClass="game-container">
 
                     <!-- BIG BANNER -->
-                    <HBox alignment="CENTER"
-                          prefHeight="360.0"
-                          styleClass="game-banner-wrapper">
+                    <!-- BIG BANNER -->
+                    <StackPane fx:id="bannerWrapper"
+                               prefHeight="360.0"
+                               minHeight="360.0"
+                               maxHeight="360.0"
+                               styleClass="game-banner-wrapper">
 
                         <ImageView fx:id="selectedGameBannerImage"
-                                   fitHeight="320.0"
-                                   fitWidth="1200.0"
-                                   preserveRatio="false"
+                                   preserveRatio="true"
+                                   smooth="true"
                                    styleClass="game-banner-image"/>
-                    </HBox>
+                    </StackPane>
 
                     <!-- LOWER CONTENT -->
                     <GridPane styleClass="game-main-grid"

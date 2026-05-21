@@ -18,6 +18,7 @@ import org.ies.fenix.client.config.FxmlView;
 import org.ies.fenix.client.config.StageManager;
 import org.ies.fenix.controller.IClientController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -60,10 +61,10 @@ public class ClientController implements Initializable {
 
         username.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
         password.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
+
         if (passwordCheck != null) {
             passwordCheck.textProperty().addListener((obs, oldVal, newVal) -> errorProperty.set(""));
         }
-
     }
 
     // ============================================================
@@ -85,6 +86,8 @@ public class ClientController implements Initializable {
             return;
         }
 
+        LoginResponseDTO body;
+
         try {
             ResponseEntity<LoginResponseDTO> response =
                     clientApiService.login(new ClientLoginDTO(name, rawPassword));
@@ -96,23 +99,34 @@ public class ClientController implements Initializable {
                 return;
             }
 
-            LoginResponseDTO body = response.getBody();
-            if (body == null || body.getToken() == null) {
-                errorProperty.set("Invalid server response.");
-                return;
-            }
+            body = response.getBody();
 
-            sessionManager.saveSession(
-                    body.getToken(),
-                    body.getClientId(),
-                    body.getUsername()
-            );
-
-            errorProperty.set("");
-            stageManager.switchScene(FxmlView.MARKETPLACE);
-
-        } catch (Exception e) {
+        } catch (RestClientException e) {
+            e.printStackTrace();
             errorProperty.set("Could not connect to server.");
+            return;
+        }
+
+        if (body == null || body.getToken() == null) {
+            errorProperty.set(body != null && body.getMessage() != null
+                    ? body.getMessage()
+                    : "Invalid server response.");
+            return;
+        }
+
+        sessionManager.saveSession(
+                body.getToken(),
+                body.getClientId(),
+                body.getUsername()
+        );
+
+        errorProperty.set("");
+
+        try {
+            stageManager.switchScene(FxmlView.MARKETPLACE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorProperty.set("Login ok, but Marketplace could not be loaded. Check console.");
         }
     }
 
@@ -148,19 +162,26 @@ public class ClientController implements Initializable {
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 Object body = response.getBody();
+
                 if (body instanceof String msg) {
                     errorProperty.set(msg);
                 } else {
                     errorProperty.set("Registration failed.");
                 }
+
                 return;
             }
 
             errorProperty.set("");
             stageManager.switchScene(FxmlView.LOGIN);
 
-        } catch (Exception e) {
+        } catch (RestClientException e) {
+            e.printStackTrace();
             errorProperty.set("Could not connect to server.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorProperty.set("Register ok, but login view could not be loaded. Check console.");
         }
     }
 
